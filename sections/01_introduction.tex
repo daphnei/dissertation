@@ -1,0 +1,70 @@
+\chapter{Introduction} \label{chap:intro}
+
+
+% State-of-the-art neural language models have become capable of generating incredibly fluent text.
+
+% This dissertation addresses two main questions.
+
+% \textit{What problems arise from attempting to use language models for generation in real-world settings?}
+
+% \textit{What are some of the potentials for applying this technology to }
+
+% The first problem I focus on is the ability to generate text that humans perceive as high quality but has the same diversity of language present in genuine human writing.
+
+% The second problem is on what happens when generated text is \TODO{}. Are humans able to notice when they are reading language model-generated text?
+
+% The third problem is the privacy implications of training on large, barely curated text datasets extracted from the internet.  
+
+
+
+% Moreover, the ability to finetune on corpora of in-domain text or to use few-shot learning to influence generation has created a deluge of exciting applications of these models.
+% These range from fun applications like machine-generated RPG games\footnote{\url{https://play.aidungeon.io/}} and fake presidential Tweets\footnote{\url{https://faketrump.ai/}} to practical tasks like closed-book Q\&A \cite{roberts2020much} and summarization \cite{zhang2019pegasus,fabbri2020improving}.
+% The first half of this thesis explores the capabilities of neural language models to assist humans in real-world writing tasks, with a specific focus on being able to use natural language generation (NLG) systems to aid in the creative process of storytelling and narrative construction.
+% However, amid the fast-paced advancements in this field it is vital that research into understanding and evaluating the generative capabilities of large language models keeps pace with their application to new tasks.
+% Thus, the second half of this thesis involves analyses to better understand the capabilities and relative strengths of NLG systems.
+
+% While computer-assisted creative writing has long been an interest of NLP researchers \cite{meehan1977tale,klein1973automatic}, it remains a very difficult task for a number of reasons.
+% First of all, good stories tend to have coherent narratives that span paragraphs, chapters, and even entire novel series, far beyond the sequence length most neural networks operating on word sequences can naively handle.
+% Section \ref{section:sentence_lms} proposes a method for capturing coherence across sentences, rather than across individual words as most standard language models do.
+% Second, replacing human story writers with ML is not nearly as interesting a goal as providing tools to assist in the creative writing process.
+% Assistance requires controllability--providing writers the ability to dictate what kind of text gets generated and decide how it interfaces with what they might have already written.
+% Section \ref{section:infilling} introduces a method for allowing writers to modify existing text through a fill-in-the-blank task, rather than the more typical continue-the-prompt formulation used in many language model user interfaces.
+
+% Understanding the limitations of giant language models and the nature of the text they are capable of generating is also crucial to the ultimate use of these systems in real applications.
+% Section \ref{section:div-quality} discusses research that analyzes the inference-time tradeoff between generating interesting and diverse text and generating text that humans perceive as high-quality.
+% We show how this tradeoff was present in earlier LSTM-based sequence-to-sequence models and still persists in today's state-of-the-art neural language models.
+% The tradeoff exists because of the manner in which nearly all neural networks for language generation are trained.
+% These models are trained using a log-likelihood loss to predict a probability distribution over the vocabulary for what the next word should be in a sequence of words.
+% Because the log-likelihood loss always assigns some non-zero probability to each word in the vocabulary, the model's predicted probability distributions always have a long tail of low-likelihood words.
+% Unfortunately this poses a significant challenge; we do not have good strategies for disambiguating between words which are assigned a low likelihood because they are interesting and surprising, words that are assigned a low-likelihood because they did not occur frequently enough in the training set to be well-modeled, and words which truly are poor choices to continue the text.
+% All decoding methods (the algorithms used to sample text from the output probability distributions) make some decision about the extent to which they will choose words in the low-likelihood tail of the distribution.
+% On one hand, if one chooses a decoding method which avoids sampling from the tail entirely, humans might prefer the resulting generated text, even though it distributionally no longer looks like what a human what actually write.
+% On the other hand, if one chooses a decoding method that occasionally selects unlikely words, there is a greater chance the system will make poor word choices. This does mean though that the system will use uncommon words at a rate more similar to human writers.
+
+% The relative strengths of different NLG systems, especially ones meant to generate text in open-ended domains such as fiction writing or chatbots, cannot be truly assessed without human evaluation.
+% This is because automatic evaluation is not sufficient to capture generation quality.
+% For example, perplexity on a validation set can give a sense of how well a model represents natural language, but it does not capture perceived differences in quality caused by the quality-diversity tradeoff seen at inference time.
+% Similarly, targeted downstream tasks such as common-sense reasoning and question-answering can help answer the question of whether a language model is able to generate factual, non-contradictory text but they do not provide insight into human stylistic preferences or a model's ability to generate entire multi-paragraph passages with narrative coherence.
+% In Section \ref{section:human-eval}, two systems are presented which were designed to tackle the challenge of human evaluation.
+% In ChatEval (Section \ref{section:chateval}), we propose a system to fairly compare different chitchat chatbots by asking human raters to report which system's output they prefer. With the Real or Fake Text (RoFT) website (Section \ref{section:roft}), we propose evaluating NLG quality through a detection task, where human raters are challenged to figure out when a passage of text transitions from being human-written to being machine-generated.
+
+% The final section of this proposal (Section \ref{section:future}) describes ongoing projects which will complete my thesis.
+% I propose to continue the line of work on computer-assisted storytelling by focusing more strongly on how humans interact or want to interact with text generation systems.
+% I propose to build user interfaces with many different types of controllability (further detail provided in Section \ref{section:controllability_proposal}), which will make it possible to investigate how useful/enjoyable different controls are for creative writers of different experience levels through user studies.
+% Since Human Computer Interaction (HCI) is outside my domain of expertise, I am actively collaborating with HCI researchers at Google on this line of research.
+% In addition, to enable better models to be trained in story domains where high-quality datasets tend to be quite small, I propose a method for extracting story-like datasets from massive Common Crawl datasets (Section \ref{section:score_filter_proposal}).
+
+% Insights from our investigations into the diversity-quality tradeoff have led to observation of a related phenomena--since language models are explicitly trained to make text in their training set as likely according to the model as possible, they have a troubling ability to regurgitate phrases copied verbatim from their training data \cite{carlini2020extracting}.
+% This tendency may be especially problematic in creative writing applications since authors ought to be made aware if the NLG suggestions they are being provided are simply paraphrases of Shakespeare or Dickens.
+% To complete my thesis section on analysis of LM-generated text, I propose conducting a systematic and large-scale study of just how often memorization occurs and whether there exist trends between when text is seen during training and whether that text was memorized by the language models.
+% This planned research is discussed in further detail in Section \ref{section:memorization}.
+
+% Lastly, in Section \ref{section:roft_plans}, I propose a largescale human evaluation study using the RoFT system to compare NLG abilities across different subject domains and trained neural networks.
+% This study will complement the proposed HCI research on methods of controllability for creative writing purposes.
+% While in RoFT all users see and evaluate the same set of pre-computed generations, the controllability project will analyze what generations users choose when they are presented with several candidates custom-tailored to each unique user-specified prompt text and control signals.
+%%%
+
+
+
+\section{Goals of this Work} \label{subsec:goalswork}
+something something something

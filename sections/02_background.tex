@@ -1,0 +1,75 @@
+\chapter{Background on Neural Language Models}
+\label{chap:background}
+
+\section{What is a Language Model?}
+
+\section{What is a Neural Language Model?}
+
+Neural network-based language models replace the statistical models described in the previous section with a learned function (the neural network) whose output can be used to produce probability distribution over the next word in sequence given the previous words.
+Neural language models have the advantage that they assign non-zero probabilities to sequences never seen in the training data, and thus they can handle very long context sequences.
+
+Rather than computing probabilities for sequences of discrete words, the first step of a neural language model is to embed each word into a continuous vector space.
+An embedding matrix (whose rows are the embeddings for each word in the vocabulary) is used to map a sequence of words to a sequence of fixed-sized real-numbered vectors.
+Let $\by_1, \ldots, \by_n$ be the sequence of embeddings for some text.
+Typical neural language models emit $\hat{\by}_t$, a predicted embedding for the $t$th position in the sequence given the previous embeddings in the sequence. This can be written as
+\begin{align}
+    \hat{\by}_t = f(\by_1, \ldots, \by_{t-1})
+    \label{eq:lm_feq}
+\end{align}
+
+where $f$ is the neural network and $\by_1, \ldots, \by_{t-1}$ are the embeddings of the previous tokens in the sequence.
+To train the weights in $f$ (and the weights of the embedding matrix), we measure how how close the emitted embedding $\hat{\by}_t$ is to the embedding of the true next word.
+
+Some language models condition both on the previous words of the target sequence as well as an additional sequence of text.
+This paradigm is known as an encoder-decoder or sequence-to-sequence, and the function above is modified to
+\begin{align}
+    \hat{\by}_t = f(\by_1, \ldots, \by_{t-1}; \bx_1, \ldots, \bx_n)
+    \label{eq:cond_lm_feq}
+\end{align}
+where $\bx_1, \ldots, \bx_n$ is the additional input sequence. 
+The most popular application of encoder-decoder models is machine translation, where to convert some text from French to English, the language model predicts the next word of the English sequence given the entirety of the French sequence and the previous words of the English sequence.
+
+Finally, to produce a probability distribution for what the next word should be, the predicted embedding $\hat{\bx}_t$ is multiplied by the embedding matrix $\bE$ (to produce a score for each word in the vocabulary), then a softmax transformation is used to normalize these scores into a probability distribution.
+Let $X_t$ be a random variable representing the vocabulary item predicted for the $t$th position. We then have:
+\begin{align}
+    \label{equation:vocab}
+    P(Y_t=i | \by_1, \ldots, \by_{t-1}) = \frac{\exp(\bE\hat{\by}_t[i])}{\sum_j\exp(\bE\hat{\by}_t[j])}
+\end{align}
+where $i$ and $j$ are indexes into the vocabulary.
+
+Neural language models are almost always trained with a log-likelihood loss that encourages the model to put more probability mass on the true next token than the alternatives:
+\begin{align}
+    \mathcal{L} = -\sum_{t=1}^T \log P(Y_t=i^* | \by_1, \ldots, \by_{t-1})
+\end{align}
+where $i^*$ is the label of the of the true next token.
+
+Most state-of-the-art work uses a variant of the Transformer architecture \cite{vaswani2017attention} as the neural network $f$.
+Except for my work described in Section \TODO{decide on section}, which uses an LSTM-based model, all my research uses the Transformer model architecture.
+
+For simplicity, this section refers to the input to a language model as a sequence of words, but it in practice most state-of-the-art systems divide text into a sequence of sub-word tokens, such as those produced by a Byte Pair Encoding (BPE) \citep{sennrich2016neural}.
+Typical BPE vocabularies range from 32k to 50k words.
+Only my work in Section \TODO{decide on section} uses an older word-level vocabulary.
+
+\section{Generating Text with a Language Model}
+
+Language models in themselves are not generative. AS noted in the previous section, they only predict a probability distribution for what the next token in the sequence \textit{could} be.
+To perform generation, an algorithm for decoding sequences from these predicted probability distributions is needed.
+At each step of decoding, the algorithm performs a forward pass on the neural network using the existing prompt text as input, selects a next token based on the neural network's predictions, adds this token to the prompt, and repeats until the desired number of tokens have been generated.
+
+There are many possible decoding strategies for selecting a token from the prediction probability distribution.
+The simplest strategy is to take the $\arg \max$ of the distribution.
+This approach is simple but only allows a single generation to be produced for any given prompt.
+Alternatively, one can randomly sample from the vocabulary, where each vocab item is assigned a sampling probability proportional to its probability predicted by the language model.
+This method allows for many different sequences to be generated from the same prompt.
+Lastly, search methods such as beam search can be used to traverse many possible likely sequences and pick the best one overall.
+The diversity-quality tradeoffs involved in search-based and random sampling decoding strategies are described in Sections \TODO{} and \TODO{} respectively.
+
+\section{Neural Language Models and Creativity}
+
+Story generation and creative writing assistance have been \TODO() of natural language processing since the early days of the field.
+Since I started my PhD in 2015, language generation systems have gone from largely rule-based systems able to generate highly structured text in narrow domains \TODO{citation} to multi-billion parameter language models capable of generating text which human raters are often unable to distinguish from text written by human writers \TODO{citation}.
+
+This progress has led many to try and understand the potential impact of natural language generation systems on \TODO{}.
+There are two over-arching questions whch bear consideration.
+Are neural language models useful for generating novel and engaging stories and other creative writing, either when used standalone or as a tool in the hands of human writers?
+What are the ethical considerations around using a neural network, especially one trained on the writings of real authors, to try and replicate human creativity?

@@ -1,0 +1,23 @@
+\begin{table}[t]
+    \centering
+    \small
+% \begin{tabular}{rrrrrr}
+% \toprule
+%  \multicolumn{2}{c}{Original Dataset} & \multicolumn{2}{c}{\Approx{} Deduplicated} & \multicolumn{2}{c}{\Exact{} Deduplicated} \\
+%  \multicolumn{1}{r}{1} & \multicolumn{1}{r}{2} & \multicolumn{1}{r}{1} & \multicolumn{1}{r}{2} & \multicolumn{1}{r}{1} & \multicolumn{1}{r}{2} \\
+%  \midrule
+% 0.01372 & 0.01108 & 0.00122 & 0.00177 & 0.00082 & 0.00110 \\
+% \bottomrule
+% \end{tabular}
+\begin{tabular}{l|rr}
+\toprule
+Model & 1 Epoch & 2 Epochs \\
+\midrule
+XL-\Original & 1.926\% & 1.571\% \\
+XL-\Approx & 0.189\% & 0.264\% \\
+XL-\Exact & 0.138\% & 0.168\% \\
+\bottomrule
+\end{tabular}
+\caption{When generating 100k sequences with no prompting, over $1\%$ of the tokens emitted from a model trained on the original dataset are part of a 50-token long sequence copied directly from the training dataset. This drops to $0.1\%$ for the deduplicated datasets.}
+\label{tab:memorizations_no_prompt}
+\end{table}

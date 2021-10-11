@@ -1,0 +1,20 @@
+\begin{table*}[ht]
+    \centering
+    \small
+\begin{tabular}{l|rrrrrr}
+\toprule
+  \multicolumn{1}{l}{Training Dataset:}  & \multicolumn{2}{c}{C4-\Original} & \multicolumn{2}{c}{C4-\Approx{}} & \multicolumn{2}{c}{C4-\Exact{}} \\
+ \multicolumn{1}{l}{Epoch:} & \multicolumn{1}{r}{1} & \multicolumn{1}{c}{2} & \multicolumn{1}{c}{1} & \multicolumn{1}{c}{2} & \multicolumn{1}{c}{1} & \multicolumn{1}{c}{2} \\
+ \midrule
+No prompt & 1.93\% & 1.57\% & 0.19\% & 0.26\% & 0.14\% & 0.17\% \\
+Duplicate Train Prompts & 35.88\% & 34.34\% & 3.34\% & 3.15\% & 5.71\% & 4.67\% \\
+Unique Train Prompt & 0.42\% & 0.41\% & 0.42\% & 0.41\% & 0.22\% & 0.23\% \\
+Duplicate Test Prompt & 16.27\% & 15.32\% & 1.61\% & 1.52\% & 0.34\% & 0.25\% \\
+Unique Test Prompt & 0.25\% & 0.22\% & 0.21\% & 0.23\% & 0.03\% & 0.08\% \\
+
+\bottomrule
+\end{tabular}
+\caption{Percentage of tokens in 100k generations that were part of memorized substring according to \Exact.
+Models trained with approximate or exact deduplication have 
+$10\times$ less memorization than the model trained on the original (non-deduplicated) dataset.}
+\end{table*}

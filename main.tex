@@ -1,0 +1,269 @@
+% **************************************************************************************************************
+% A Classic Thesis Style
+% An Homage to The Elements of Typographic Style
+%
+% Copyright (C) 2018 André Miede and Ivo Pletikosić
+%
+% If you like the style then I would appreciate a postcard. My address
+% can be found in the file ClassicThesis.pdf. A collection of the
+% postcards I received so far is available online at
+% http://postcards.miede.de
+%
+% License:
+% This program is free software; you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation; either version 2 of the License, or
+% (at your option) any later version.
+%
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with this program; see the file COPYING.  If not, write to
+% the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+% Boston, MA 02111-1307, USA.
+%
+% PLEASE SEE ALSO THE AUTHORS' NOTE REGARDING THIS LICENSE
+% IN THE DOCUMENTATION (ClassicThesis.pdf --> Chapter 1 / Chapter01.tex)
+% **************************************************************************************************************
+\RequirePackage{silence} % :-\
+% this gives \cellcolor for table entries highlighting
+\PassOptionsToPackage{table}{xcolor}
+\WarningFilter{scrreprt}{Usage of package `titlesec'}
+%\WarningFilter{scrreprt}{Activating an ugly workaround}
+\WarningFilter{titlesec}{Non standard sectioning command detected}
+\documentclass[
+    oneside,
+    % openright,
+    titlepage,
+    numbers=noenddot,%1headlines,
+    headinclude,
+    footinclude,
+    cleardoublepage=empty,
+    abstract=on,
+    BCOR=5mm,
+    paper=letter,
+    fontsize=11pt,
+    ]{scrreprt}
+%********************************************************************
+% Note: Make all your adjustments in here
+%*******************************************************
+\input{classicthesis-config}
+
+%********************************************************************
+% from penn thesis
+\usepackage[
+  % useful to debug margins!
+  % showframe,
+  papersize={8.5 in, 11 in},
+  % nohead,
+  includeheadfoot,
+  left=1 in,
+  right = 1 in,
+  vmargin= 1 in]{geometry}
+\usepackage[doublespacing]{setspace} % Needed to set double-spacing for the main document, but needs
+
+% this ensures page numbers are within margins
+% see: https://tex.stackexchange.com/questions/466883/how-to-set-page-numbers-within-left-right-margins-using-classicthesis-and-geomet
+\lehead{\mbox{{\small\pagemark\kern2em}\headmark\hfil}}
+\rohead{\mbox{\hfil{\headmark}{\small\kern2em\pagemark}}}
+
+% do not reset footnote counter per chapter
+\counterwithout*{footnote}{chapter}
+
+% multi-line chapter titles look better with this:
+% (from https://tex.stackexchange.com/a/102108)
+% \renewcommand{\sfdefault}{lmss}
+\renewcommand\formatchapter[1]{%
+  \begin{minipage}[b]{0.15\linewidth}
+    \chapterNumber
+  \end{minipage}%
+  \begin{minipage}[b]{0.7\linewidth}
+    \raggedright\spacedallcaps{#1}
+  \end{minipage}
+}
+
+% mine
+\usepackage{subfiles} % To be better able to manage large projects by compiling the separate files included in the final document
+\usepackage{tikz-cd}
+\usepackage[capitalize]{cleveref}
+\usepackage{amsmath,amssymb,amsthm} % For including math equations, theorems, symbols, etc
+\usepackage{microtype}
+\usepackage{siunitx}
+\usepackage{booktabs}
+\usepackage{dsfont}
+\usepackage{overpic}
+\usepackage{soul}
+\usepackage{multirow}
+\usepackage{makecell}
+\usepackage{bm}
+% better control of lists with \setlist
+\usepackage{enumitem}
+% better positioning of subscripts
+\usepackage{tensor}
+% compact symbols for 1/2, etc.
+\usepackage{nicefrac}
+% this disables old style figures everywhere
+% \usepackage{tgpagella}
+% does not work; skip some paragraphs and envs for some reason
+% \usepackage[displaymath,mathlines]{lineno}
+% \linenumbers
+% ********************************************************************
+
+%%%% My includes %%%%
+\usepackage{algorithm,algorithmicx,listings}        % algorithms
+\usepackage{algpseudocode}
+\usepackage[font=small]{caption}
+\usepackage{enumitem}
+\captionsetup[algorithm]{font=small}
+%%%%%%%%%%%%%%%%%%%%%
+
+
+%********************************************************************
+% fix old font commands broken in scrreprt
+% WARNING! not ideal since it changes the font of marked numerals
+% a better solution is to use \bgl and \bgd commands defined below
+% \makeatletter
+% \DeclareOldFontCommand{\rm}{\normalfont\rmfamily}{\mathrm}
+% \DeclareOldFontCommand{\sf}{\normalfont\sffamily}{\mathsf}
+% \DeclareOldFontCommand{\tt}{\normalfont\ttfamily}{\mathtt}
+% \DeclareOldFontCommand{\bf}{\normalfont\bfseries}{\mathbf}
+% \DeclareOldFontCommand{\it}{\normalfont\itshape}{\mathit}
+% \DeclareOldFontCommand{\sl}{\normalfont\slshape}{\@nomath\sl}
+% \DeclareOldFontCommand{\sc}{\normalfont\scshape}{\@nomath\sc}
+% \makeatother
+
+% table stuff
+% this was defined for EMVN, it hides the table column
+\newcolumntype{H}{>{\setbox0=\hbox\bgroup}c<{\egroup}@{}}
+% when it's the last column we need to fix the padding
+\newcolumntype{Z}{>{\setbox0=\hbox\bgroup}c<{\egroup}@{\hspace*{-\tabcolsep}}}
+
+% \renewcommand{\arraystretch}{1.2} % for better looking tables
+% we define background color for highlighting table cells
+% \bgl: background light
+% \bgd: background dark
+\robustify\cellcolor
+\newcommand{\bgl}{\cellcolor[HTML]{DDDDDD}}
+\newcommand{\bgd}{\cellcolor[HTML]{BBBBBB}}
+\newcommand{\chaptersubtitle}[1]{{\raggedright\Large\itshape #1\par}}
+% \newcommand{\li}[2]{\tensor*[_#1]{#2}{}}
+\newcommand{\li}[2]{{_#1}{#2}}
+% avoid changing font in description environments
+\setlist[description]{labelindent=1cm}
+
+%
+% theorems
+\theoremstyle{definition} % Define theorem styles here based on the definition style (used for definitions and examples)
+\newtheorem{definition}{Definition}
+
+\theoremstyle{plain} % Define theorem styles here based on the plain style (used for theorems, lemmas, propositions)
+\newtheorem{theorem}{Theorem}
+
+\theoremstyle{remark} % Define theorem styles here based on the remark style (used for remarks and notes)
+
+\theoremstyle{theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+\newtheorem*{example}{Example}
+\newtheorem*{examples}{Examples}
+
+% from Penn template
+\usepackage{tocloft}
+\setcounter{tocdepth}{1} % Only show chapters and sections in ToC
+\renewcommand{\contentsname}{Table of Contents}
+\renewcommand{\listtablename}{List of Tables}
+\renewcommand{\listfigurename}{List of Illustrations}
+
+% Make tables single-space.
+\usepackage{setspace}% http://ctan.org/pkg/setspace
+\AtBeginEnvironment{tabular}{\singlespacing}% Single spacing in tabular environment
+
+% ********************************************************************
+% TODO(chengduscp): grep --include=*tex -nHr --color="auto" [A-Z][A-Z][A-Z] main.tex sections/
+
+%********************************************************************
+% Bibliographies
+%*******************************************************
+\addbibresource{dissertation.bib}
+%********************************************************************
+% Hyphenation
+%*******************************************************
+%\hyphenation{put special hyphenation here}
+
+\input{common.tex}
+% \makeglossaries
+% \makenoidxglossaries
+
+% ********************************************************************
+% GO!GO!GO! MOVE IT!
+%*******************************************************
+\begin{document}
+\frenchspacing
+\raggedbottom
+\selectlanguage{american} % american ngerman
+%\renewcommand*{\bibname}{new name}
+%\setbibpreamble{}
+\pagenumbering{roman}
+\pagestyle{plain}
+
+%********************************************************************
+% Frontmatter
+% *******************************************************
+\include{titlepage}
+%********************************************************************
+% Mainmatter
+%*******************************************************
+\cleardoublepage
+\pagestyle{scrheadings}
+\pagenumbering{arabic}
+%\setcounter{page}{90}
+% use \cleardoublepage here to avoid problems with pdfbookmark
+\cleardoublepage
+
+\subfile{sections/01_introduction.tex}
+\subfile{sections/02_background.tex}
+% \subfile{sections/03_decoding.tex}
+%\subfile{sections/04_detection.tex}
+\subfile{sections/05_memorization.tex}
+\subfile{sections/06_infilling.tex}
+\subfile{sections/07_creativity.tex}
+
+\appendix
+% LIST OF TABLES
+\clearpage
+% \TODO(machc){put numbers on appendix chapters}
+\phantomsection
+\addcontentsline{toc}{chapter}{List of Tables}
+
+% Penn formatting guidelines:
+% For the sake of readability, it is recommended that the text of the dissertation be double-spaced (except for footnotes, long quoted passages, and lists of tables and figures, which are single-spaced). If desired, authors may chose to single-space the abstract and/or dissertation manuscript.
+
+\singlespacing
+\listoftables
+% LIST OF ILLUSTRATIONS
+\clearpage
+\phantomsection
+\renewcommand{\listfigurename}{List of Illustrations}
+\addcontentsline{toc}{chapter}{List of Illustrations}
+\listoffigures
+
+% \doublespacing
+% \clearpage
+% \renewcommand{\abbreviationsname}{List of Acronyms}
+% \printnoidxglossaries
+
+\clearpage
+\phantomsection
+\addcontentsline{toc}{chapter}{dissertation} % This is to include this section in the Table of Contents
+\printbibliography
+
+% ********************************************************************
+% Game Over: Restore, Restart, or Quit?
+%*******************************************************
+\end{document}
+% ********************************************************************

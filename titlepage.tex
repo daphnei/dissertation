@@ -1,0 +1,178 @@
+\def\mytitle{Understanding the Limitations of Using\\Large Language Models for Text Generation} % Make sure this is in all caps
+\def\myauthor{Daphne Ippolito}
+\def\myauthorfull{Daphne Ippolito}
+\def\mysupervisorname{Chris Callison-Burch}
+\def\mysupervisortitle{Professor, Computer and Information Science}
+% \def\mysupervisortitle{Ruth Yalom Stone Professor of Computer and Information Science}
+\newlength{\superlen}   % a "scratch" length
+\settowidth{\superlen}{\mysupervisorname, \mysupervisortitle} % Width of signature line for supervisor
+\def\gradchairname{Mayur Naik}
+% \def\gradchairtitle{Zisman Family Professor of Computer and Information Science}
+\def\gradchairtitle{Professor of Computer and Information Science}
+\newlength{\chairlen}   % a "scratch" length
+\settowidth{\chairlen}{\gradchairname, \gradchairtitle} % Width of signature line for supervisor
+\newlength{\maxlen}
+% \setlength{\maxlen}{\maxof{\superlen}{\chairlen}}
+\def\mydepartment{Computer and Information Science}
+\def\myyear{2021}
+\def\signatures{46 pt} % Space to accommodate the signatures, you can fiddle with this as you like
+
+%% PRELIMINARY PAGES
+
+\pagenumbering{roman}
+% \pagestyle{plain}
+
+% this works for initial pages that are not chapters
+% dedication/ack/abstrack
+\deftripstyle{pgnumbottomcenter}{}{}{}{}{\pagemark{}}{}
+\pagestyle{pgnumbottomcenter}
+
+% TITLE PAGE
+
+\begin{titlepage}
+\thispagestyle{empty} % No page numbers on title page, as per Manual page 8
+\begin{center}
+
+% CHANGE(machc): one half spacing too short comparing to template
+% \onehalfspacing
+\doublespacing
+
+% \mytitle
+{\mytitle}
+\\[1ex]
+\myauthor
+\\[1ex]
+% A DISSERTATION
+{A DISSERTATION}
+
+in 
+
+\mydepartment 
+
+% For the Graduate Group in Managerial Science and Applied Economics 
+
+Presented to the Faculties of the University of Pennsylvania
+
+in 
+
+Partial Fulfillment of the Requirements for the
+
+Degree of Doctor of Philosophy
+
+\myyear
+
+\end{center}
+
+%\vfill % Here to make sure the page is filled
+
+\begin{flushleft}
+
+Supervisor of Dissertation\\%[\signatures] % Space for signature, you can fiddle with this as you like
+
+\renewcommand{\tabcolsep}{0 pt}
+\begin{table}[h]
+\begin{tabularx}{\maxlen}{l}
+%\toprule
+\mysupervisorname, \mysupervisortitle\\ %Space between advisor and graduate chair, you can fiddle with this as you like
+\end{tabularx}
+\end{table}
+
+Graduate Group Chairperson\\%[\signatures] % Space for signature, you can fiddle with this as you likee
+
+\begin{table}[h]
+\begin{tabularx}{\maxlen}{l}
+%\toprule
+\gradchairname, \gradchairtitle\\ %Space between advisor and graduate chair, you can fiddle with this as you like
+\end{tabularx}
+\end{table}
+
+% CHANGE(machc): single spacing too short comparing to template
+% \singlespacing
+\doublespacing
+
+Dissertation Committee % No signature necessary
+
+Lyle Ungar, Professor, Computer and Information Science
+
+Dan Roth, Professor, Computer and Information Science
+
+Marianna Apidianaki, Professor, Computer and Information Science
+
+David Grangier, Research Scientist, Google Brain
+
+\end{flushleft}
+
+\end{titlepage}
+
+% COPYRIGHT NOTICE (optional)
+
+\doublespacing
+
+\thispagestyle{empty} % No page number as per Manual, p. 11
+
+\vspace*{\fill}
+
+\begin{flushleft}
+\mytitle
+
+ \copyright \space COPYRIGHT
+ 
+\myyear
+
+\myauthorfull\\[24 pt] % If traditional copyright then delete everything below here, but keep \end{flushleft}
+
+This work is licensed under the \\
+Creative Commons Attribution \\
+NonCommercial-ShareAlike 3.0 \\
+License
+
+To view a copy of this license, visit
+
+\url{http://creativecommons.org/licenses/by-nc-sa/3.0/}
+
+\end{flushleft}
+\pagebreak 
+
+% Changing formatting for preliminary pages (NOT OPTIONAL)
+% \newenvironment{preliminary}{}{}
+
+% \titleformat{\chapter}[hang]{\large\center}{\thechapter}{0 pt}{}
+% \titlespacing*{\chapter}{0pt}{-33 pt}{6 pt} % The key value here is the -33 pts, I got to it by old fashioned measuring with a ruler....
+% \begin{preliminary}
+
+%   DEDICATION (OPTIONAL)
+\setcounter{page}{3}  %Makes this page Roman numeral 3. Thanks to Albert Zevelev.
+
+\begin{center}
+\textit{}
+\end{center}
+
+% ACKNOWLEDGEMENT (OPTIONAL)
+
+\clearpage
+\begin{center}
+{\Large\spacedallcaps{ACKNOWLEDGEMENT}}
+\end{center}
+\vspace{1cm}
+% \chapter*{ACKNOWLEDGEMENT}
+% \addcontentsline{toc}{ACKNOWLEDGEMENT} % This is to include this section in the Table of Contents
+\input{acknowledgement}
+
+% ABSTRACT
+
+\clearpage
+% TABLE OF CONTENTS
+\input{abstract}
+\onehalfspacing
+\clearpage
+\tableofcontents
+
+\doublespacing
+% PREFACE (OPTIONAL)
+
+% \clearpage
+% \chapter*{PREFACE (optional)}
+% \addcontentsline{toc}{chapter}{PREFACE} % This is to include this section in the Table of Contents
+
+% \end{preliminary}
+

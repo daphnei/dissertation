@@ -1,0 +1,7 @@
+\chapter{Detection of Machine-Generated Text}
+\label{chap:detection}
+
+\section{Motivation}
+\section{Background}
+\section{Method}
+\section{Results}How much can a Transformer model actually memorize? One experiment we could do is to take the original train set and split it into two, A and B. Deduplicate the n-grams between them (so if an n-gram is in A, it won't be in B). Then train/finetune a Transformer on the binary classification task: given an n-gram predict yes if it is in A and no if it is not in A.

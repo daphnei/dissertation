@@ -1,0 +1,36 @@
+% \begin{table*}[]
+%     \centering
+%     \small
+%     \begin{tabular}{ll|rr|rr|rr}
+%     \toprule
+%      &  & \multicolumn{2}{c}{Original eval set} & \multicolumn{2}{c}{Eval examples in train} & \multicolumn{2}{c}{ Unique eval examples} \\
+%     Dataset & Model & \multicolumn{1}{c}{Count} & \multicolumn{1}{c}{Ppl} & \multicolumn{1}{c}{Count} & \multicolumn{1}{c}{Ppl} & \multicolumn{1}{c}{Count} & \multicolumn{1}{c}{Ppl} \\
+%     \midrule
+%     LM1B & Transformer-XL \citep{dai2019transformer} & 306,688 & 21.77  & 15,126  & 10.11  & & \\
+%     % RealNews & GROVER-Base &  &  15.440 & & 13.771 \\
+%     RealNews & GROVER-Base \citep{zellers2019defending} & 1,639,104 &  15.44 & 235,235 & 13.77 &  & 15.73  \\
+%     RealNews & Grover-XL \citep{zellers2019defending} & &  &  & 7.68 & & 9.45 \\
+%     \bottomrule
+%     \end{tabular}
+%     \caption{The perplexity of a trained language model on the official validation set and the perplexity on the valid set examples which were identified as near-duplicates of training set examples. \todo{finish up computing values}}
+%     \label{tab:ppl_sota_models}
+% \end{table*}
+
+
+\begin{table}[]
+    \centering
+    \small
+    \begin{tabular}{ll|rrr}
+    \toprule
+    Model & Dataset & \multicolumn{1}{c}{Orig} & \multicolumn{1}{c}{Dups} & \multicolumn{1}{c}{Unique} \\
+    \midrule
+    Transformer-XL & LM1B & 21.77 & 10.11  & 23.58  \\
+    % RealNews & GROVER-Base &  &  15.440 & & 13.771 \\
+    GROVER-Base  & RealNews & 15.44 & 13.77 & 15.73  \\
+    GROVER-XL & RealNews & 9.15 & 7.68 & 9.45 \\
+    \bottomrule
+    \end{tabular}
+    \caption{For each model, the perplexity of the official validation set (\textit{Orig}), valid set examples which were identified by \Approx{} as matches of train set examples (\textit{Dups}), and valid set examples identified by \Approx{} as unique (\textit{Unique}).
+    Due to the size of the RealNews validation set, we evaluated on only the first 25k examples meeting each condition.}
+    \label{tab:ppl_sota_models}
+\end{table}

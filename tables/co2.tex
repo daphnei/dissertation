@@ -1,0 +1,20 @@
+\begin{table*}[t]
+\centering
+\small
+\begin{tabular}{l|rrrrr}
+\toprule
+ & \multicolumn{1}{l}{T5 11B} & \multicolumn{1}{l}{\shortstack{XL-\Original\\ XL-\Exact}} & \multicolumn{1}{l}{XL-\Approx} & \multicolumn{1}{l}{\shortstack{Base-\Original\\Base-\Exact}} & \multicolumn{1}{l}{Total Inference} \\
+ \midrule
+TPU v3 cores & 512 & 128 & 128 & 64 & 64 \\
+Training time (days) & 20 & 5.47 & 5.26 & 3 & 0.80 \\
+TPU hrs & 245760 & 16804.70 & 16149.31 & 4608 & 1228.80 \\
+Energy (MWh) & 85.70 & 5.86 & 5.63 & 1.61 & 0.43 \\
+\bottomrule
+\end{tabular}
+\caption{Estimates of energy usage based on the data in \citet{patterson2021carbon}. The first column is \citet{patterson2021carbon}'s estimate of the T5 11B encoder-decoder model, which we based our own estimates on.
+% Note, we did not measure the energy used in these particular training runs.
+Inference includes all XL models. We generated 100,000 sequences from 3 models, with 5 prompts, and at 2 different checkpoints.). 
+% We estimated the cost of training each model on Google Cloud assuming a cost of \$0.06 per core per hour.
+}
+\label{tab:co2}
+\end{table*}

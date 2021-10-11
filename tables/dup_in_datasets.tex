@@ -1,0 +1,58 @@
+
+
+% Edit this: https://docs.google.com/spreadsheets/d/1VDy_TtaEN8eO9Aj5OYso-txrz4BRrV_IXOLE1YwWKAE/edit?resourcekey=0-4uqN2Jj_pYKxxAwORZUScA#gid=0
+% \begin{table*}[]
+% \centering 
+% \small
+% \begin{tabular}{l|rrrrrrrl}
+% \toprule
+% Dataset & \multicolumn{1}{l}{\# Train Ex} & \multicolumn{2}{l}{\# Duplicates in Train} & \multicolumn{2}{l}{Most Duplicate} & \multicolumn{1}{l}{\# Test Ex} & \multicolumn{2}{l}{\# Test Ex in Train} \\
+%  & \multicolumn{1}{l}{} & \multicolumn{1}{l}{\Approx} & \multicolumn{1}{l}{\Exact} & \Approx & \multicolumn{1}{r}{\Exact} & \multicolumn{1}{l}{} & \multicolumn{1}{l}{\Approx} & \Exact \\
+% \midrule
+% C4 & 364,865,800 & 11,077,485 & 63,396,191 & 250,933 & 224,323 & 364,608 & 16,756 &  \\
+% Real News & 31,158,659 & 4,247,409 & 10,567,686 & 3,002 & 131,853 & 1,639,104 & 235,235 &  \\
+% LM1B & 30,301,028 & 1,474,048 & 105,906 & 143 & 4,154 & 306,688 & 15,083 &  \\
+% Wiki40B & 2,926,536 & 11,487 & 283,667 & 855 & 1,121 & 162,274 & 1,163 & \\
+% \bottomrule
+% \end{tabular}
+
+% \caption{On the left, the total number of examples in the train set for each dataset, and the number of examples that were identified as containing duplicate text.
+% On the right, the total number of examples in the validation set for each dataset, and the fraction of validation set examples which contained duplicate text with the train set.}
+% \label{tab:num_duplicates}
+% \end{table*}
+    
+\begin{table}[tbp]
+  \centering
+  \small
+    \begin{tabular}{l|rr|r}
+    \toprule
+          & \multicolumn{2}{c}{\% train examples with} & \multicolumn{1}{c}{\% valid with} \\
+          & \multicolumn{1}{c}{dup in train} & \multicolumn{1}{c}{dup in valid} & \multicolumn{1}{c}{dup in train} \\
+          \midrule
+    C4    & 3.04\% & 1.59\% & 4.60\%  \\
+    RealNews & 13.63\% & 1.25\% & 14.35\%  \\
+    LM1B  & 4.86\% & 0.07\% & 4.92\%  \\
+    Wiki40B & 0.39\% & 0.26\% & 0.72\% \\
+    \bottomrule
+    \end{tabular}%
+  \caption{The fraction of examples identified by \Approx{} as near-duplicates.}
+  \label{tab:num_duplicates}%
+\end{table}%
+
+\begin{table}[tbp]
+  \centering
+  \small
+    \begin{tabular}{l|S[table-format=3.2]S[table-format=3.3]|S[table-format=3.3]}
+    \toprule
+          & \multicolumn{2}{c}{\% train tokens with} & \multicolumn{1}{c}{\% valid with} \\
+          & \multicolumn{1}{c}{dup in train} & \multicolumn{1}{c}{dup in valid} & \multicolumn{1}{c}{dup in train} \\
+          \midrule
+    C4    & 7.18\% & 0.75\%  & 1.38\% \\
+    RealNews & 19.4\%  & 2.61\%  & 3.37\% \\
+    LM1B  & 0.76\%  & 0.016\%  & 0.019\% \\
+    Wiki40B & 2.76\%  & 0.52\%  & 0.67\% \\
+    \bottomrule
+    \end{tabular}%
+  \caption{The fraction of tokens  (note Table~\ref{tab:num_duplicates} reports the fraction of \emph{examples}) identified by \Exact{} as part of an exact duplicate 50-token substring.}
+  \label{tab:num_duplicates2}%
+\end{table}%
