@@ -14,7 +14,7 @@
 
 
 
-\section{Introduction}
+\section{Motivation}
 
 
 
@@ -36,12 +36,16 @@ While naive deduplication is straightforward
 (and the datasets we consider already perform some naive form
 of deduplication), performing thorough deduplication at scale is both computationally challenging and requires sophisticated techniques.
 
-We propose two scalable techniques to detect and remove duplicated training data.
-\textit{Exact} substring matching identifies verbatim strings that are repeated.
-    This allows us to identify cases where only part of a training example is duplicated (\S\ref{sec:exact}).
-\textit{Approximate} full document matching uses hash-based techniques~\cite{broder1997resemblance} to identify pairs of documents with high $n$-gram overlap (\S\ref{sec:approx}).
-
-% \subsection{Consequences of Dataset Duplicates}
+The simplest technique to find duplicate examples would be to perform exact string matching between all example pairs, but we show this is insufficient since the web containing many docments which are near-duplicates of eacho ther.
+This, we introduce two complementary, scalable methods for performing deduplication on documnets which have substantial overlap but may not be identical.
+\begin{itemize}
+    \item
+\textit{Exact} substring matching identifies strings that are repeated verbatim in the train set multiple times.
+This allows us to identify cases where only part of a training example is duplicated (\S\ref{sec:exact}).
+Using a suffix array \cite{manber1993suffix}, we are able to remove duplicate substrings from the dataset if they occur verbatim in more than one example.
+    \item
+\textit{Approximate} full document matching uses  MinHash \citep{broder1997resemblance}, an efficient algorithm for estimating the $n$-gram similarity between all pairs of examples in a corpus, to remove entire examples from the dataset if they have high $n$-gram overlap with any other example (\S\ref{sec:approx}).
+\end{itemize}
 
 We identify four distinct advantages to training on datasets that have been thoroughly deduplicated.
 \begin{enumerate}
@@ -121,7 +125,7 @@ In computer vision, memorization of training data has been studied from various 
 The Book Corpus \citep{zhu2015aligning}, which was used to train popular models such as BERT, has a substantial amount of exact-duplicate documents according to \citet{bandy2021addressing}.
 \citet{allamanis2019adverse} shows that duplicate examples in code datasets cause worsened performance on code understanding tasks.
 
-\section{Language Modeling Datasets}
+\section{Datasets Considered}
 We analyze the presence of duplicate text in four datasets of varying sizes that have been used for training natural language generation systems, producing general-purpose pre-trained models, and for language model benchmarking.
 While this paper restricts itself to English datasets, we expect that non-English datasets suffer from similar issues and could likewise benefit from de-duplication.
 
@@ -154,27 +158,16 @@ RealNews was deduplicated by inserting a hash of the first 100 characters of eac
 Like C4, examples with duplicate URLs were excluded.
 
 
-\section{Methods for Identifying Duplicates}
-\label{sec:methods}
-
-The simplest technique to find duplicate examples would be to perform exact string matching between all example pairs, but as we will show, this is insufficient.
-We introduce two complementary methods for performing deduplication.
-First, using a suffix array \cite{manber1993suffix}, we remove duplicate substrings from the dataset if they occur verbatim in more than one example.
-Second, we use MinHash \citep{broder1997resemblance}, an efficient algorithm for estimating the $n$-gram similarity between all pairs of examples in a corpus, to remove entire examples from the dataset if they have high $n$-gram overlap with any other example.
-
+% In all the datasets studied here, an example corresponds to a \emph{document}, except for LM1B, in which an example corresponds to a \emph{sentence}.
+\section{Method for Exact Substring Duplication} \label{sec:exact}
 We consider a dataset $D = \{x_i\}_{i=1}^N$ as a collection of \emph{examples} $x_i$.
 Each of these examples is itself a sequence of \emph{tokens}: $x_i = \left[ x_i^1, x_i^2, \cdots, x_i^{s_i} \right]$.
-% In all the datasets studied here, an example corresponds to a \emph{document}, except for LM1B, in which an example corresponds to a \emph{sentence}.
 
-
-\subsection{Exact Substring Duplication} \label{sec:exact}
 Due to the diversity of possibilities in human language, it is rare for the same idea to be expressed identically in multiple documents unless one expression is derived from the other, or both are quoting from a shared source.
 This observation motivates deduplicating exact substrings. We call our approach \Exact{}.
 When two examples $x_i$ and $x_j$ share a sufficiently long substring (that is, a substring for which $x_i^{a..a+k} = x_j^{b..b+k}$), that substring is removed from one of them.
-Based on statistical analyses (\S\ref{section:exact_thresh}), we select $k=50$ tokens as the minimum matching substring length.
-A breakdown of the computation needed for this approach can be found in Appendix \ref{sec:suffix-implementation}.
 
-\subsubsection{Suffix Arrays}
+\subsection{Suffix Arrays}
 This exact-substring-matching criterion, while conceptually simple, is computationally prohibitive with naive (quadratic) all-pair matching.
 %
 To improve the efficiency, we concatenate all the examples of the entire dataset $D$ into a giant sequence $\mathcal{S}$, and construct a Suffix Array $\mathcal{A}$ of $\mathcal{S}$.
@@ -203,7 +196,7 @@ In practice, we construct $\mathcal{S}$ from the BPE tokenization of the text (\
 %% TODO FIGURE 1 GOES HERE
 
 
-\subsubsection{Substring matching}
+\subsection{Substring matching}
 
 After constructing $\mathcal{A}$, it is straightforward to identify duplicated training examples.
 Suppose that the sequence $s$ was repeated exactly twice in the training dataset $\mathcal{S}$ at positions $i$ and $j$,
@@ -218,7 +211,7 @@ at least some threshold length.
 Any satisfying sequences are recorded.
 %
 
-\subsubsection{Setting a threshold of duplicates}
+\subsection{Setting a threshold of duplicates}
 \label{section:exact_thresh}
 One important question is how long a substring match must be before we ought to count it as a duplicate.
 %
@@ -231,7 +224,7 @@ the ``bend in the knee'' occurs at $10$ tokens, and manual inspection of
 length-$25$ matches found no false positives.
 We then doubled this value to have an exceptionally large margin for error.
 
-\subsubsection{Implementation}
+\subsection{Implementation}
 \paragraph{Parallel linear time construction.}
 We build a parallelized linear time suffix array algorithm.
 %
@@ -298,7 +291,7 @@ the bounds of $j$ by binary searching into $C$ so that $S_{B_{i}} < S_{C_{j}} < 
 The case where $K>2$ is identical except that we repeat this over all $K$ partial suffix arrays.
 
 
-\subsubsection{Computational Analysis.}
+\subsection{Computational Analysis.}
 We run our algorithm on a single VM on the cloud with $96$ cores and $768$GB of memory.
 Our algorithm is efficient, for example processing the Wiki-40B training set ($3$ million
 examples containing $4$GB of text) in $2.3$ minutes wall-clock time ($2.1$ CPU-hours of work).
@@ -327,9 +320,9 @@ work required to deduplicate the training dataset is negligible.
 
 \input{tables/qualitative_examples}
 
-\subsection{Approximate Matching with MinHash} \label{sec:approx}
+\section{Method for Approximate Matching with MinHash} \label{sec:approx}
 
-\subsubsection{Overview}
+\subsection{Overview}
 
 We also perform \emph{approximate} deduplication based on matching entire examples.
 This method, which we call \Approx, is a good complement to the \emph{exact} substring matching, especially for web crawl text, as it handles the very common case of documents being identical except for interspersed templated fields (such as the last row of Table \ref{tab:qualitative_examples}).
@@ -351,7 +344,6 @@ In our implementation, we use 5-grams and a signature of size 9,000. The probabi
 \operatorname{Pr}(d_i, d_j | \operatorname{Jaccard}(d_i, d_j) = s_{i, j}) = 1 - (1 - s_{i, j}^b)^r
 \end{equation}
 where $b=20$ and $r=450$ are user-settable parameters to control the strength of the filter.
-See Appendix~\ref{section:minhash_details} for more details.
 
 For each pair of documents identified as a potential match, more computationally expensive similarity metrics can be employed as a subsequent filtering step.
 In particular, we identify two documents as duplicates if they are matched by the MinHash algorithm and their \emph{edit similarity} is greater than 0.8. The edit similarity between token sequences $x_i$ and $x_j$ is defined as:
@@ -362,7 +354,7 @@ In particular, we identify two documents as duplicates if they are matched by th
 \noindent To build clusters of similar documents, we construct a graph that has an edge between two documents if they are considered a match. Then, we use the method introduced in \citet{lacki2018connected} to identify  connected components.
 %
 
-\subsubsection{Implementation Details}
+\subsection{Implementation Details}
 \label{section:minhash_details}
 For our MinHash based deduplication method, documents are first space tokenized, then each consecutive 5-gram is hashed using tabulation hashing.
 The set of these hashes is the signature for the document.
@@ -387,7 +379,7 @@ Figure \ref{fig:neardup-hist} shows the histogram of Jaccard similarities and ed
 This allows us verify if the threshold chosen has few comparisons around the chosen threshold, then we've likely captured the majority of actual near duplicates above that threshold. To verify that yourself, look at the left hand tails of the distributions. Since both 0.8 and 0.9 begin to vanish at the same point (in spite of the fact that the two thresholds are optimized for accuracy around different thresholds), we feel comfortable saying that we're capturing the majority of actual near duplicates. 
 
 
-\subsubsection{Computational Analysis}
+\subsection{Computational Analysis}
 % Our Minhash algorithm works by generating $B$ hash signatures for each document, grouping the documents by each signature to form buckets, randomly sampling $K$ documents within each bucket. Pairwise comparisons are made between the elements within each sample.
 
 Let $N$ be the number of documents and $T$ be the maximal number of tokens in a document. Edit similarity has a worst case complexity of $T^2$, so the worst case complexity is
@@ -410,7 +402,7 @@ Note that our choices of $k$ and $b$ were designed to produce very high recall, 
     \label{fig:nd3-cluster-hist-c4}
 \end{figure}
 
-\section{Deduplication Results}\label{sec:deduplication-results}
+\section{Results}\label{sec:deduplication-results}
 We deduplicate each of the four datasets with both of our two techniques.
 When text was duplicated across multiple data splits, we prioritized keeping a copy in the test or validation set and removing it from the train set.
 %, so we can have comparable evaluation sets.
@@ -464,7 +456,7 @@ For example, 4.6\% of the C4 validation set and 14.4\% of the RealNews validatio
 Such duplication is problematic since it could cause evaluation metrics to be unfairly inflated for models that are better at memorizing their train sets.
 We evaluate the effect of this leakage on publicly released models in Section \ref{sec:eval-existing-models}.
 
-\section{Impact on Trained Models}
+\subsection{Impact on Trained Models}
 \label{sec:impact-trained-models}.
 We trained 1.5B parameter ``XL", decoder-only, Transformer-based language models similar to GPT-2, on C4-\Original, C4-\Approx, and C4-\Exact, respectively.
 We use the T5 codebase and model architecture from \citet{t52020}, and each model was trained for about two epochs on its respective dataset.
@@ -482,7 +474,7 @@ The 1.5B parameter XL models had 24 layers, each with 32 attention heads. The mo
 The 110M parameter base models had 12 layers, each with 12 attention heads.
 The model embedding size was 768, the feed forward layers had a hidden size of 2,048, and the key/value dimension size for the attention heads 64.
 
-\subsection{Model Perplexity}\label{sec:perplexity-results}
+\paragraph{Model Perplexity}\label{sec:perplexity-results}
 
 \begin{figure}[t]
     \centering
@@ -508,26 +500,28 @@ These trends holds true for the XL sized model as well.
 While this may suggest \Exact{} duplication results in models least overfit on the train set, note that both of these techniques have
 used separate duplicate thresholds and a different choice of thresholds could change the results.
 
-When evaluating on the validation sets of LM1B and Wiki-40B, we found that models trained on \Approx-deduplicated C4 consistently achieved lowest perplexity (for LM1B eval with base models, see Appendix Figure \ref{fig:eval-ppl-with-lm1b}).
+When evaluating on the validation sets of LM1B and Wiki-40B, we found that models trained on \Approx-deduplicated C4 consistently achieved lowest perplexity.
 \Exact{} deduplication decreases perplexity of the XL model by almost 3 points perplexity on Wiki-40B which is much larger than the variation of about 1 point perplexity we observed in the base models.
 This is despite seeing fewer tokens of training data overall.
 
 Lastly, we note all our XL models achieved  <35 perplexity on LM1B, which is less than the 42.16 perplexity reported for the 1.5B GPT-2 using a vocabulary the same size as ours.
 
 
-\subsection{Generated Text}\label{sec:memorization-results}
+\paragraph{Generated Text}\label{sec:memorization-results}
 Data duplication has the effect of biasing the trained LM towards particular types of examples. 
 This can contribute to a lower diversity of generations, and increased likelihood that the generated content is copied from the training data \citep{carlini2020extracting}.
 For our generation experiments, we use top-$k$ random sampling with $k=50$ and experiment with prompted and unprompted generation.
 
 \input{tables/memorizations_no_prompt}
-\paragraph{No prompt.}
+\paragraph{Generation with no prompt.}
 We first evaluate memorization tendencies in the case where the model is asked to generate text without any prompt sequence.
-We generate 100,000 samples, each up to 512 tokens in length (examples provided in the Appendix).
+We generate 100,000 samples, each up to 512 tokens in length.
 For each generated token, we say the token is memorized if it is part of a 50-token substring that is exactly contained in the training data.
 On XL-\Original, over 1\% of the generated tokens belong to memorized sub-sequences (see Table~\ref{tab:memorizations_no_prompt}).
 This is $\sim10\times$ more memorization than XL-\Exact{} or XL-\Approx.
-Some example subsequences that were copied verbatim from the train set can be found in Table \ref{tab:exact_substr_examples} in the Appendix.
+Some example subsequences that were copied verbatim from the train set can be found in Table \ref{tab:exact_substr_examples}.
+
+\input{tables/exact_substr_examples.tex}
 
 \begin{figure}
     \centering
@@ -543,7 +537,7 @@ Some example subsequences that were copied verbatim from the train set can be fo
     \caption{The proportion of generations which have edit similarity above 0.8 with the groundtruth continuation when using the LM to generate continuations for 32-token prompts identified by \Approx{} as either duplicated or unique.}
     \label{fig:ground-truth-continuation}
 \end{figure}
-\paragraph{With prompting.}
+\paragraph{Generation with prompting.}
 In most real use cases, language model generation is controlled by providing a prompt for the model to continue.
 We experiment with four possible prompt sources: training examples identified by \Exact{} as having near-duplicates in the train set (train dup), training examples identified as unique (train unique), validation set examples with a near-duplicate in the train set (valid in train), and validation set examples identified as unique across all splits (valid unique).
 We select the first 32 tokens of each example as the prompt, which means we can evaluate the fraction of generations which are near-duplicates with the ground-truth continuation for the prompt.
@@ -552,7 +546,7 @@ When the prompt comes from duplicate examples in the train set, XL-\Original{} r
 XL-\Exact{} and XL-\Approx{} still copy the groundtruth more often when the prompt comes from a duplicate example than when the prompt comes from a unique example, suggesting that more stringent deduplication may be necessary to remove memorization tendencies entirely. 
 
 \input{tables/ppl_on_sota_models}
-\subsection{Impact on Existing Models} \label{sec:eval-existing-models}
+\paragraph{Impact on Existing Models} \label{sec:eval-existing-models}
 Train-test leakage does not just impact models trained on C4.
 Table \ref{tab:ppl_sota_models} shows that
 % the presence of a near-duplicate
@@ -602,8 +596,6 @@ collected and the how the model's intended usage constrains what should be part 
 % For example, if the goal of training a language model is to be able to exactly reproduce text found on the internet, then perhaps deduplication does not make sense.
 % However, for the vast majority of related work, the goal is to model human communication through language, which means training on low-quality highly duplicated text undesirable.
 Developing techniques to memorize or forget specific sequences depending on the end application is a promising research direction. 
-
-\section{Conclusion}
 
 We encourage future language model research to perform dataset deduplication, either by training on the deduplicated datasets we release, using the deduplication tools we release, or following our approach to deduplicate datasets with new tools.
 

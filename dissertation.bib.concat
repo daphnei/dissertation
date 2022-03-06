@@ -260,16 +260,6 @@
   year		= {2013}
 }
 
-###Article{	  chelba2013one,
-  title		= {One billion word benchmark for measuring progress in
-		  statistical language modeling},
-  author	= {Chelba, Ciprian and Mikolov, Tomas and Schuster, Mike and
-		  Ge, Qi and Brants, Thorsten and Koehn, Phillipp and
-		  Robinson, Tony},
-  journal	= {arXiv preprint arXiv:1312.3005},
-  year		= {2013}
-}
-
 @InProceedings{	  cho2016noisy,
   title		= {Noisy parallel approximate decoding for conditional
 		  recurrent language model},
@@ -357,14 +347,6 @@
   year		= {2019}
 }
 
-###Article{	  dai2019transformer,
-  title		= {Transformer-xl: Attentive language models beyond a
-		  fixed-length context},
-  author	= {Dai, Zihang and Yang, Zhilin and Yang, Yiming and
-		  Carbonell, Jaime and Le, Quoc V and Salakhutdinov, Ruslan},
-  journal	= {arXiv preprint arXiv:1901.02860},
-  year		= {2019}
-}
 
 @InProceedings{	  danescu2011chameleons,
   title		= "Chameleons in Imagined Conversations: A New Approach to
@@ -1266,17 +1248,6 @@
   year		= {2019}
 }
 
-###Article{	  radford2019language,
-  title		= {Language models are unsupervised multitask learners},
-  author	= {Radford, Alec and Wu, Jeffrey and Child, Rewon and Luan,
-		  David and Amodei, Dario and Sutskever, Ilya},
-  journal	= {OpenAI blog},
-  volume	= {1},
-  number	= {8},
-  pages		= {9},
-  year		= {2019}
-}
-
 @Article{	  raffel2019exploring,
   title		= {Exploring the limits of transfer learning with a unified
 		  text-to-text transformer},
@@ -1600,15 +1571,6 @@
   year		= {2017}
 }
 
-###Article{	  vaswani2017attention,
-  title		= {Attention is all you need},
-  author	= {Vaswani, Ashish and Shazeer, Noam and Parmar, Niki and
-		  Uszkoreit, Jakob and Jones, Llion and Gomez, Aidan N and
-		  Kaiser, Lukasz and Polosukhin, Illia},
-  journal	= {arXiv preprint arXiv:1706.03762},
-  year		= {2017}
-}
-
 @InProceedings{	  vaswani2017attentionia,
   title		= {{Attention Is All You Need}},
   author	= {Ashish Vaswani and Noam Shazeer and Niki Parmar and Jakob
@@ -1787,14 +1749,6 @@
   year		= {2019}
 }
 
-###Article{	  zellers2019defending,
-  title		= {Defending against neural fake news},
-  author	= {Zellers, Rowan and Holtzman, Ari and Rashkin, Hannah and
-		  Bisk, Yonatan and Farhadi, Ali and Roesner, Franziska and
-		  Choi, Yejin},
-  journal	= {arXiv preprint arXiv:1905.12616},
-  year		= {2019}
-}
 
 @Article{	  zeng2021pangualpha,
   title		= {PanGu-$\alpha$: Large-scale Autoregressive Pretrained
@@ -1843,4 +1797,604 @@
 		  computer vision},
   pages		= {19--27},
   year		= {2015}
+}
+@inproceedings{feldman2020neural,
+  title={What neural networks memorize and why: Discovering the long tail via influence estimation},
+  author={Feldman, Vitaly and Zhang, Chiyuan},
+  booktitle={Advances in Neural Information Processing Systems},
+  year={2020}
+}
+
+@inproceedings{arpit2017closer,
+  title={A closer look at memorization in deep networks},
+  author={Arpit, Devansh and Jastrz{\k{e}}bski, Stanis{\l}aw and Ballas, Nicolas and Krueger, David and Bengio, Emmanuel and Kanwal, Maxinder S and Maharaj, Tegan and Fischer, Asja and Courville, Aaron and Bengio, Yoshua and others},
+  booktitle={International Conference on Machine Learning},
+  pages={233--242},
+  year={2017},
+  organization={PMLR}
+}
+
+@inproceedings{stephenson2021geometry,
+  title={On the geometry of generalization and memorization in deep neural networks},
+  author={Stephenson, Cory and Padhy, Suchismita and Ganesh, Abhinav and Hui, Yue and Tang, Hanlin and Chung, SueYeon},
+  booktitle={International Conference on Learning Representations},
+  year={2021}
+}
+
+@INPROCEEDINGS{8953411,
+  author={Webster, Ryan and Rabin, Julien and Simon, Loïc and Jurie, Frédéric},
+  booktitle={2019 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, 
+  title={Detecting Overfitting of Deep Generative Networks via Latent Recovery}, 
+  year={2019},
+  volume={},
+  number={},
+  pages={11265-11274},
+  doi={10.1109/CVPR.2019.01153}}
+
+@inproceedings{teterwak2021understanding,
+  title={Understanding invariance via feedforward inversion of discriminatively trained classifiers},
+  author={Teterwak, Piotr and Zhang, Chiyuan and Krishnan, Dilip and Mozer, Michael C},
+  booktitle={International Conference on Machine Learning},
+  pages={10225--10235},
+  year={2021},
+  organization={PMLR}
+}
+
+@article{radford2019language,
+  title={Language models are unsupervised multitask learners},
+  author={Radford, Alec and Wu, Jeffrey and Child, Rewon and Luan, David and Amodei, Dario and Sutskever, Ilya},
+  journal={OpenAI blog},
+  volume={1},
+  number={8},
+  pages={9},
+  year={2019}
+}
+
+@article{xue2020mt5,
+  title={mT5: A massively multilingual pre-trained text-to-text transformer},
+  author={Xue, Linting and Constant, Noah and Roberts, Adam and Kale, Mihir and Al-Rfou, Rami and Siddhant, Aditya and Barua, Aditya and Raffel, Colin},
+  journal={arXiv preprint arXiv:2010.11934},
+  year={2020}
+}
+
+@misc{gpt-j,
+  author = {Wang, Ben and Komatsuzaki, Aran},
+  title = {{GPT-J-6B: A 6 Billion Parameter Autoregressive Language Model}},
+  howpublished = {\url{https://github.com/kingoflolz/mesh-transformer-jax}},
+  year = 2021,
+  month = May
+}
+
+@article{sheng2020towards,
+  title={Towards controllable biases in language generation},
+  author={Sheng, Emily and Chang, Kai-Wei and Natarajan, Premkumar and Peng, Nanyun},
+  journal={arXiv preprint arXiv:2005.00268},
+  year={2020}
+}
+
+@article{wallace2019universal,
+  title={Universal adversarial triggers for attacking and analyzing NLP},
+  author={Wallace, Eric and Feng, Shi and Kandpal, Nikhil and Gardner, Matt and Singh, Sameer},
+  journal={arXiv preprint arXiv:1908.07125},
+  year={2019}
+}
+
+@article{pile,
+  title={The {P}ile: An 800GB Dataset of Diverse Text for Language Modeling},
+  author={Gao, Leo and Biderman, Stella and Black, Sid and Golding, Laurence and Hoppe, Travis and Foster, Charles and Phang, Jason and He, Horace and Thite, Anish and Nabeshima, Noa and Presser, Shawn and Leahy, Connor},
+  journal={arXiv preprint arXiv:2101.00027},
+  year={2020}
+}
+    
+@article{graff2003english,
+  title={English gigaword},
+  author={Graff, David and Kong, Junbo and Chen, Ke and Maeda, Kazuaki},
+  journal={Linguistic Data Consortium, Philadelphia},
+  volume={4},
+  number={1},
+  pages={34},
+  year={2003}
+}
+
+@software{gpt-neo,
+  author = {Black, Sid and Gao, Leo and Wang, Phil and Leahy, Connor and Biderman, Stella},
+  title = {{GPT-Neo}: Large Scale Autoregressive Language Modeling with Mesh-Tensorflow},
+  url = {http://github.com/eleutherai/gpt-neo},
+  version = {1.0},
+  year = {2021},
+}
+
+@article{linzen2020can,
+  title={How can we accelerate progress towards human-like linguistic generalization?},
+  author={Linzen, Tal},
+  journal={arXiv preprint arXiv:2005.00955},
+  year={2020}
+}
+
+@article{zeng2021pangualpha,
+      title={PanGu-$\alpha$: Large-scale Autoregressive Pretrained Chinese Language Models with Auto-parallel Computation}, 
+      author={Wei Zeng and Xiaozhe Ren and Teng Su and Hui Wang and Yi Liao and Zhiwei Wang and Xin Jiang and ZhenZhang Yang and Kaisheng Wang and Xiaoda Zhang and Chen Li and Ziyan Gong and Yifan Yao and Xinjing Huang and Jun Wang and Jianfeng Yu and Qi Guo and Yue Yu and Yan Zhang and Jin Wang and Hengtao Tao and Dasen Yan and Zexuan Yi and Fang Peng and Fangqing Jiang and Han Zhang and Lingfeng Deng and Yehong Zhang and Zhe Lin and Chao Zhang and Shaojie Zhang and Mingyue Guo and Shanzhi Gu and Gaojun Fan and Yaowei Wang and Xuefeng Jin and Qun Liu and Yonghong Tian},
+      year={2021},
+      journal={arXiv preprint arXiv:2104.12369},
+}
+
+@article{vaswani2017attention,
+  title={Attention is all you need},
+  author={Vaswani, Ashish and Shazeer, Noam and Parmar, Niki and Uszkoreit, Jakob and Jones, Llion and Gomez, Aidan N and Kaiser, Lukasz and Polosukhin, Illia},
+  journal={arXiv preprint arXiv:1706.03762},
+  year={2017}
+}
+
+@inproceedings{guo2020wiki40b,
+title	= {Wiki-40B: Multilingual Language Model Dataset},
+author	= {Mandy Guo and Zihang Dai and Denny Vrandecic and Rami Al-Rfou},
+year	= {2020},
+URL	= {http://www.lrec-conf.org/proceedings/lrec2020/pdf/2020.lrec-1.296.pdf},
+booktitle	= {LREC 2020}
+}
+
+@article{dai2019transformer,
+  title={Transformer-xl: Attentive language models beyond a fixed-length context},
+  author={Dai, Zihang and Yang, Zhilin and Yang, Yiming and Carbonell, Jaime and Le, Quoc V and Salakhutdinov, Ruslan},
+  journal={arXiv preprint arXiv:1901.02860},
+  year={2019}
+}
+
+@ARTICLE{Dodge2021-lb,
+  title         = "Documenting the English Colossal Clean Crawled Corpus",
+  author        = "Dodge, Jesse and Sap, Maarten and Marasovic, Ana and Agnew,
+                   William and Ilharco, Gabriel and Groeneveld, Dirk and
+                   Gardner, Matt",
+  month         =  apr,
+  year          =  2021,
+  journal       = {arXiv preprint arXiv:2104.08758},
+  archivePrefix = "arXiv",
+  primaryClass  = "cs.CL",
+  eprint        = "2104.08758"
+}
+
+@article{trinh2018simple,
+  title={A simple method for commonsense reasoning},
+  author={Trinh, Trieu H and Le, Quoc V},
+  journal={arXiv preprint arXiv:1806.02847},
+  year={2018}
+}
+
+@inproceedings{brown2020language,
+  title={Language models are few-shot learners},
+  author={Brown, Tom B and Mann, Benjamin and Ryder, Nick and Subbiah, Melanie and Kaplan, Jared and Dhariwal, Prafulla and Neelakantan, Arvind and Shyam, Pranav and Sastry, Girish and Askell, Amanda and others},
+  booktitle={Advances in Neural Information Processing Systems 33},
+  year={2020}
+}
+
+@inproceedings{versley2012not,
+  title={Not just bigger: Towards better-quality Web corpora},
+  author={Versley, Yannick and Panchenko, Yana},
+  booktitle={Proceedings of the seventh Web as Corpus Workshop (WAC7)},
+  pages={44--52},
+  year={2012}
+}
+
+@article{GABRIEL201863,
+title = {Identifying and characterizing highly similar notes in big clinical note datasets},
+journal = {Journal of Biomedical Informatics},
+volume = {82},
+pages = {63-69},
+year = {2018},
+issn = {1532-0464},
+doi = {https://doi.org/10.1016/j.jbi.2018.04.009},
+url = {https://www.sciencedirect.com/science/article/pii/S153204641830073X},
+author = {Rodney A. Gabriel and Tsung-Ting Kuo and Julian McAuley and Chun-Nan Hsu},
+keywords = {Electronic medical record, De-deduplication, Natural language processing},
+}
+
+@inproceedings{gyawali2020deduplication,
+  title={Deduplication of Scholarly Documents using Locality Sensitive Hashing and Word Embeddings},
+  author={Gyawali, Bikash and Anastasiou, Lucas and Knoth, Petr},
+  booktitle={Proceedings of the 12th Language Resources and Evaluation Conference},
+  pages={901--910},
+  year={2020}
+}
+
+@inproceedings{zhu2015aligning,
+  title={Aligning books and movies: Towards story-like visual explanations by watching movies and reading books},
+  author={Zhu, Yukun and Kiros, Ryan and Zemel, Rich and Salakhutdinov, Ruslan and Urtasun, Raquel and Torralba, Antonio and Fidler, Sanja},
+  booktitle={Proceedings of the IEEE international conference on computer vision},
+  pages={19--27},
+  year={2015}
+}
+
+@inproceedings{allamanis2019adverse,
+  title={The adverse effects of code duplication in machine learning models of code},
+  author={Allamanis, Miltiadis},
+  booktitle={Proceedings of the 2019 ACM SIGPLAN International Symposium on New Ideas, New Paradigms, and Reflections on Programming and Software},
+  pages={143--153},
+  year={2019}
+}
+
+@inproceedings{shazeer2018adafactor,
+  title={Adafactor: Adaptive learning rates with sublinear memory cost},
+  author={Shazeer, Noam and Stern, Mitchell},
+  booktitle={International Conference on Machine Learning},
+  pages={4596--4604},
+  year={2018},
+  organization={PMLR}
+}
+
+@inproceedings{shokri2017membership,
+  title={Membership inference attacks against machine learning models},
+  author={Shokri, Reza and Stronati, Marco and Song, Congzheng and Shmatikov, Vitaly},
+  booktitle={2017 IEEE Symposium on Security and Privacy (SP)},
+  pages={3--18},
+  year={2017},
+  organization={IEEE}
+}
+
+@article{chelba2013one,
+  title={One billion word benchmark for measuring progress in statistical language modeling},
+  author={Chelba, Ciprian and Mikolov, Tomas and Schuster, Mike and Ge, Qi and Brants, Thorsten and Koehn, Phillipp and Robinson, Tony},
+  journal={arXiv preprint arXiv:1312.3005},
+  year={2013}
+}
+
+@inproceedings{mikolov2011empirical,
+  title={Empirical evaluation and combination of advanced language modeling techniques},
+  author={Mikolov, Tom{\'a}{\v{s}} and Deoras, Anoop and Kombrink, Stefan and Burget, Luk{\'a}{\v{s}} and {\v{C}}ernock{\`y}, Jan},
+  booktitle={Twelfth annual conference of the international speech communication association},
+  year={2011}
+}
+
+@article{zellers2019defending,
+  title={Defending against neural fake news},
+  author={Zellers, Rowan and Holtzman, Ari and Rashkin, Hannah and Bisk, Yonatan and Farhadi, Ali and Roesner, Franziska and Choi, Yejin},
+  journal={arXiv preprint arXiv:1905.12616},
+  year={2019}
+}
+
+@article{t52020,
+  author  = {Colin Raffel and Noam Shazeer and Adam Roberts and Katherine Lee and Sharan Narang and Michael Matena and Yanqi Zhou and Wei Li and Peter J. Liu},
+  title   = {Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer},
+  journal = {Journal of Machine Learning Research},
+  year    = {2020},
+  volume  = {21},
+  number  = {140},
+  pages   = {1-67},
+  url     = {http://jmlr.org/papers/v21/20-074.html}
+}
+
+@inproceedings{broder1997resemblance,
+  title={On the resemblance and containment of documents},
+  author={Broder, Andrei Z},
+  booktitle={Proceedings. Compression and Complexity of SEQUENCES 1997 (Cat. No. 97TB100171)},
+  pages={21--29},
+  year={1997},
+  organization={IEEE}
+}
+`
+@misc{dodge2021documenting,
+      title={Documenting the English Colossal Clean Crawled Corpus}, 
+      author={Jesse Dodge and Maarten Sap and Ana Marasovic and William Agnew and Gabriel Ilharco and Dirk Groeneveld and Matt Gardner},
+      year={2021},
+      eprint={2104.08758},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+
+@misc{caswell2021quality,
+      title={Quality at a Glance: An Audit of Web-Crawled Multilingual Datasets}, 
+      author={Isaac Caswell and Julia Kreutzer and Lisa Wang and Ahsan Wahab and Daan van Esch and Nasanbayar Ulzii-Orshikh and Allahsera Tapo and Nishant Subramani and Artem Sokolov and Claytone Sikasote and Monang Setyawan and Supheakmungkol Sarin and Sokhar Samb and Benoît Sagot and Clara Rivera and Annette Rios and Isabel Papadimitriou and Salomey Osei and Pedro Javier Ortiz Suárez and Iroro Orife and Kelechi Ogueji and Rubungo Andre Niyongabo and Toan Q. Nguyen and Mathias Müller and André Müller and Shamsuddeen Hassan Muhammad and Nanda Muhammad and Ayanda Mnyakeni and Jamshidbek Mirzakhalov and Tapiwanashe Matangira and Colin Leong and Nze Lawson and Sneha Kudugunta and Yacine Jernite and Mathias Jenny and Orhan Firat and Bonaventure F. P. Dossou and Sakhile Dlamini and Nisansa de Silva and Sakine Çabuk Ballı and Stella Biderman and Alessia Battisti and Ahmed Baruwa and Ankur Bapna and Pallavi Baljekar and Israel Abebe Azime and Ayodele Awokoya and Duygu Ataman and Orevaoghene Ahia and Oghenefego Ahia and Sweta Agrawal and Mofetoluwa Adeyemi},
+      year={2021},
+      eprint={2103.12028},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+
+@misc{carlini2020extracting,
+      title={Extracting Training Data from Large Language Models}, 
+      author={Nicholas Carlini and Florian Tramer and Eric Wallace and Matthew Jagielski and Ariel Herbert-Voss and Katherine Lee and Adam Roberts and Tom Brown and Dawn Song and Ulfar Erlingsson and Alina Oprea and Colin Raffel},
+      year={2020},
+      eprint={2012.07805},
+      archivePrefix={arXiv},
+      primaryClass={cs.CR}
+}
+
+@misc{bandy2021addressing,
+      title={Addressing "Documentation Debt" in Machine Learning Research: A Retrospective Datasheet for BookCorpus}, 
+      author={Jack Bandy and Nicholas Vincent},
+      year={2021},
+      eprint={2105.05241},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+
+@misc{fedus2021switch,
+      title={Switch Transformers: Scaling to Trillion Parameter Models with Simple and Efficient Sparsity}, 
+      author={William Fedus and Barret Zoph and Noam Shazeer},
+      year={2021},
+      eprint={2101.03961},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG}
+}
+
+@misc{gebru2020datasheets,
+      title={Datasheets for Datasets}, 
+      author={Timnit Gebru and Jamie Morgenstern and Briana Vecchione and Jennifer Wortman Vaughan and Hanna Wallach and Hal Daumé III au2 and Kate Crawford},
+      year={2020},
+      eprint={1803.09010},
+      archivePrefix={arXiv},
+      primaryClass={cs.DB}
+}
+
+@article{bender2018data,
+    title = "Data Statements for Natural Language Processing: Toward Mitigating System Bias and Enabling Better Science",
+    author = "Bender, Emily M.  and
+      Friedman, Batya",
+    journal = "Transactions of the Association for Computational Linguistics",
+    volume = "6",
+    year = "2018",
+    url = "https://www.aclweb.org/anthology/Q18-1041",
+    doi = "10.1162/tacl_a_00041",
+    pages = "587--604",
+}
+
+@misc{bowman2021fix,
+      title={What Will it Take to Fix Benchmarking in Natural Language Understanding?}, 
+      author={Samuel R. Bowman and George E. Dahl},
+      year={2021},
+      eprint={2104.02145},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+
+@inproceedings{nong2009linear,
+  title={Linear suffix array construction by almost pure induced-sorting},
+  author={Nong, Ge and Zhang, Sen and Chan, Wai Hong},
+  booktitle={2009 data compression conference},
+  pages={193--202},
+  year={2009},
+  organization={IEEE}
+}
+
+@inproceedings{ko2003space,
+  title={Space efficient linear time construction of suffix arrays},
+  author={Ko, Pang and Aluru, Srinivas},
+  booktitle={Annual Symposium on Combinatorial Pattern Matching},
+  pages={200--210},
+  year={2003},
+  organization={Springer}
+}
+
+@inproceedings{karkkainen2003simple,
+  title={Simple linear work suffix array construction},
+  author={K{\"a}rkk{\"a}inen, Juha and Sanders, Peter},
+  booktitle={International colloquium on automata, languages, and programming},
+  pages={943--955},
+  year={2003},
+  organization={Springer}
+}
+
+@article{manber1993suffix,
+  title={Suffix arrays: a new method for on-line string searches},
+  author={Manber, Udi and Myers, Gene},
+  journal={siam Journal on Computing},
+  volume={22},
+  number={5},
+  pages={935--948},
+  year={1993},
+  publisher={SIAM}
+}
+
+@inproceedings{weiner1973linear,
+  title={Linear pattern matching algorithms},
+  author={Weiner, Peter},
+  booktitle={14th Annual Symposium on Switching and Automata Theory (swat 1973)},
+  pages={1--11},
+  year={1973},
+  organization={IEEE}
+}
+@inproceedings{bender2021stochastic,
+author = {Bender, Emily M. and Gebru, Timnit and McMillan-Major, Angelina and Shmitchell, Shmargaret},
+title = {On the Dangers of Stochastic Parrots: Can Language Models Be Too Big?\raisebox{-5pt}{\includegraphics[scale=0.1]{parrot.png}}},
+year = {2021},
+isbn = {9781450383097},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3442188.3445922},
+doi = {10.1145/3442188.3445922},
+booktitle = {Proceedings of the 2021 ACM Conference on Fairness, Accountability, and Transparency},
+pages = {610–623},
+numpages = {14},
+location = {Virtual Event, Canada},
+series = {FAccT '21}
+}
+
+@article{jaccard1912distribution,
+  title={The distribution of the flora in the alpine zone.},
+  author={Jaccard, Paul},
+  journal={New phytologist},
+  volume={11},
+  number={2},
+  pages={37--50},
+  year={1912},
+  publisher={Wiley Online Library}
+}
+
+@misc{cohen2016min,
+  title={Min-Hash Sketches: A Brief Survey},
+  author={Cohen, Edith},
+  year={2016},
+  url={http://www.cohenwang.com/edith/Surveys/minhash.pdf},
+}
+
+@misc{lacki2018connected,
+      title={Connected Components at Scale via Local Contractions}, 
+      author={Jakub Łącki and Vahab Mirrokni and Michał Włodarczyk},
+      year={2018},
+      eprint={1807.10727},
+      archivePrefix={arXiv},
+      primaryClass={cs.DC}
+}
+
+@misc{patterson2021carbon,
+      title={Carbon Emissions and Large Neural Network Training}, 
+      author={David Patterson and Joseph Gonzalez and Quoc Le and Chen Liang and Lluis-Miquel Munguia and Daniel Rothchild and David So and Maud Texier and Jeff Dean},
+      year={2021},
+      eprint={2104.10350},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG}
+}
+
+@misc{strubell2019energy,
+      title={Energy and Policy Considerations for Deep Learning in NLP}, 
+      author={Emma Strubell and Ananya Ganesh and Andrew McCallum},
+      year={2019},
+      eprint={1906.02243},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+
+ACM Digital Library home 
+ACM home
+University of Toronto
+ 
+BrowseAbout
+Sign in Register
+Journals
+Magazines
+Proceedings
+Books
+SIGs
+Conferences
+People
+Search ACM Digital Library
+Search ACM Digital Library
+
+ Advanced Search
+Conference
+Proceedings
+Upcoming Events
+Authors
+Affiliations
+Award Winners
+HomeConferencesWWWProceedingsWWW '07A new suffix tree similarity measure for document clustering
+ARTICLE
+A new suffix tree similarity measure for document clustering
+Share on
+Authors: 
+Hung Chim
+
+, 
+Xiaotie Deng
+
+ Authors Info & Affiliations
+WWW '07: Proceedings of the 16th international conference on World Wide WebMay 2007 Pages 121–130https://doi.org/10.1145/1242572.1242590
+Published:08 May 2007
+64citation1,536Downloads
+ 
+eReaderPDF
+WWW '07: Proceedings of the 16th international conference on World Wide Web
+A new suffix tree similarity measure for document clustering
+Pages 121–130
+PreviousNext
+ABSTRACT
+References
+Index Terms
+Comments
+ACM Digital Library
+ABSTRACT
+In this paper, we propose a new similarity measure to compute the pairwise similarity of text-based documents based on suffix tree document model. By applying the new suffix tree similarity measure in Group-average Agglomerative Hierarchical Clustering (GAHC) algorithm, we developed a new suffix tree document clustering algorithm (NSTC). Experimental results on two standard document clustering benchmark corpus OHSUMED and RCV1 indicate that the new clustering algorithm is a very effective document clustering algorithm. Comparing with the results of traditional word term weight tf-idf similarity measure in the same GAHC algorithm, NSTC achieved an improvement of 51% on the average of F-measure score. Furthermore, we apply the new clustering algorithm in analyzing the Web documents in online forum communities. A topic oriented clustering algorithm is developed to help people in assessing, classifying and searching the the Web documents in a large forum community.
+
+References
+R. Baeza-Yates and B. Ribeiro-Neto. Modern Information Retrieval. Addison Wesley, 1999. Google ScholarDigital Library
+E. Charniak. Statistical Language Learning. MIT Press, 1993. Google ScholarDigital Library
+W. B. Croft. Organizing and searching large files of documents. PhD thesis, University of Cambridge, 1978.Google Scholar
+Show All References
+Index Terms
+A new suffix tree similarity measure for document clustering
+Computing methodologies
+
+Artificial intelligence
+
+Natural language processing
+
+Information systems
+
+Information retrieval
+
+Document representation
+
+Content analysis and feature selection
+
+Retrieval tasks and goals
+
+Clustering and classification
+
+Information storage systems
+
+Record storage systems
+
+Directory structures
+
+B-trees
+
+Information systems applications
+
+Data mining
+
+Clustering
+
+Mathematics of computing
+
+Discrete mathematics
+
+Graph theory
+
+Trees
+
+Comments
+
+27References
+View Table Of Contents
+Back
+Close modal
+Export Citations
+
+BibTeX
+@inproceedings{hung2007new,
+author = {Chim, Hung and Deng, Xiaotie},
+title = {A New Suffix Tree Similarity Measure for Document Clustering},
+year = {2007},
+isbn = {9781595936547},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/1242572.1242590},
+doi = {10.1145/1242572.1242590},
+booktitle = {Proceedings of the 16th International Conference on World Wide Web},
+pages = {121–130},
+numpages = {10},
+keywords = {similarity measure, document model, suffix tree},
+location = {Banff, Alberta, Canada},
+series = {WWW '07}
+}
+
+@article{yamamoto2001using,
+  title={Using suffix arrays to compute term frequency and document frequency for all substrings in a corpus},
+  author={Yamamoto, Mikio and Church, Kenneth W},
+  journal={Computational Linguistics},
+  volume={27},
+  number={1},
+  pages={1--30},
+  year={2001},
+  publisher={MIT Press One Rogers Street, Cambridge, MA 02142-1209, USA journals-info~…}
+}
+
+@article{bloom1970space,
+  title={Space/time trade-offs in hash coding with allowable errors},
+  author={Bloom, Burton H},
+  journal={Communications of the ACM},
+  volume={13},
+  number={7},
+  pages={422--426},
+  year={1970},
+  publisher={ACM New York, NY, USA}
 }
