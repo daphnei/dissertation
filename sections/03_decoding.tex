@@ -1,5 +1,5 @@
 % \chapter{The Diversity-Quality Tradeoff and Its Impact on Generated Text Quality and Detectability}
-\chapter{Measuring Generated Text Qualitiy and the Diversity-Quality Tradeoff}
+\chapter{Factors that Impact Generated Text Quality, Diversity, and Detectability}
 \label{chap:decoding}
 
 \section{Motivation}
@@ -18,6 +18,8 @@ However, when many low-likelihood words cumulatively contain quite a bit of prob
 Humans readers are quick to notice these types of errors.
 Thus, more commonly, methods are used that reduce the entropy of the distribution before sampling, which improves generation quality at the cost of diversity.
 We show that humans have a hard type identifying that text is machine-generated when sampling is heavily restricted to only high-likelihood words.
+
+Finally in Section \ref{section:roft}, we conduct a large-scale study of the detectability of generated text by human annoators, expanding upon the small-scale human evaluation experiments described in Section \ref{section:detection}.
 
 % \section{Definition and Measurement of Diversity}
 \section{Terminology}
@@ -915,8 +917,480 @@ We therefore suggest three prongs for future research:
 Finally, we would like to note that all of our experiments were performed with English language models, and it remains an open question how the trade-off between ease of human detection and ease of automatic detection might differ for languages that are very different from English. 
 
 
-
-
-
 \section{Detecting the Boundary between Human-Written and Machine-Generated Text}
 \label{section:roft}
+
+
+
+Neural language models (LMs) are capable of generating increasingly natural-sounding text.
+One growing worry is that bad actors may attempt to pass off automatically-generated text as genuine.
+For example, \citet{zellersetal2019} discuss the dangers of machine-generated news articles, and \citet{martens2019towards} document how easy it is to buy fake app store reviews, a problem which will inevitably be made worse as language models allow fake reviews to be generated cheaply and quickly.
+\citet{weidinger2021ethical} give a detailed overview of the risks LMs pose in the spread of misinformation, fraud, and other harmful text.
+Thus, it is important to answer the question: just how susceptible are humans to being duped by machine-generated text?
+
+Existing studies of the ability of humans to detect generated text have focused on the binary question of whether or not a provided document contains any generated text.
+In this work, we instead frame detection as a boundary-detection task: given a document that starts off as human-written and at some point transitions to machine-generated, can annotators detect the transition point?
+The boundary detection setting is more informative than the classification setting because it better aligns with how LMs are used to generate text in practice--in typical usage, a generative system is provided with a prompt and asked to produce a continuation.
+By measuring human skill at the boundary detection task, we can make progress toward quantifying the risks associated with LMs; we can also evaluate the relative performance of different generative systems.
+Furthermore, these research goals can be achieved while simultaneously educating the public about how to spot generated text. 
+
+\begin{figure}[tb]
+    \centering
+    \framebox{\includegraphics[scale=0.19]{figures/interface.png}}
+    \caption{In the boundary detection task, players see one sentence as a time and try to guess when they transition from human-written to machine-generated.}
+    \label{fig:pg1}
+\end{figure}
+% TODO: Should we mention the roft platform here? Maybe change this figure's caption instead to better explain what is going on? Say something like "annotators are asked to select the sentence at which text transitions from human-written to machine generated". Human emojis represents the human written sentences and the robot emojis represent generated text.
+
+% In particular, we were interested in studying how the following factors impact human skill on the boundary detection task:
+In particular, we show how the boundary detection task can be used to evaluate how the following factors impact generated text quality.
+\begin{itemize}[noitemsep,topsep=0pt]
+    \item Genre of the text (news, stories, etc.)
+    \item Choice of generative system
+    \item Decoding strategy
+\end{itemize}
+In order to facilitate data collection, we follow \citet{roft} and pose the detection task as a game.
+In each game round, players were shown one sentence at a time and earned points for guessing close to the true boundary (Figure \ref{fig:pg1}).
+They were also asked to select reasons for why they made their decision.
+In total we collected over 20,000 annotations.
+We find that players vary substantially in their detection ability, and that factors such as the amount of time taken to complete a game round and total number of game rounds played sometimes correlate with success.
+We discuss the difficulty in incentivizing players to improve over time.
+Furthermore, we examine some of the the trends and errors which distinguish real from generated text and look at whether annotators could pick up on these trends.
+
+In addition to producing valuable data for analyzing detectability, the publicly accessible game format allows anyone to try their skill at detecting generated text.
+Furthermore, the game platform is easily extensible to support answering additional research questions in the future.
+All generations and annotations used in this paper will be made publicly available to encourage further study of the detectability of machine-generated text.
+
+Our primary contributions in this paper are:
+\begin{itemize}[itemsep=0.5pt,topsep=1pt]
+    \item Large-scale case study on how a game-like platform can be used to perform data collection for the detectability task.
+    \item Analysis of how generation-time design choices impact detectability of generated text. 
+    \item Study of the errors and text properties which humans associate with machine generations.
+    \item Public dataset of 21,646 human annotations on the boundary detection task.
+\end{itemize}
+
+\section{Related Work}
+
+% Evaluation of natural language generation remains a difficult task to organize. However, the growing subfield that studies the identification of machine-written text has offered a more practical human-centric approach to model evaluation.
+Previous research on understanding the ability of humans to detect machine generated text has mostly posed the task as a classification task--given a text example that is either entirely human-written or entirely machine-generated (aside from an initial prompt), annotators must predict whether it is human-written or machine-generated.
+On this task, \citet{ippolito-etal-2020-automatic} reported that trained evaluators were able to achieve an accuracy of at best 71.4\%, using generation from GPT-2 Large \citep{radford2019language}.
+\citet{clark2021all} demonstrated that annotators are able to distinguish GPT-2 XL generations with at best 62\% accuracy, but they perform no better than random chance on GPT-3 outputs \citep{brownetal2020}.
+Even after training evaluators to improve their detection abilities, detection accuracy on GPT-3 was only able to converge to around 55\%.
+A study by \citet{brownetal2020} reported similarly low performance (52\%) on the detection of machine-generated news articles.
+
+Our work builds directly off of the RoFT detection game introduced by \citet{roft}; we contribute expanded analysis across a variety of genres and generative systems.
+A similar detection task, where annotators guess whether turns in a conversation were generated, was posed as a way to evaluate dialog systems \citep{deriu-etal-2020-spot}.
+
+Another related area of research is asking annotators to explain why they think generated text is generated.
+\citet{he-etal-2021-tgea} created a dataset of generated text annotated with the errors that humans found in it, and \citet{dou2021scarecrow} proposed an error annotation schema for generated text.
+The errors we allow players to report in our experiments were inspired by this schema.
+
+% In this paper, we expand on the findings of previous research by altering the evaluation methodology from a classification task over an entire text to a boundary detection task, where human evaluators are asked to identify the sentence at which a passage transitions from being human-written to machine generated. We also display the effect of annotator ``training'', where we investigate whether repeated attempts at the task with feedback yields better performance over time. We provide additional insight into detection performance, by controlling for variables such as hyperparameter value, model parameter size, and textual domains.
+
+\section{Experimental Design}
+\subsection{The Real or Fake Text Game}
+Our study uses data collected through the ``Real or Fake Text'' (\ROFT{}) annotation platform \citep{roft}.
+\ROFT{} is a turn-based game where a player first selects a domain of text (news articles, recipes, short stories, or speeches).
+The player then plays a series of game rounds.
+In each round, the player is shown a starting sentence which they are told comes from a real human-written document.
+They are then shown subsequent sentences, one at a time.
+Each subsequent sentence may be the true continuation of the document, or it may be text generated by a language model.
+Once the sentences transition to being machine-generated, they will stay so for the rest of the 10-sentence passage.
+
+After being shown each sentence, the player must guess whether that sentence was machine-generated or human-written.
+If the user selects ``human-written,'' another sentence is displayed.
+If the player deems the current sentence to be written by a machine, the game round ends and the true author (machine or human) for each sentence is revealed.
+Before submitting their selection, the player is able to select a reason to explain their choice of sentence\footnote{See Table \ref{tab:reasons_text} in the Appendix for a full list of reasons given with their accompanying description text.}.
+Thus, the player's goal in \ROFT{} is to correctly identify the sentence at which a passage transitions from being human written to being generated by a language model.
+This setting is considerably more realistic than prior work, since in the real world, generating with a prompt is the standard way to achieve controllability, and malicious actors will not reveal what portion of a generation is the human-written prompt.
+
+\subsection{Datasets}
+In order to answer questions of how textual genre and writing style affect detectability of machine-generated text, we selected four diverse categories of prompts. 
+For each category, documents were sentence-segmented, and only documents with 11 or more sentences were retained.
+For each document, the first $h$ sentences were used as the prompt, where $h$ is a uniform random number between 1 and 10 (inclusive). The remaining $10-h$ sentences of each 10-sentence game round were a machine-generated continuation. Our four genres of prompts are as follows:
+
+\paragraph{News articles.}
+Documents were drawn from the New York Times Annotated Corpus \citep{sandhaus2008new}, which contains 1.8 million articles published by the Times between 1987 and 2007.
+Our hypothesis was that this domain would be challenging for models since news requires factual accuracy, which state of the art models have been shown to struggle with \cite{nakano2021webgpt, lin2021truthfulqa}. 
+
+\paragraph{Presidential speeches.}
+Documents were drawn from the presidential speech corpus \citep{brown2016cops}, which contains 963 speeches given by presidents of the United States, with dates ranging from 1789 to 2015.
+Our hypothesis was that the sort of first-person rhetoric found in these speeches would be easy for models to impersonate since political speech and first-person speech are plentiful in web-based training data.
+
+\paragraph{Stories.}
+Fictional stories were selected from the Reddit Writing Prompts dataset \citep{fan2018hierarchical}, a corpus of amateur short stories scraped from the r/WritingPrompts sub-Reddit\footnote{\tiny https://www.reddit.com/r/WritingPrompts/}. 
+We hypothesized that this domain would be challenging for players since the writing quality of the stories is not especially high (which lowers the bar for the model generation quality), and factuality is not as important in a fictional domain.
+
+\paragraph{Recipes.}
+Recipes were extracted from the Recipe1M+ dataset \cite{marin2019learning}.
+Recipes were parsed slightly differently than the other domains.
+We set the ``first sentence'' of each document as the name of the recipe and the ingredient list, and each subsequent ``sentence'' was a step in the recipe. Some recipe steps were more than one sentence. We hypothesized that this dataset would be difficult for models due to the closed-ended nature of the task and the reliance on common sense. 
+
+\subsection{Awarding Points}
+\label{sec:points}
+In each game round, the player is awarded points based on how close their selection was to the true boundary\footnote{For our purposes, the ``boundary'' sentence is considered to be the first machine-generated sentence in the passage}.
+Players were awarded 5 points for correctly choosing the boundary sentence and $\max(5-n, 0)$ points for a guess $n$ sentences after the boundary.
+Players were not awarded points for guessing a sentence before the boundary.
+Players were able to see how many points they earned in each category on their profile page and compare their performance with fellow players on the leaderboard page.
+In the Findings section (Section \ref{sec:findings}), we report mean score earned as the predominant evaluation metric. 
+This metric has high correlation with other more standard metrics (Appendix \ref{app:metric}).
+% Users are additionally given profiles, and are able to collect "trophies" for various accomplishments during the annotation task (e.g. getting the boundary exactly correct) in a manner to incentivize additional annotation collection.
+
+\subsection{Players}
+\label{sec:players}
+Players were recruited from two sections of an Artificial Intelligence course for Master's students and senior undergraduates at an American university.
+We only analyze fully anonymized data from students who consented to having their annotations used for research purposes.
+
+% TODO: Replace with University of Pennsylvania after anonymity period.
+The first section (Group A) was asked to play 30 minutes of the \ROFT{} annotation game for a fixed amount of points of class credit.
+Students in this section were not given any instructions beyond how to create an account.
+The second section (Group B) was explicitly told they would be awarded $\min(p/250, 2)$ points of extra credit toward their final grade, where $p$ was the number of points the student earned on the \ROFT{} leaderboard.
+Students in Group B were given detailed instructions\footnote{
+% [Link redacted for review process.]
+{\tiny{https://storage.cloud.google.com/roft\_datasets/boundary\_detection\_guide.pdf}}
+} and examples of signs to look out for that text was machine-generated.
+% TODO: Change google doc to be PDF and host on roft cloud bucket
+Table \ref{tab:particpants} gives statistics on the annotations collected from each class.
+
+We note that university students taking an advanced artificial intelligence course are not reflective of the global population of English speakers, and the results presented in this paper may not reflect the general population's ability to detect machine-generated text. 
+% TODO: (Checklist) Maybe worth also explicitly mentioning that we asked for annotator consent for use of their data in this section as well
+
+\begin{table*}[tb]
+\center
+\small
+\begin{tabular}{l|r|rr|r|c|c}
+\toprule
+ & \# & \multicolumn{2}{|c|}{\# Annotations} & {Avg} & & \\
+Genre & Gens & Raw & Final & Ann/Gen & Systems & Decoding Strategies \\
+\midrule
+News & 1,838 & 7,806 & 4,488 & 2.97 &
+\begin{minipage}{.275\textwidth}
+      \includegraphics[height=1em]{figures/model_dist_new_york_times}
+\end{minipage}
+&
+\begin{minipage}{.225\textwidth}
+      \includegraphics[height=1em]{figures/decoding_dist_new_york_times}
+\end{minipage}
+\\
+Stories & 9,864 & 8,007 & 4,614 & 2.53 &
+\begin{minipage}{.275\textwidth}
+      \includegraphics[height=1em]{figures/model_dist_short_stories}
+\end{minipage}
+&
+\begin{minipage}{.225\textwidth}
+      \includegraphics[height=1em]{figures/decoding_dist_short_stories}
+\end{minipage}
+\\
+Recipes & 7,258 & 17,978 & 7,709 & 2.13 &
+\begin{minipage}{.275\textwidth}
+      \includegraphics[height=1em]{figures/model_dist_recipes}
+\end{minipage}
+&
+\begin{minipage}{.225\textwidth}
+      \includegraphics[height=1em]{figures/decoding_dist_recipes}
+\end{minipage}
+\\
+Speeches & 297 & 8,374 & 4,835 & 16.28 &
+\begin{minipage}{.275\textwidth}
+      \includegraphics[height=1em]{figures/model_dist_presidential_speeches}
+\end{minipage}
+&
+\begin{minipage}{.225\textwidth}
+      \includegraphics[height=1em]{figures/decoding_dist_presidential_speeches}
+\end{minipage}
+\\
+\bottomrule
+\end{tabular}
+\caption{Statistics on the annotation tasks (game rounds) available in our system. The discrepancies in number of annotations per dataset is partially due to the fact that players were able to choose which domain they performed annotations in.}
+\label{tab:dataset_stats}
+\end{table*}
+
+\begin{table*}[tb]
+\center
+\small
+\begin{tabular}{l|rrrrr}
+\toprule
+Class & \# Participants & \# Annotations & Avg Ann / Part & Avg Score / Part & Avg Time (s)\\
+\midrule
+Group A & 141 & 6,527 & 46 & 1.966 & {5.651} \\
+Group B & 102 & 15,119 & 148 & 2.134 & {6.443} \\
+\midrule
+Overall & 241 & 21,646 & 90 & 2.083 & {6.338} \\
+\bottomrule
+\end{tabular}
+\caption{Statistics on the students who were invited to complete annotations on \ROFT. ``Avg Ann / Part'' is the average number of annotations per participating student,  while ``Avg Score / Part'' is the average score. ``Avg Time'' is the average time it took a participant to read one sentence. Standard error is shown.
+}
+\label{tab:particpants}
+\end{table*}
+\subsection{Continuation Sources}
+
+In order to answer questions related to how model attributes affect generated text we employed different methods of text generation for each category.
+For Recipes, New York Times, and Stories, we generated continuations with GPT-2 XL using nucleus sampling \citep{holtzmanetal2020} with $p=0.4$ and a repetition penalty of $1.2$ \citep{keskar2019ctrl}.
+For Recipes, we additionally generated continuations with a GPT-2 XL model finetuned on recipes\footnote{See Appendix \ref{app:gen_filter} for finetuning details.}.
+
+For New York Times and Stories, we experimented with varying the $p$ used for decoding, testing out $p=0.0$ (argmax) and $p=1.0$ (sampling directly from the model's predicted distribution).
+
+We also added 100 attention-check game rounds (10 for each possible context length), where rather than transitioning to machine-generated text, the passage transitioned to sentences from a randomly selected news article.
+We refer to this as the ``random'' model in our analysis and expect these game rounds to be trivial for players.
+
+For Stories, we experimented with different model sizes, generating continuations with both GPT-2 Small (117M Parameters) and GPT-2 XL (1.5B Parameters).
+Lastly, for Presidential Speeches, we generated continuations using the CTRL model \citep{keskar2019ctrl} rather than GPT-2.
+CTRL has the option to specify a control code indicating what domain to generate text in. For half of the generations, we used the ``[Politics]'' control code while for the other half we randomly selected a control code each time.
+Table \ref{tab:dataset_stats} gives the statistics of the generations included. Note that not all generations received annotations.
+
+
+
+\subsection{Final Annotations Used for Analysis}
+In total, we collected 42,165 annotations over 7,895 different game rounds.
+The annotations were then filtered in the following ways.
+If a player guessed the same boundary position for a series of 5 or more rounds in a row, we removed all the annotations in the series because the player was likely no longer actually playing the game as designed.
+We also removed annotations from cheaters who exploited Javascript vulnerabilities.
+Finally, for the recipes genre, a bug during dataset curation resulted in an over-representation of ``all-human'' game rounds played;
+for better balance during analysis, we randomly removed a portion of these annotations.
+More details on filtering are in Appendix \ref{app:filtering}.
+Our final filtered dataset consisted of 21,646 annotations over 7,257 game rounds.
+For News, Stories, and Recipes, we had on average over 2 annotations per game round, while for Speeches, a smaller dataset, we had on average 16.
+Table \ref{tab:dataset_stats} gives a detailed breakdown of the dataset across genres and generation systems.
+
+
+% \TODO{(Checklist) Mention the exit survey explicitly and mention that all players in our data are anonymized and that they consented to their data being used in our research? Also mention the intended use of our dataset. (maybe include that in \S3.6?)}
+
+\section{Findings}
+\label{sec:findings}
+The collected annotations allow us to investigate several questions.
+Error bars on all figures and tables are 95\% confidence intervals.
+Appendix \ref{app:graph_values} gives the exact values for all bar graphs.
+
+\subsection{Can humans detect generated text?}
+Players correctly guessed exactly on the boundary sentence 23.4\% of the time.
+For game rounds which contained at least one generated sentence, players were able to eventually guess machine-generated 72.3\% of the time, even if they missed the exact boundary. % TODO (Daphne) does this mean predicted >= true && true != 9 ?
+Players incorrectly identified 61.3\% of all-human game rounds as containing machine-generated text .
+
+The average number of points (\S\ref{sec:points}) received per round by our players was 2.08, well above random chance.
+As baselines, if a player uniform randomly guessed every round, their expected per-round score would be 1.31, and
+if they always guessed the last sentence, their expected per-round score would be 1.5.\footnote{These expectations assume that the true boundary position is equally likely to be at any position. Figure \ref{fig:distribution_true_boundaries} shows the true distribution of boundaries, which was not quite uniform.}
+For the remaining analyses, we will use average points earned as the primary measure of detection ability.
+This measure correlates with other possible metrics (Table \ref{tab:correlations_with_other_metrucs}).
+
+As an additional sanity check on annotator skill, we included game rounds in the News domain where instead of transitioning to an LM-generated continuation, the text transitioned to a completely different news article selected at random.
+Out of the 214 annotations we collected for this ``sanity check'' system, the mean score was 2.75, significantly higher than any of the true LM-backed systems.
+Also, for these annotations, the error type ``irrelevant'' was selected about twice as often as all other error types combined, validating that players were paying attention to the task at hand.
+
+\subsection{How much does player ability vary?}
+% \subsection{Annotator Skill and Agreement}
+There was a large variance in the skill of individual players.
+Out of the 116 players who completed 50 game rounds, 19 earned a total score of 70 or fewer points (one std below the mean score) in their first 50 rounds, while 15 earned a total score 127 or greater points (one standard deviation above the mean score). Four of these raters scored two standard deviations above the mean score.
+
+We also found that under the right conditions, players can improve over time.
+There was no correlation between number of rounds played and player score for Group A.
+However, Group B, who were given extra credit proportional to their game score, did show slight improvement (Table \ref{tab:correlation_over_time}). 
+Interestingly, there was also lower variance in points earned among Group B (Figure \ref{fig:skill_over_time}).
+
+% We hypothesize that the difference between these two group comes from better guidance as to what to look for in generated text and more performance-based incentives to improve at the task.
+
+% Given the tendency for annotators to game our system by learning to select all sentences as human-written, we hypothesized that this improvement over time may actually be attributable to annotators learning how to maximize points rather than actually improving at the detection task. To combat this, we re-conducted our analysis with much more aggressive filtering and got similar results. A more detailed reporting of this experiment can be found in Appendix \ref{app:gaming}.
+
+We can also measure inter-annotator agreement with the Krippendorff's alpha co-efficient.
+This statistic measures how much disagreement there is between players compared to the amount of disagreement one would expect by chance.
+Two players are considered to have agreed if they both guessed ``machine-generated'' on any sentence after the true boundary or if they both guessed the entire passage was human-written.
+Over all annotations, we found $\alpha$=-0.25, indicating there was less agreement than could be expected from random guessing, suggesting different annotators were better at identifying different kinds of problems with LM-generated text.
+However, among our top 25\% of players (measured by mean score), there was high inter-annotator agreement, with  $\alpha$=0.44, suggesting that good annotators made similar errors.
+
+\begin{figure}[tb]
+    \centering
+    \includegraphics[width=1\linewidth]{figures/domain_topp.pdf}
+    \caption{\textbf{(left)} Comparison of mean player score across different genres with GPT-2 XL $p$=0.4 (and CTRL $p$=0.4 for speeches). \textbf{(right)} Comparison of mean player score across different values of $p$ for nucleus sampling (GPT-2 XL), as well as a ``sanity-check'' baseline.}
+    \label{fig:genre_top_p}
+\end{figure}
+
+\begin{figure}[tb]
+    \centering
+    \includegraphics[width=0.7\linewidth]{figures/model_size_and_finetuning.pdf}
+    \caption{\textbf{(left)} For Stories, as model size increases (using $p$=0.4), detection becomes harder. \textbf{(middle)} For Recipes, extra finetuning does not significantly impact detectability. \textbf{(right)} For Speeches, using a ``[Politics]'' control has no impact on detectability.}
+    \label{fig:model_size_finetuning}
+\end{figure}
+
+\begin{figure}[tb]
+    \centering
+    \includegraphics[width=\linewidth]{figures/time_tracking.pdf}
+    \caption{\textbf{(left)} Histogram showing the relationship between points earned and the number of seconds an annotation took. \textbf{(right)} Among players who completed at least 100 annotations, average annotation speed decreased with increased experience at the task.
+    % We see that high scoring annotations take longer and that players get faster over time.
+    % \TODO{nth annotation -> nth game round}
+    }
+    \label{fig:time_tracking}
+\end{figure}
+
+\subsection{Are some genres easier to detect?}
+We found that generated text was easier to identify in the recipes and speeches genres than in the stories and news genres.
+Figure \ref{fig:genre_top_p} (left) shows the average points received on each genre for game rounds that used comparable LMs, while Table \ref{tab:scores_per_domain} gives a more detailed breakdown across models. 
+
+For recipes, we expect that the task was made easier by the fact that the first human-written "sentence" in each game round was a semi-structured ingredients list, making it easy for players to check for contradictions---a step saying to mix in cream is probably generated if there is no cream ingredient.
+In addition, recipes often assume implicit unwritten knowledge, which language models struggle to get right---a step saying to crack eggs into a bowl must precede a step saying to  whisk the eggs.
+Indeed, if we look at the reasons given by our players for saying ``machine-generated,'' recipes had a much larger percentage of ``common\_sense'' errors (26\%) than did either News (10\%) or Stories (10\%).
+It is worth noting that this result slightly contradicts the one reported by \citet{clark2021all} who reported that generated recipes were more difficult to detect than news or stories; more targeted research is necessary to fully understand the relationship between domain and generation performance.
+
+We believe the speech genre was easier for players not because speeches are intrinsically more difficult to generate but because we struggled to get CTRL to produce high-quality, non-repetitive generations, even though it is about the same size model as GPT-2 XL.
+It was necessary to incorporate repetition penalties during generation with CTRL, which helped but did not
+solve the quality issues.
+
+\subsection{Does model size make a difference?}
+Previous work has shown that language model performance scales with number of parameters \citep{kaplan2020scaling}, so we expected players to be worse at detecting generations from larger models.
+Indeed, we found that players scored significantly higher when generations came from GPT-2 small (117M parameters) than when they came from GPT-2 XL (1.5B parameters) (Figure \ref{fig:model_size_finetuning}.).
+
+% We additionally experimented with the GPT-3 Davinci model (150B parameters) but were unable to collect enough annotations to draw any statistically significant conclusions.
+
+
+\subsection{Are diverse generations easier to detect?}
+Choice of decoding strategy is known to have significant impact on text quality \citep{zhang2020trading} and detectability \citep{ippolito-etal-2020-automatic}.
+Choosing a lower value of $p$ when generating with a nucleus sampling \citep{holtzmanetal2020} decoding strategy produces less diverse but also less noisy text than choosing a higher value of $p$.
+In our experiments, we did not find statistically significant differences in player skill between $p$=0.0 (greedy) and $p$=0.4 sampling (Figure \ref{fig:genre_top_p}).
+However, players were significantly better at $p$=1 (pure random sampling) than the lower values, 
+validating claims from earlier papers that LMs struggle to generate high-quality text with similar diversity to human-written text.
+Interestingly, generations from GPT-XL using $p$=1.0 were easier for players to detect than generations from GPT-2 small using $p$=0.4.
+This highlights the importance of decoding, as improper selection of decoding strategy may cause a language model to perform worse than one that is one tenth its size.
+% This further emphasizes the need for automatic detection tools to be used alongside human players in the boundary detection task as well as the binary detection task.
+% maybe mention the differences in reasons given for different p values. mention how the GROVER paper says that human text's perplexity is more similar to p=0.92 (lol)
+
+
+\subsection{Do control codes affect detectability?}
+CTRL is a 1.6B parameter LM trained with controllability in mind.
+At inference time, one can pass in a control code, such as ``[Politics]'' or ``[Horror]'' to include the style of the generated text.
+We investigated the efficacy of these control codes on the genre of presidential speeches by using ``[Politics]'' for half the generations and randomly selecting control codes for the remaining half.
+We found that use of the politics control code did not significantly affect  players' ability to distinguish real from fake text.
+This is not to say that control codes do not affect generation; however, it does suggest that the cues used by players to detect generations may not be related to genre-specific details, as least not within the genre of political speeches.
+Further work is needed to investigate whether control codes could have influenced detectability in other genres.
+
+\subsection{Does finetuning affect detectability?}
+We had expected that finetuning on in-domain text would result in a model that was better able to fool humans.
+Counter to expectations, there was a small increase in player detection ability when generations came from GPT-2 finetuned on recipes compared with generations from pre-trained GPT-2. This is despite the fact that the finetuned model had close to half the perplexity of the pre-trained model on a held out test set of 50,000 recipes (4.781 vs. 8.979).
+While we can only speculate as to the amount of recipe knowledge present in the pre-trained model (GPT-2's training data is not publicly available), it is possible the pre-trained model already contained enough understanding of recipe-like text that it was not critical to do the extra-finetuning.
+Perhaps finetuning would have had more impact in a specialized or jargon-laden domain (e.g. legal, medical).
+
+
+% However, it may also be the case that a sufficiently long prompt is enough priming to put any vanilla model with broad enough training data into a space where it generates comparative to a finetuned model. Future work should seek to further investigate this area and determine how finetuning may affect both automatic and human detection accuracy.
+
+\begin{figure}[tb]
+    \centering
+    \includegraphics[scale=0.375]{figures/overtime.pdf}
+    \caption{Performance over time for the two player groups (\S\ref{sec:players}). Players in Group B, who were given extra instruction and incentives, improved over time while those in Group A did not.}
+    \label{fig:skill_over_time}
+\end{figure}
+
+\begin{table}[tb]
+\small
+\centering
+\begin{tabular}{SSSSS} \toprule
+    {Group} & {$k$} & {$n$} & {Spearman $\rho$}\\ \midrule
+    {A} & {50} & {22} & {-0.03} \\
+    {A} & {100} & {13} & {-0.06}  \\
+    % {A} & {200} & {4} & {-0.03} \\
+    \midrule
+    {B} & {50} & {88} & {0.29} \\
+    {B} & {100} & {81} & {0.42} \\
+    % {B} & {200} & {54} & {0.35} \\
+    \bottomrule
+\end{tabular}
+\caption{The Spearman's rank correlation coefficient between the number of annotations performed before the current annotation and the score on the current annotation, for all $n$ players who have performed $k$ or more annotations. Players in Group B, who were given extra instruction and incentives, improved over time while those in Group A did not.}
+\label{tab:correlation_over_time}
+\end{table}
+
+\begin{figure}[tb]
+    \centering
+    \includegraphics[width=\linewidth]{figures/survey_results_no_fam.pdf}
+    \caption{Violin plots showing results of our mandatory exit survey. A violin plot is a box plot that also provides a density estimation. Results shown are filtered to only include players who did at least 20 rounds. We see that reading the help guide, being a native English speaker, and providing a custom response for your familiarity with NLG all contribute to a higher mean score while high domain expertise does not seem have an affect (except in the case of short stories, where variance is lower for domain experts).}
+    \label{fig:survey_results}
+\end{figure}
+
+\begin{figure*}[tb]
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/ner_stats.pdf}
+    \caption{We see that human sentences tended to have a different number of named entities than generated sentences.
+    Players picked up on the correct trend in Stories, but not in News or Speeches.}
+    \label{fig:sentence_stats}
+\end{figure*}
+
+\subsection{How much time did game rounds take?}
+To understand how much time game rounds took, we logged how many seconds players spent on each sentence decision.
+We controlled for instances of players leaving a game open mid-annotation by applying $\min(120, t)$ to all recorded times $t$.
+We computed total time per annotation by summing the times for each sentence-level decision.
+We found players took longer on annotations where they ended up receiving more points, and players gradually got faster over time (Figure \ref{fig:time_tracking}).
+While one might expect longer sentences to take more time to read and make decisions on, we found no correlation between time taken and length of sentence ($\rho$=-0.10), indicating that players take time to think about the task beyond just reading the sentence.
+
+\subsection{What sentence-level features could be used to detect generated text?}
+It has been well-studied how generated text differs in basic, measurable ways from human-written text, often due to the choice of decoding strategy.
+In particular, we measured how sentence length, part-of-speech distribution, and presence of named entities and novel words differed between the generated and human-written sentences in our dataset, and whether players were able to pick up on these differences.
+Figure \ref{fig:sentence_stats} shows the results for named entities, where novel named entities are ones which occured in the current sentence but not in any previous sentences.
+We found surprisingly different trends across different genres.
+On News and Recipes, the generated sentences tended to have fewer named entities than in human-written sentences.
+Annotators did not pick up on these trends, though they may have picked up on the fact that for Stories, the generated sentences tended to have slightly more named entities.
+
+In News and Speeches, machine-generated sentences tended to be shorter than human-written ones, a trend players did not pick up on.
+However, for Stories, the generated sentences were on average longer than the human ones, and annotators tended to select longer sentences as the boundary.
+Additionally in Stories, generated sentences has on average a greater proportion of adjectives and adverbs, but annotators did not pick up on this trend.
+
+
+\subsection{Does familiarity affect detectability?}
+All participating players filled out an exit survey after completing their annotations. The questions on this survey are in Table \ref{tab:survey_questions}.
+Figure \ref{fig:survey_results} shows some of the results.
+First, there was not much difference in performance between participants who reported they had never heard of GPT-2/3 and those who reported having considerable familiarity with them.
+Interestingly, participants who answered ``other'' and wrote custom responses did end up being better at the task.
+Second, participants who admitted that they did not read the help guide tended to perform poorly; all the best players did read the guide.
+Third, there was not much difference in ability between native and non-native English speakers.
+The very strongest players were not native English speakers.
+Finally, we did not observe any correlation between self-reported familiarity with a given genre and detection skill on that genre.
+% We see that a larger degree of domain familiarity does not have a statistically significant effect on mean score. However, we see that those who did not read the provided help guide did much worse on average and those that gave a custom response to their familiarity with NLG did much better on average. Finally, while native English speakers did do better on average than non-native speakers, the variance for non-natives was much higher resulting in many of our best players being non-native speakers.
+
+\subsection{What are the most reliable errors to look for when detecting generated text?}
+\label{sec:reasons}
+Each time a player specified a sentence was machine-generated, they had the option to specify why they made this decision, selecting from a set of pre-defined options (Table \ref{tab:reasons_text}) or else writing down a custom reason.
+Table \ref{tab:reasons} shows for each reason, the average number of points earned when that reason was specified.
+Like \citet{clark2021all}, we see that conditioning on bad grammar is by far the least reliable way to detect generated text.
+In addition, we see that over 30\% of all reasons given for generated text were ``irrelevant,'' a result that stayed consistent across all models and domains.
+We note that the three most reliable reasons given (``common\_sense,'' ``irrelevant,'' and ``contradicts\_sentence'') were also the three most common, indicating that improving these attributes will lead to the biggest improvements in generation performance.
+A more detailed breakdown, as well as several examples of custom reasons, can be found in Appendix \ref{app:reasons}.
+
+\begin{table}[tb]
+\small
+\center
+\begin{tabular}{lcc} \toprule
+    {Reason} & {$n$} & {Mean Score}\\ \midrule
+    {common\_sense} & {2,432} & {2.566 $\pm$ 0.086} \\
+    {irrelevant} & {4,259} & {2.530 $\pm$ 0.064}  \\
+    {contradicts\_sentence} & {1,606} & {2.527 $\pm$ 0.105}  \\ 
+    {contradicts\_knowledge} & {1,411} & {2.262 $\pm$ 0.111}   \\
+    {coreference} & {542} & {2.249 $\pm$ 0.176} \\
+    {repetition} & {728} & {2.128 $\pm$ 0.154} \\
+    {other} & {75} & {2.040 $\pm$ 0.483} \\
+    {generic} & {1,546} & {1.920 $\pm$ 0.101} \\
+    {grammar} & {1,539} & {1.780 $\pm$ 0.105} \\\bottomrule
+\end{tabular}
+\caption{
+The number of times each reason was given for text being machine-generated, and the mean score over those annotations.
+We see that when players select reasons like ``grammar'' or ``generic,'' they are much less likely to be correct than when selecting ``common\_sense'' or ``irrelevant.''}
+\label{tab:reasons}
+\end{table}
+
+\section{Discussion}
+\label{sec:discussion}
+In this paper, we have demonstrated the viability of the boundary detection task as a framework for soliciting human evaluation of natural-language generation systems.
+We conducted the largest study of generated text detectability to date and, in the process, replicated many previous major results in the field, such as the improved performance of bigger models \citep{kaplan2020scaling}, the importance of decoding strategy selection \citep{ippolito-etal-2020-automatic}, and the difficulty in incentivizing annotators to improve over time \citep{clark2021all}.
+In addition, we have provided new insights into the ways in which humans interact with partially-generated text.
+
+In terms of ethics, work on the detectability of machine-generated text sits at an interesting balancing point.
+On one hand, gamifying and publicizing the detection task may help to raise the public's awareness of their susceptibility to machine-generated text, and work such as ours paves the way for future research on techniques for helping the public to improve at detection.
+On the other hand, we show that the detection task is a viable method for evaluating generation systems.
+For researchers aiming to build better generative language models, decreasing human detection ability might a very reasonable goal to optimize for.
+As much as our project seeks to better understand and improve human detection, our results can just as easily be used to make generative models even less detectable than they already are.
+Despite this drawback, we nonetheless believe it is important to study detection as a means of assessing the risks that language models pose and protecting against future harm.
+
+One major area of improvement in our study is to develop better incentives for players to give good annotations that are unbiased by system design.
+Many of the students given extra credit proportional to the amount of points they scored learned they could exploit the point system by always picking one of the later sentences as the boundary.
+They found that rapidly guessing Sentence 9 as the boundary on every game round was a more effective strategy for maximizing earned points per time spent than taking the time to carefully read the text in each round.
+One alternative system which could reduce this bias would be to show all ten sentences in the passage at once rather than show them one at a time.
+The player would get a certain number of tries to guess the index of the boundary sentence and would be scored based on the number of tries this takes.
+This would resolve the bug in our current system that some sentence positions have a high point value in expectation.
+
+In addition to the game design aspect of the study, there are many more areas for future work to investigate. To start, our study tested only a limited subset of models and domains. It would be interesting to see if larger models, such as GPT-3 \citep{brownetal2020}, continue to show similar results across the variables we investigated (finetuning, topic control, decoding strategy). Another area of improvement is in the nature of the boundaries. Our study was limited in that we assumed continuations always happened on the sentence boundary, but that is not always necessarily the case. Future work should look at continuations that do not happen exactly on the boundary between sentences. While this would require major edits to the detection task, interface, and incentive structure, it would allow for a much more realistic representation of what generated text looks like in the real world if done properly. 
+
+Finally, we believe that future work should seek to investigate more into exactly what annotators are thinking when they make their decisions. Researchers need to help give annotators the language to properly explain how and why they come to select the sentences that they do, whether this be in the form of better error categorization or in free text responses. In addition, future work should seek to draw from a more diverse pool of annotators. We acknowledge that university students (many of whom have studied computer science) may not be representative of the larger population and we hope that future work can take on a larger user study on a more diverse population and investigate how the unique backgrounds of different annotators contribute to how they detect generated text.
+
