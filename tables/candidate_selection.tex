@@ -1,0 +1,32 @@
+
+\begin{table}
+    % \setlength{\tabcolsep}{2pt}
+    \centering \small 
+        \begin{tabular}{l r r r}
+        \toprule
+         & Acc & BLEU & PPL\\
+        \midrule
+        \underline{LLM-128B} \\
+        Zero-shot & 69.7 & 28.6 & 397 \\
+        + cand.~select. & 31.4 & 61.5 & 354\\
+        Five-shot & 83.2 & 19.8 & 240\\
+        + cand.~select. & 61.5 & 55.6 & 306\\
+        Augmented zero-shot & 79.6 & 16.1 & 173\\
+        + cand.~select. & 65.0 & 49.3 & 292\\
+        \midrule
+        \underline{LLM-128B-dialog} \\
+        Zero-shot & 59.1 & 17.6 & 138\\
+        + cand.~select. & 46.8 & 24.2 & 166\\
+        Five-shot & 94.3 & 13.6 & 126\\
+        + cand.~select. & 81.3 & 47.6 & 345\\
+        Augmented zero-shot & 90.6 & 10.4 & 79\\
+        + cand.~select. & 73.7 & 40.6 & 184\\
+        \bottomrule
+        \end{tabular}
+    % \vspace{3mm}
+\caption{
+Sentiment style transfer results with candidate selection (cand.~select.). 
+Candidate selection means that of the sixteen examples returned by our model, we choose the one with the highest BLEU with the source sentence.  
+}
+\label{tab:candidate_select}
+\end{table}

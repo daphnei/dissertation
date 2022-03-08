@@ -1,0 +1,48 @@
+
+\begin{table}[t]
+    \setlength{\tabcolsep}{3pt}
+    \centering \small 
+        \begin{tabular}{l r r r}
+        \toprule
+         & Acc & BLEU & PPL\\
+        \midrule
+        \underline{\textsc{Supervised Methods}} \\
+        Cross-alignment \citep{NIPS2017_2d2c8394} & 73.4 & 17.6 & 812 \\
+        Backtrans \citep{prabhumoye-etal-2018-style} & 90.5 & 5.1 & 424 \\
+        Multidecoder \citep{AAAI1817015}  & 50.3 & 27.7 & 1,703\\
+        Delete-only \citep{li-etal-2018-delete} & 81.4 & 28.6 & 606 \\
+        Delete-retrieve \citep{li-etal-2018-delete} & 86.2 & 31.1 & 948\\
+        Unpaired RL \citep{xu-etal-2018-unpaired} & 52.2 & 37.2 & 2,750\\
+        Dual RL \citep{DBLP:conf/ijcai/LuoLZYCSS19} & 85.9 & 55.1 & 982\\
+        Style transformer \citep{dai-etal-2019-style} & 82.1 & 55.2 & 935\\
+        \midrule
+        \underline{\textsc{Inference-only methods}} \\
+        GPT-3 ada, aug zero-shot& 31.5 & 39.0 & 283\\
+        GPT-3 curie, aug zero-shot& 53.0 & 48.3 & 207\\
+        GPT-3 da vinci, aug zero-shot& 74.1 & 43.8 & 231\\
+        % \midrule
+        LLM: zero-shot & 69.7 & 28.6 & 397 \\ 
+        {\color{white}LLM: }five-shot & 83.2 & 19.8 & 240 \\
+        {\color{white}LLM: }aug zero-shot & 79.6 & 16.1 & 173 \\
+        % \midrule
+        LLM-dialog: zero-shot & 59.1 & 17.6 & 138 \\
+        {\color{white}LLM-dialog: }five-shot & 94.3 & 13.6 & 126 \\
+        {\color{white}LLM-dialog: }aug zero-shot & 90.6 & 10.4 & 79 \\
+        % \midrule
+        % GLM & 65.0 & 49.3 & 292 & 10.3 \\
+        % GLM-dialog & 73.7 & 40.6 & 184 & 10.7 \\
+        % GLM & 79.6 & 16.1 & 173 \\
+        % GLM-dialog & 90.6 & 10.4 & 79\\
+        \bottomrule
+        \end{tabular}
+    % \vspace{3mm}
+\caption{
+Comparing augmented zero-shot prompting with supervised style transfer methods on the Yelp sentiment style transfer dataset using automatic evaluation.
+Acc: accuracy; PPL: perplexity.  The inference-only table shows our method applied to 3 different sizes of GPT-3, plus our own LLM. 
+% For sentiment style transfer, we show accuracy, BLEU, and perplexity (PPL) reported as the average of positive $\rightarrow$ negative and negative $\rightarrow$ positive. 
+% In (a), augmented zero-shot prompting of GLM and GPT-3 are compared with prior supervised style transfer methods.
+% In (b), we compare zero-shot, five-shot, and augmented zero-shot prompting for our GLM models. 
+% Candidate selection means that of the sixteen examples returned by the API, we choose the one with the highest BLEU with the source sentence (in the default case, we just use the first returned output).  
+}
+        \label{tab:summary_table}
+\end{table}

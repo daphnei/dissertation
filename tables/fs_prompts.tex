@@ -1,0 +1,54 @@
+\newcommand{\inputsent}[1]{\textcolor{teal}{\{#1\}}}
+\newcommand{\rewrite}[1]{{\textcolor{magenta}{\underline{#1}}}}
+\newcommand{\outputsent}[1]{\textcolor{blue}{\{#1\}}}
+
+\begin{table*}[t]
+    \centering
+    \small
+    \begin{tabular}{p{\linewidth}}
+\hline
+\multicolumn{1}{c}{(a) Zero-shot Prompt} \\
+\textbf{\texttt{Here is some text:\inputsent{That is an ugly dress}. Rewrite it to be \rewrite{more positive}.}}
+\\
+\hline
+\multicolumn{1}{c}{(b) Few-shot Prompt}\\
+\texttt{Here is some text:\inputsent{I was really sad about the loss}. Rewrite it to be \rewrite{more positive}.}
+\newline
+\texttt{\outputsent{I was able to accept and work through the loss to move on.}}
+\newline
+\texttt{Here is some text:\inputsent{The eggnog was tasteless.}. Rewrite it to be \rewrite{more positive}.}
+\newline
+\texttt{\outputsent{The eggnog had a great, festive taste to it.}}
+\newline
+\texttt{`Here is some text:\inputsent{Everything is awful}. Rewrite it to be \rewrite{more positive}.}
+\newline
+\texttt{\outputsent{Everything is going well!}"}\newline
+\textbf{\texttt{``Here is some text:\inputsent{That is an ugly dress}. Rewrite it to be \rewrite{more positive}.}}
+\\
+\hline
+\multicolumn{1}{c}{(c) Augmented Zero-shot Prompt}
+\\
+\texttt{Here is some text:\inputsent{When the doctor asked Linda to take the medicine, he smiled and gave her a lollipop.}. Rewrite it to be \rewrite{more scary}. \newline
+\outputsent{When the doctor told Linda to take the medicine, there had been a malicious gleam in her eye that Linda didn't like at all.} \newline
+Here is some text:\inputsent{they asked loudly, over the sound of the train.}. Rewrite it to be \rewrite{more intense}. \newline
+\outputsent{they yelled aggressively, over the clanging of the train}\newline
+Here is some text:\inputsent{When Mohammed left the theatre, it was already dark out}.\newline
+Rewrite it to be \rewrite{more about the movie itself}.\newline
+\outputsent{The movie was longer than Mohammed had expected, and despite the excellent ratings he was a bit disappointed when he left the theatre.}\newline
+Here is some text:\inputsent{next to the path}. Rewrite it \rewrite{to be about France}. \newline
+\outputsent{next to la Seine}\newline
+Here is some text:\inputsent{The man stood outside the grocery store, ringing the bell.}. Rewrite it to be \rewrite{about clowns}. \newline
+\outputsent{The man stood outside the circus, holding a bunch of balloons.}\newline
+Here is some text:\inputsent{the bell ringing}. Rewrite it to be \rewrite{more flowery}. \newline
+\outputsent{the peals of the jangling bell}"\newline
+Here is some text:\inputsent{against the tree}. Here is a rewrite of the text, which includes the word 'snow'. \newline
+\outputsent{against the snow-covered bark of the tree}\newline
+\textbf{\texttt{Here is some text:\inputsent{That is an ugly dress}. Rewrite it to be \rewrite{more positive}.}}}
+\\
+\hline
+\end{tabular}
+    \caption{Examples of zero, few and augmented-zero shot prompts for negative-to-positive style transfer on the sentence ``That is an ugly dress."
+    % The prompt marked (b) is the exact one we used for all our style transfer experiments. The text corresponding to the specific example we would like to transform is marked in blue.
+    }
+    \label{tab:prompts}
+\end{table*}
