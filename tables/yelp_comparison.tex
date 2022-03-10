@@ -1,5 +1,11 @@
 
 \begin{table*}
+\caption{
+For sentiment style transfer, we show accuracy, BLEU, and perplexity (PPL) reported as the average of positive $\rightarrow$ negative and negative $\rightarrow$ positive. 
+In (a), augmented zero-shot prompting of GLM and GPT-3 are compared with prior supervised style transfer methods.
+In (b), we compare zero-shot, five-shot, and augmented zero-shot prompting for our GLM models. 
+Candidate selection means that of the sixteen examples returned by the API, we choose the one with the highest BLEU with the source sentence (in the default case, we just use the first returned output).  
+}
     \setlength{\tabcolsep}{2pt}
     \begin{subtable}{.58\linewidth}
     \centering \small 
@@ -65,11 +71,5 @@
         \label{tab:ablation}
     \end{subtable}
     % \vspace{3mm}
-\caption{
-For sentiment style transfer, we show accuracy, BLEU, and perplexity (PPL) reported as the average of positive $\rightarrow$ negative and negative $\rightarrow$ positive. 
-In (a), augmented zero-shot prompting of GLM and GPT-3 are compared with prior supervised style transfer methods.
-In (b), we compare zero-shot, five-shot, and augmented zero-shot prompting for our GLM models. 
-Candidate selection means that of the sixteen examples returned by the API, we choose the one with the highest BLEU with the source sentence (in the default case, we just use the first returned output).  
-}
 \end{table*}
 % \end{wraptable}

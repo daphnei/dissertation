@@ -11,10 +11,353 @@ Third, I will present a recipe for performing sentence style transfer into arbit
 To test out how these and other NLG-based tools can be used in practice, we built Wordcraft, a word processor augmented with a variety of ``smart'' writing controls and suggestion tools.
 I will end by describing the features of Wordcraft and the results of a user study conducted with the tool.
 
-\section{Background}
-\TODO{Background on AI-assisted writing}
+\section{Motivation}
+Artificial intelligence systems which can write stories have bee a goal of researchers since the early days of computing.
+
+Rather than focusing on developing NLG systems which produce entire stories, my research in this area focuses on enabling better human-AI collaboration.
+
+\TODO{More background on AI-assisted writing}
 
 \section{Models for Infilling Text}
+
+\subsection{Motivation}
+% Main contributions
+% First to propose using the same model for both fill-in-the-blank and continuation.
+% First to compare against strategies which do not require any fine-tuning.
+% First to show how models trained on general data transfer to out-of-domain data.
+
+Natural language generation systems are increasingly being incorporated into applications where a human writer and an AI jointly collaborate to construct text.
+Wordcraft, The AI-assited text processor I describe in Section \ref{section:wordcraft} is one such application.
+Another is Storium, where players of a writing game, have the option to accept suggestions from a natural langueg generatin system \citep{akoury2020storium}.
+There are also more practical domain such as email composition assistance and code synthesis \citep{buschek2021impact,wu2018smart,austin2021program}.
+Many of these applications are limited to generating text at the end of what has been written so far.
+This is because
+both historical language models (LMs) and state-of-the-art neural LMs
+are typically designed to produce text by repeatedly predicting the next word in a sequence given the previous words.
+However, there is a need for more powerful interactive tools which enable writers to solicit insertions at any chosen position within the existing text, a task referred to as fill in the blank (\FitB) or infilling.
+For example, a creative writer might want a tool which can insert a description of a place or character, and a programmer might want a system that can fill in a method in the middle of their code.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.48\textwidth]{figures/leading_figure.pdf}
+    \caption{A single model that can handle a variety of related writing tasks is more efficient than separate models per task.}
+    \label{fig:leading_figure}
+    \vspace{-1em}
+\end{figure}
+
+Most prior work tackling \FitB{} consider it a separate task from continuation, one to be specifically optimized for, for example training a model from scratch \citep{ippolito2019unsupervised,zhu2019text} or finetuning a model trained originally for continuation \citep{donahue2020enabling}.
+Having separate trained models for \FitB{} and for continuation is inefficient for downstream applications where maintaining multiple neural networks can b e prohibitive.
+
+Any model that can do \FitB{} can be made to do continuation simply by placing the blank at the end of the input.
+Thus, in this section, we describe how models trained on \FitB{} can be employed effectively for both infilling and continuation operations.
+We show how T5 \citep{raffel2019exploring}, one of the most popular pre-trained models, can reasonably handle both tasks, as it was pre-trained with a \FitB-like objective.
+Finetuning T5 further improves its ability and also allows for the incorporation of controllability of generation length and word choice.
+
+\begin{table}[t]
+  \centering
+  \small
+  \caption{Examples of the finetuning objectives. ``8" is the approximate length in words of the target sequence. During finetuning, about 25\% of training examples took each of these formats.}
+    \begin{tabular}{p{0.12\textwidth}p{0.57\textwidth}p{0.20\textwidth}}
+    \hline
+    Example Type & Input & Target \\
+    \hline
+     \cFITB{} no goal & fill: I love avocados. I ate a sandwich covered in them. {\textbf \_8\_} I talked to my doctor about it later. It turned out I was allergic to avocados. & After I ate it, my mouth was itchy and tingly. \\
+    \hline
+     \cFITB{}  with goal & fill: I love avocados. I ate a sandwich covered in them.  {\textbf \_8\_} I talked to my doctor about it later. It turned out I was allergic to avocados.  {\textbf Goal: mouth was itchy} & After I ate it, my mouth was itchy and tingly. \\
+    \hline
+     \cFITB{} no goal& fill: I love avocados. I ate a sandwich covered in them. After I ate it, my mouth was itchy and tingly. I talked to my doctor about it later.  {\textbf \_8\_}  & It turned out I was allergic to avocados. \\
+    \hline
+     \cFITE{} with goal & fill: I love avocados. I ate a sandwich covered in them. After I ate it, my mouth was itchy and tingly. I talked to my doctor about it later.  {\textbf \_8\_}   {\textbf Goal: allergic to} & It turned out I was allergic to avocados. \\
+    \hline
+    \end{tabular}
+   \vspace{-0.6em}
+  \label{tab:task_examples}
+  \vspace{-1em}
+\end{table}%
+
+\subsection{Supporting \FitB{} and Continuation}
+\label{section:methods}
+We define filling in the blank as the task of predicting text to replace a single missing span, usually demarcated with a special token, in an input text passage. (Some prior work considers inputs with multiple blanks, but inserting text at one position at a time better matches the kinds of edits humans do.)
+We define continuation in the traditional language modeling sense--predicting the next token in a sequence given only the previous tokens.
+\citet{donahue2020enabling} discuss how language modeling is a special case of infilling, and they use this as justification to finetune a continuation-based language model to do infilling.
+However, we argue that if continuation is a subtask of infilling, it makes more sense to go in the opposite direction: prioritize a model which can do infilling and check that it achieves satisfactory performance at continuation.
+
+T5 is a model pre-trained with a ``span corruption'' objective very similar to \FitB; the model is asked to reconstruct the missing text after random sub-sequences of the input are replaced with special identifiers.
+Thus, a pre-trained T5 model can be used without any further training to do both continuation and infilling by appropriately choosing text to mask out.
+The encoder-decoder architecture of T5 is also more conducive to \FitB{} than decoder-only architectures like GPT-2 \citep{radford2019language} which are typically used for continuation-based language models.
+This is because the attention mechanism in encoder-decoder architectures allows the context on the left side of the blank to attend to the context on the right, while decoder-only architectures only support masked attention (each token can only attend to the positions to its left).
+
+Even though T5's pre-training objective was a form of \FitB, finetuning is still advantageous.
+For one, our definition of \FitB{} only includes a single masked out substring, not multiple, so finetuning improves alignment with the goal task.
+% Furthermore,
+Finetuning also allows us to incorporate additional conditioning signals not supported by the pre-trained T5, such as being able to specify the desired length of the generated text or specify words that ought to be included in the blank, a task we refer to as ``goal conditioning."
+Length control, which comes by default in a traditional language model
+%since one can simply sample
+by simply sampling more or fewer
+tokens, is particularly necessary for \FitB, where the end of the generation must fit seamlessly with the text to its right.
+
+The biggest language models available today were largely trained in the continuation rather than the \FitB{} paradigm \citep{gpt3,gpt-neo}.
+Since our primary goal is to have a single model for both tasks, we also address the question: if a continuation-trained model is big enough, can it handle \FitB{} without the need for finetuning?
+Few-shot learning with large language models, as popularized by \citet{gpt3}, has had success on many tasks in NLP.
+We try out this approach for \FitB{} by designing a few-shot prompt containing several demonstrations of the \FitB{} task, formulated in a similar ``infilling by language modelling" style as \citet{donahue2020enabling}.
+
+\subsection{Experimental Setup}
+For all primary experiments, we use the 800M parameter v1.1 `large' model.
+We also show soome addditional results comparing against the 3B parameter `XL' T5 model.
+To finetune T5 for \FitB, we construct training examples from documents by first partitioning the document text into a left context, gap, and right context.
+The input sequence is then the left and right contexts concatenated with textual representations of the additional conditioning signals.
+The target sequence is the true text for the blank.
+This formulation easily supports continuation, as the blank can be deliberately placed at the end (i.e., providing no right context).
+Documents are drawn from C4, the same dataset T5 was pre-trained on.
+Documents are split into word sequences, and these are then randomly truncated to be between 256-512 words long.
+A substring of between 1 and 64 words is selected to be blanked out.
+For half of the training examples the blank is randomly selected, and for the other half it is always placed at the end.
+To support length conditioning, we follow \citet{roberts2020exploring} and include a bucketed version of the target length as part of the blank.
+To support goal conditioning, for half the examples, a random substring of up to half the words of the target is appended to the end of the input.
+Examples are shown in Table \ref{tab:task_examples}.
+
+We compare T5 against a state-of-the-art 137B parameter decoder-only language model (\LLM{}) trained explicitly for continuation and used successfully for few-shot learning in other domains \citep{austin2021program,reif2021recipe}.
+%This model is used (1) as a standard continuation model, passing in only the left context of an example as the prompt; and (2) in a few-shot learning paradigm.
+This model is used (1) as a standard continuation model, prompting with only the left context of an example; and (2) in a few-shot learning paradigm.
+
+We evaluate continuation and \FitB{} on C4 as well as two story writing datasets, as creative writing assistant applications are one of the key areas we expect to benefit from multi-task models \citep{wordcraft}.
+Reddit Writing Prompts (\textsc{Rwp}) is a corpus of stories from the `r/WritingPrompts' sub-Reddit \citep{fan2018hierarchical}, and we construct validation sets \rwpFITB{} and \rwpFITE{} using the same method described in the previous section.
+C4 and \textsc{Rwp} validation sets are capped to 5,000 examples.
+% We also include a third validation set \rwpFITS, where gaps are randomly chosen but always exactly one sentence long.
+ROC Stories (\textsc{Roc}) is a crowd-sourced dataset of five-sentence commonsense stories \citep{mostafazadeh2016corpus}.
+For ROC Stories, the 2018 validation set is used to construct \rocFITB, where the middle sentence of each story is blanked out, and \rocFITE, where the last sentence is blanked out.
+Unless otherwise noted, all evaluation is done without goal conditioning and uses random sampling with top-$k$=50 as the decoding strategy.
+Example generations for all evaluation sets can be found at \url{https://bit.ly/2U0Ixxa}.
+
+\begin{table}[t]
+\small
+\centering
+    \caption{Perplexity of evaluation sets according to \LLM{} when the blank has been filled with approaches involving no fine-tuning (top), finetuned approaches (middle), and the groundtruth (bottom).
+    Lower values indicate that the text was considered more fluent by the \LLM{}.
+    \label{tab:generative_ppl_results}
+    }
+    \begin{tabular}{l|rrr}
+    \toprule
+    %  & \cFITB & \rocFITB & \rwpFITB & \rwpFITB-Sent \\
+    & \textsc{C4Fill} & \textsc{RwpFill} & \textsc{RocFill} \\ % & \textsc{RwpFill} \\
+    & \textsc{Blank} & \textsc{Middle} & \textsc{Blank} \\ % & \textsc{Blank}-Sent \\
+    % \cline{2-5}
+    \hline
+    {Few-shot \LLM} & 14.14 & 19.48 & 18.21 \\ % & 16.36 \\
+    % {Pre-trained T5 XL} & 10.27 & 13.94 & 21.75 \\ % & TODO \\
+    {Pre-trained T5} & 10.38 & 14.08 & 22.62 \\ % & 10.49 \\
+    \hline
+    % {\FITBFITE{} XL} & 11.49 & 15.05 & 24.87 \\ % & 10.33 \\
+    {Finetuned T5} & 10.33 & 14.08 & 20.47 \\ % & 10.37 \\
+    {\citet{donahue2020enabling}} & N/A & N/A & 23.28 \\ % & N/A \\
+    
+    \hline
+    {Groundtruth} & 9.41 & 12.99 & 16.90 \\
+
+    \bottomrule
+    \end{tabular}
+\end{table}
+
+\begin{table}[t]
+    \caption{Perplexity of continuation-based evaluation sets when a continuation has been generated using approaches with no finetuning (top) and two settings of finetuning T5 (middle).}
+    \label{tab:generative_ppl_continuation_results}
+    \centering
+    \small
+    \begin{tabular}{l|rrr}
+    \toprule
+    %  & \cFITB & \rocFITB & \rwpFITB & \rwpFITB-Sent \\
+    & \textsc{C4Fill} & \textsc{RwpFill} & \textsc{RocFill} \\
+    & \textsc{End} & \textsc{End} & \textsc{End}  \\
+    % \cline{2-5}
+    \hline
+    % {\LLM} & TODO  & TODO & TODO \\
+    {Pre-trained T5}  & 10.09 & 13.51 & 21.71 \\
+    \hline
+    % {\FITBFITE{} XL}  & 10.77 & 14.66 & 22.66 \\
+    {T5 \FITBFITE{}} & 10.04 & 13.74 & 19.60 \\
+    {T5 \textsc{Lm-Adaption}} & 10.06  & 13.71 & 19.68 \\
+    \hline
+    {Groundtruth} & 9.41 & 12.99 & 16.90 \\
+    \bottomrule
+    \end{tabular}
+\end{table}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.49\textwidth, trim={0 0.55cm 0 0}, clip]{figures/human_eval}
+    \vspace{-1.75em}
+    \caption{Human ratings of \FitB{} generations (left) and continuation generations (right). Error bars are 95\% confidence intervals.}
+    \label{fig:human_eval_results}
+\end{figure}
+
+\begin{table}[t]
+\centering
+\small
+    \caption{Accuracy of models finetuned on \FITBFITE{} at correctly using provided length and goal conditioning signals. \label{tab:conditioning_signal}}
+    \begin{tabular}{p{7em}|rr}
+    % & \multicolumn{2}{c|}{XL} \\
+    \toprule
+    % & \multicolumn{2}{c|}{Large} \\
+    \textbf{Finetuned T5} & Context & Length \\
+     \hline
+    \cFITB & 0.860 & 0.877 \\
+    \rwpFITB & 0.797 & 0.881 \\
+    \hline
+    \cFITE & 0.858 & 0.775 \\
+    \rwpFITE & 0.791 & 0.746 \\
+    \bottomrule
+    \end{tabular}
+\end{table}
+
+\section{Results}
+\subsection{Difficulty in Developing a Few-Shot Prompt for the Infilling Task}
+Filling in a blank seems like a task that ought to be easy to accomplish with few-shot learning techniques.
+Training data for large language models often contains fill-in-the-blank style examples, as school lessons with cloze-style questions are relatively common on the internet.
+Furthermore, infilling ought to be an easier task tha continuation since there is more information available for the model to base its prediction on.
+However, after conducting a large-scale study of many possible few-shot prompts, we found that this technique fell short for the fill-in-the-blank task.
+
+
+Choosing appropriate examples for a few-shot prompt is very challenging because task performance is often sensitive to minor changes in prompt design \citep{zhao2021calibrate}.
+We experimented with prompts randomly selected from the C4, Reddit Writing Prompts, and ROC Stories training sets, as well as prompts consisting of examples we hand-wrote with the goal of story-writing in mind.
+For each prompt source, we randomly generated five possible prompts, each with three examples (more details in Appendix).
+To simplify the task, we conditioned on desired length but did not include goal conditioning.
+
+An example prompt is shown in Figure \ref{fig:few_shot_prompt}.
+When choosing random few-shot prompts from the dataset train sets, in order to keep the few-shot prompt text within the 512-token context length limit of model we used for inference, we only considered examples that contained 100 or fewer tokens, so that the max length of the few-shot prompt was no more than 300 tokens.
+This left 212 tokens for the text of the actual example we were interested in performing the \FitB{} task on.
+For each evaluation set, examples with inputs longer than 212 tokens were excluded from analysis.
+For our hand-written prompt, we wrote the 7 examples shown in Table \ref{tab:custom_examples}.
+We generated 5 possible prompts by randomly subsampling 3 examples out of these 7.
+
+Table \ref{tab:generative_ppl_results_full} shows the perplexity of the generations from each few-shot prompt.
+We note that even leaving room for 212 tokens worth of context text, some evaluation examples did not fit in the prompt length, and these examples were skipped when doing this analysis.
+Figure \ref{fig:skipped_fs_examples} shows a histogram of the fraction of validation set examples that remained for each few-shot prompt after the too-long examples were filtered out.
+Based on these results, we chose to include in human evaluation the best few-shot prompt from from \rocFITB and the best few-shot prompt from \cFITB.
+Figure \ref{fig:human_eval_results} in the main paper shows the result from the \cFITB few-shot prompt, whose outputs were rated slightly higher by human annotators.
+
+Unfortunately, it is computationally impossible to conduct an exhaustive search of all possible example choices and prompt formats. 
+While none of the prompts we tried led to strong performance at the fill-in-the-blank task, we cannot rule out the possibility there might exist a prompt we did not test for which this performance might have been significantly better.
+For example, we did not conduct formal experiments to systematically vary the prompt wording/formatting shown in Figure \ref{fig:few_shot_prompt}.
+We can conclude that the process of finding an ideal prompt requires time-consuming trial-and-error and is quite difficult!
+
+\begin{table}[htbp]
+\caption{Perplexity of evaluation sets when the blank has been filled in using \LLM{} with few-shot prompting (top) and  our best fine-tuned T5 model ((bottom).
+% Perplexities are averaged over 5 prompts, and
+Among the few-shot results, the best method for each dataset is bolded, as well as methods within one standard error.
+}
+\label{tab:generative_ppl_results_full}
+  \centering
+  \small
+    \begin{tabular}{l|rrrr}
+    \toprule
+    %  & \cFITB & \rocFITB & \rwpFITB & \rwpFITB-Sent \\
+    & \textsc{C4Fill} & \textsc{RocFill} & \textsc{RwpFill} & \textsc{RwpFill} \\
+    \textbf{Few-shot source:} & \textsc{Blank} & \textsc{Middle} & \textsc{Blank} & \textsc{Blank}-Sent \\
+    \cline{2-5}
+    % \hline
+    % \textbf{\cFITB} & 15.67 & \textcolor[rgb]{ 1,  0,  0}{19.72} & \textbf{19.65} & \textbf{16.82} \\
+    {\cFITB} & 15.67 & 19.72 & \textbf{19.65} & \textbf{16.82} \\
+    {\rocFITB} & \textbf{14.14} & 19.61 & \textbf{19.48} & \textbf{16.36} \\
+    {\rwpFITB} & 24.39 & 20.29 & 32.33 & 28.13 \\
+    {\rwpFITB-Sent} & 18.91 & \textbf{18.21} & 24.44 & 19.87 \\
+    {\textsc{FS Custom}} & 17.98 & 19.80 & 21.72 & 18.38 \\
+    \hline
+    {Finetuned T5 XL} & 9.99 & 19.00 & 13.64 & 10.03 \\
+    Finetuned T5 Large & 10.33 & 20.47 & 14.08 & 10.37 \\
+    % \textbf{\FITB{}  Large} & 10.34 & 20.61 & 14.08 & 10.35 \\
+    \bottomrule
+    \end{tabular}%
+\end{table}
+
+\subsubsection{Automatic Evaluation}
+We measure the fluency of proposed generations by evaluating the perplexity of each dataset's examples when the predicted text is placed in the blank \citep{donahue2020enabling}.
+We use the \LLM{} to measure perplexity\footnote{Note, since this is the same model being used for generation for our continuation baseline, this metric may be biased.}.
+The results are shown in Table \ref{tab:generative_ppl_results}.
+We see that the \LLM{} struggles to generate fluent infills, even when used in a few-shot setting.
+The only exception to this is ROC Stories, a dataset with fairly simplistic, predictable language.
+Finetuning T5 does not result in significantly improved fluency over the pre-trained model except on ROC Stories. 
+Lastly, for ROC Stories, we compare against \citet{donahue2020enabling}'s finetuned GPT-2 small, which yielded less fluent predictions.
+Table \ref{tab:generative_ppl_continuation_results} shows a similar analysis on our continuation-style datasets. Both T5-based models achieve roughly the same fluency. 
+
+\subsubsection{Human Evaluation}
+Human evaluation was conducted on 70 examples, 35 from \rwpFITB{} and 35 from \rwpFITE, with examples about evenly distributed across length buckets.
+For \rwpFITB{} evaluation tasks, the rater was presented an input context and several possible sequences that could go in the blank. 
+They were asked to rate each sequence first, on how well it fit the text before it, and second, on how well it fit with the text following it, according to a 5-point slider 
+For \rwpFITB{}, the task was almost the same, except that the rater was presented only a left context and asked to rate how well it continued the prompt.
+More details are in the Appendix.
+Figure \ref{fig:human_eval_results} shows the results.
+
+On the \FitB{} task, the pre-trained and finetuned T5 models were indistinguishable in terms of quality.
+The \LLM{} that formed continuations prompted with only the left context did somewhat better than the few-shot \LLM{}, indicating that few-shot learning is not yet a feasible alternative to finetuning.
+On the continuation task, the \LLM{} has the highest rating, which is unsurprising since it is a much larger model than T5.
+However, the finetuned T5 is rated almost as highly.
+Overall, these results suggest that T5, unlike the \LLM{}, can be used effectively for continuation as well as \FitB.
+Furthermore, if one doesn't care about controllability, T5 can be used effectively for both tasks without any finetuning.
+
+\subsubsection{Benefits of Controllability}
+% The biggest problem with using pre-trained T5 is the lack of controllability.
+There are good reasons to care about controllability.
+For example, length conditioning is extremely important for \FitB models, since it is not possible to control the generation length by simply sampling more or fewer tokens.
+Pre-trained T5 tends to produce infill proposals which are shorter than the groundtruth (Figure A\ref{fig:t5_lengths}), and there is no way to ask the model to produce longer generations.
+In contrast, finetuned T5 was able to produce generations in the target length bucket over 74\% of the time (Table \ref{tab:conditioning_signal}).
+% ldugan: This is really interesting, I wonder how many of the prompts were within one bucket of the desired length? I think that number might be a bit more telling
+Goal conditioning, while not strictly necessary for either either task, has been shown to be useful for generative commonsense reasoning \citep{lin2020commongen} and may empower users in downstream applications such as AI-assisted creative writing \citep{roemmele2021inspiration}. 
+Finetuned T5 is able to use all of the specified goal words over 79\% of the time.
+
+\subsubsection{Domain Transfer}
+Prior work on \FitB{} tends to only evaluate models trained on data from the same domain as the validation set.
+Our results show that despite training exclusively on C4, T5 models have strong transferability to more targeted domains such as Reddit Writing Prompts.
+This sort of transferability is extremely important for achieving the goal of having single models which can handle many tasks and domains.
+
+\section{Related Work}
+\FitB{} is a form of Cloze task \citep{taylor1953cloze}.
+Prior deep-learning approaches to this task include
+%\citet{ippolito2019unsupervised} who train a Transformer model from scratch that predicts the blank text given the context, a target length bucket, and a list of tokens which should be included in the prediction, as well as \citet{donahue2020enabling} who finetune GPT-2 \citep{radford2019language} to perform fill-in-the-blank.
+training an encoder-decoder model from scratch with length and goal word conditioning
+% to predict the blank text given the context, a target length bucket, and a list of tokens which should be included in the prediction
+\citep{ippolito2019unsupervised};
+finetuning GPT-2 \citep{radford2019language} \citep{donahue2020enabling}; and
+training a custom self-attention architecture on corrupted text \citep{zhu2019text}.
+None of these show that their fill-in-the-blank models remain effective at continuation or perform well on text domains that differ from the training data.
+% Our \FitB{} training objective is similar to the ``infilling by language modeling" objective described in \citet{donahue2020enabling}, except since we use an encoder-decoder model instead of a decoder-only model, the attention layers encoding the context in our approach support attending to future tokens positions, not just prior ones.
+Related to \FitB, \citet{mori2020finding} investigate a setting where a sentence is randomly deleted from the input, and the model must both predict the location of the deletion as well as its contents.
+\citet{huang2020inset} tackle the sentence infilling task using a mixture of BERT and GPT-2.
+% to encode the context sentences and GPT-2 to generate the missing sentence given the context's BERT embeddings.
+Lastly, many LM pre-training objectives involve masking out parts of the input then predicting the masked values, which is similar to \FitB{} \citep{devlin2018bert,raffel2019exploring,joshi2020spanbert}.
+% TODO Cite https://arxiv.org/abs/2008.06048 and other music works once we have more space.
+
+\section{Conclusion}
+In this work, we make the case for starting with a model capable of filling in the blank when attempting to build a system that can perform both \FitB{} and continuation.
+As LMs become bigger, it will be unsustainable to have separately trained models per task.
+Multi-task, domain-transferable models with like the ones we propose require less total training and are more efficient to store and use at inference time.
+While pre-trained T5 by itself is capable of both infilling and continuation, additional conditioning signals such as desired length and goal text can be successfully incorporated into fine-tuning in order to support an even greater diversity of model interactions.
+Finally, we present a negative result that while few-shot learning is a promising method for
+building multi-task support without any finetuning, it is challenging to make work for the \FitB{} task. 
+
+% Takeaway 1: Fill-in-the-blank models can effectively do both fill-in-the-blank and continuation.
+% Takeaway 2: Few-shot learning is not effective for the fill-in-the-blank task.
+% Takeaway 3: Fine-tuning explicitly for fill-in-the-blank is only necessary if you want extra controllability.
+
+% Point out any strong assumptions and how robust your results are to violations of these assumptions (e.g., independence assumptions, noiseless settings, model well-specification, asymptotic approximations only held locally). Reflect on how these assumptions might be violated in practice and what the implications would be.
+% Reflect on the scope of your claims, e.g., if you only tested your approach on a few datasets, languages, or did a few runs. In general, empirical results often depend on implicit assumptions, which should be articulated. Reflect on the factors that influence the performance of your approach. For example, a speech-to-text system might not be able to be reliably used to provide closed captions for online lectures because it fails to handle technical jargon.
+% If you analyze model biases: which definition of bias are you using? Did you state the motivation and definition explicitly? See the discussion in Blodgett et al. (2020).
+% We understand that authors might fear that complete honesty about limitations might be used by reviewers as grounds for rejection. It is worth keeping in mind that a worse outcome might be if reviewers discover limitations that aren’t acknowledged in the paper. In general, we advise authors to use their best judgement and recognize that individual actions in favor of transparency play an important role in developing norms that preserve the integrity of the community. Reviewers will be specifically instructed to not penalize honesty concerning limitations.
+% A2. Did you discuss any potential risks of your work?
+
+% Examples of risks include potential malicious or unintended harmful effects and uses (e.g., disinformation, generating fake profiles, surveillance), environmental impact (e.g., training huge models), fairness considerations (e.g., deployment of technologies that could further disadvantage or exclude historically disadvantaged groups), privacy considerations (e.g., a paper on model/data stealing), and security considerations (e.g., adversarial attacks). See discussion in Leins et. al. (2020) as examples.
+% Does the research contribute to overgeneralization, bias confirmation, under or overexposure of specific languages, topics, or applications at the expense of others? See Hovy and Spruit (2016) for examples.
+% We expect many papers to be foundational research and not tied to particular applications, let alone deployments. However, we encourage authors to discuss potential risks if they see a path to any positive or negative applications. For example, the authors can emphasize how their systems are intended to be used, how they can safeguard their systems against misuse, or propose future research directions.
+% Consider different stakeholders that could be impacted by your work. Is it possible that research benefits some stakeholders while harming others? Does it pay special attention to vulnerable or marginalized communities? Does the research lead to exclusion of certain groups? See Dev et. al (2021) for examples.
+% Consider dual use, i.e, possible benefits or harms that could arise when the technology is being used as intended and functioning correctly, benefits or harms that could arise when the technology is being used as intended but gives incorrect results, and benefits or harms following from (intentional or unintentional) misuse of the technology.
+% Consider citing previous work on relevant mitigation strategies for the potential risks of the work (e.g., gated release of models, providing defenses in addition to attacks, mechanisms for monitoring misuse, mechanisms to monitor how a system learns from feedback over time, improving the efficiency and accessibility of NLP).
+
+\section{Risks and Limitations}
+All neural language models, including the ones used in this paper, reflect the biases and other issues present in their training data.
+\citet{weidinger2021ethical} discuss these risks in detail.
+The models and datasets considered in this paper are all in the English, and the proposed methods may work differently in other languages. 
+In addition, the paper mostly focuses on showing results pertinent to the story writing domain; in other domains joint models for continuation and fill-in-the-blank might work worse. 
+Finally, the LLM used in this paper is not public, which to some extent limits reproducibility, though we expect our findings would have been similar had we evaluated with a public model such as GPT-2.
+We emphasize that the main contribution of this paper is a comparison of different methods, all of which are easily implementable, rather than new model checkpoints.
 
 \section{Supporting Arbitrary Style Transfer}
 Text style transfer is the task of rewriting text to incorporate additional or alternative stylistic elements while preserving the overall semantics and structure.
@@ -56,7 +399,7 @@ We also foresee that our strategy of prompting an LLM with non-task specific exa
 \subsection{Experimental Setup}
 
 \input{tables/nonstandard_style_transfer_examples}
-\subsubsection{Style transfer tasks.}
+\subsubsection{Style Transfer Tasks}
 % \label{section:tasks}
 % We evaluate augmented zero-shot prompting on a number of text style transfer tasks.
 We consider six style transfer tasks that we deem non-standard, listed in Table \ref{tab:style-transfer-examples}.
@@ -69,7 +412,7 @@ We also evaluate our method on two standard style transfer tasks: sentiment and 
 We use the Yelp polarity dataset \citep{zhangCharacterlevelConvolutionalNetworks2015} for sentiment and Grammarly's Yahoo Answers Formality Corpus (GYAFC) dataset for formality \citep{rao-tetreault-2018-dear}.\footnote{Hosted by \citet{DBLP:conf/ijcai/LuoLZYCSS19}.}
 These datasets allow us to evaluate performance of augmented zero-shot learning in the context of prior supervised methods which have been used on these tasks.
 
-\subsubsection{Model.}
+\subsubsection{Model}
 Augmented zero-shot learning requires a large language model.
 We primarily use LaMDA, a left-to-right decoder-only transformer language model \citep{DBLP:journals/corr/VaswaniSPUJGKP17} with a non-embedding parameter count of 137B \citep{thoppilan2022lamda}. 
 The pre-trained LaMDA model, which we refer to as \textit{LLM}, was trained on a corpus comprising 1.95B public web documents, including forum and dialog data and Wikipedia.
@@ -104,8 +447,8 @@ See Table \ref{tab:fullprompt} in the Appendix for the full non-abbreviated prom
 % For automatic evaluation, we evaluate transfer strength with the built-in sentiment classification model from HuggingFace \citep{wolf-etal-2020-transformers}, semantic preservation measured with BLEU \citep{papineni2002bleu}, and fluency (measured by perplexity with according to GPT-2, 117M) following \citet{DBLP:journals/corr/abs-2011-00416, DBLP:journals/corr/abs-2010-12742}.
 
 
-\section{Results}
-\subsection{Non-Standard Styles}
+\subsection{Results}
+\subsubsection{Non-Standard Styles}
 For our six non-standard styles, we asked six professional raters to assess  <input sentence, target style, output sentence> tuples. These raters are fluent in English, live in India, and work full time labeling and evaluating data. To decrease inter-rater discrepancy and ensure that our instructions were clear, we had an initial calibration session where they test-rated a small portion of the data (around 10 datapoints which were then omitted from the results) and asked us any clarifying questions. For each style, we compare outputs from our method plus the three baselines for 50 sentences.
 
 
@@ -121,7 +464,6 @@ Overall, the average length of the input sentences was 66 characters, whereas th
     \includegraphics[width=\linewidth]{figures/meaning_standard_False.pdf}
   \vspace{-0.7cm}
   \caption{Human evaluation of style transfer for six atypical styles. Our method is rated comparably to the human-written ground truth. Error bars show Standard Error of the Mean. Evaluation of fluency is shown in Figure \ref{human_eval_other_styles_fluency} in the Appendix.}
-  \vspace{-0.1cm}
   \label{human_eval_other_styles}
 \end{figure}
 
@@ -130,7 +472,7 @@ We found that the ``\textit{balloon}'' and ``\textit{park}'' transformations suc
 % The word ``\textit{park}'' was used in a variety of senses, including``\textit{parking a car}'' and ``\textit{nature park}.'' 
 For ``\textit{more descriptive}'' and ``\textit{include a metaphor}'' the transformed text was, as expected, longer than the original (by 252\% and 146\% respectively, compared with 165\% and 146\% for human baselines).
 
-\subsection{Standard Styles}
+\subsubsection{Standard Styles}
 To better contextualize the performance of our method with prior methods, we also generated outputs for two standard style transfer tasks: sentiment and formality. 
 Figure \ref{human_eval_standard_style} shows human evaluations (same setup as before) for our outputs as well as the outputs from two popular prior style transfer methods, Unsup MT \citep{prabhumoye-etal-2018-style} and Dual RL \citep{DBLP:conf/ijcai/LuoLZYCSS19}.
 The outputs from our method were rated comparably to both human generated responses and the two prior methods, using the same rating setup as the non-standard styles, with six outputs and baselines for four styles across 50 sentences, rated independently by three raters, totalling 3,000 total ratings.
@@ -200,6 +542,8 @@ In a real world setting, our augmented zero-shot approach allows users to effort
 \subsection{Potential of Arbitrary Styles}\label{subsec:potential}
  
 \begin{table}[t]
+\caption{\label{tab:unique_requests}Requests in the form of ``\textit{Rewrite this...}'' made by real users to a large LM-powered text editor.}
+\label{tab:realusers}
 \small
 % \resizebox{\columnwidth}{!}{%
 \def\arraystretch{1.5}% 
@@ -211,8 +555,6 @@ into paragraphs • to be a bit clearer • to be a little less angsty • to be
 \end{tabular}
 % }
 % \vspace*{3mm}
-\caption{\label{tab:unique_requests}Requests in the form of ``\textit{Rewrite this...}'' made by real users to a large LM-powered text editor.}
-\label{tab:realusers}
 \end{table}
 
 % The adaptability of our method to arbitrary styles is compelling because it facilitate an AI-powered writing assistant that transforms text to any desired re-write specified by a user. 
@@ -263,7 +605,9 @@ Thus, augmented zero-shot learning offers less fine-grained controllability in t
 
 
 
-\begin{table*}[ht]
+\begin{table}[ht]
+    \caption{Examples of users' arbitrary style transfer requests for which the model suggestion was accepted.}
+    \label{tab:selected_usage_examples}
     \small
     \centering
     \def\arraystretch{1.5}% 
@@ -276,12 +620,13 @@ Thus, augmented zero-shot learning offers less fine-grained controllability in t
       But Sally remained unmoved--and lonely. \newline \textbf{Rewrite it to be more emotional} & Her tears rolled and rolled down her cheek, mixing with the saltwater around her, until the water was a rich mixture of the two. She wanted her poem to be cheerful like it used to be, but couldn't find the right words. \\
     \bottomrule
     \end{tabular}
-    \caption{Examples of users' arbitrary style transfer requests for which the model suggestion was accepted.}
-    \label{tab:selected_usage_examples}
-    \vspace*{3mm}
-\end{table*}
+\end{table}
 
-\begin{table*}[ht]
+\begin{table}[ht]
+    \caption{In black, we show the exact augmented-zero shot prompts used in our experiments, for \textit{LLM} and GPT-3 (top), and for \textit{LLM-Dialog} (bottom). As shown, for \textit{LLM-Dialog}, we replaced ``\texttt{Here is a rewrite of the text, which is}'' with ``\texttt{Rewrite it to be}''. Each line starting with ``>"" above was passed in as an individual dialog turn. 
+    The blue shows how an input text and goal style are concatenated to the few-shot prompt in order to produce final model output.
+    Note that we can achieve high accuracy even though the prompt formulation resulted in some minor grammatical errors for some styles (e.g., ``\texttt{rewrite it to be include the word 'snow'}''). Text versions of these prompts can be downloaded at \url{https://bit.ly/3fLDuci}.}
+    \label{tab:fullprompt}
     \centering
     \tiny
     \begin{tabular}{p{.9\linewidth}}
@@ -313,11 +658,7 @@ Thus, augmented zero-shot learning offers less fine-grained controllability in t
 \\
 \hline
 \end{tabular}
-    \caption{In black, we show the exact augmented-zero shot prompts used in our experiments, for \textit{LLM} and GPT-3 (top), and for \textit{LLM-Dialog} (bottom). As shown, for \textit{LLM-Dialog}, we replaced ``\texttt{Here is a rewrite of the text, which is}'' with ``\texttt{Rewrite it to be}''. Each line starting with ``>"" above was passed in as an individual dialog turn. 
-    The blue shows how an input text and goal style are concatenated to the few-shot prompt in order to produce final model output.
-    Note that we can achieve high accuracy even though the prompt formulation resulted in some minor grammatical errors for some styles (e.g., ``\texttt{rewrite it to be include the word 'snow'}''). Text versions of these prompts can be downloaded at \url{https://bit.ly/3fLDuci}.}
-    \label{tab:fullprompt}
-\end{table*}
+\end{table}
 
 \begin{figure}[!htb]
   \centering
