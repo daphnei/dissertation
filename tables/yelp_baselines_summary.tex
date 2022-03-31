@@ -1,5 +1,14 @@
 
 \begin{table}[t]
+\caption{
+Comparing augmented zero-shot prompting with supervised style transfer methods on the Yelp sentiment style transfer dataset using automatic evaluation.
+Acc: accuracy; PPL: perplexity.  The inference-only table shows our method applied to 3 different sizes of GPT-3, plus our own LLM. 
+% For sentiment style transfer, we show accuracy, BLEU, and perplexity (PPL) reported as the average of positive $\rightarrow$ negative and negative $\rightarrow$ positive. 
+% In (a), augmented zero-shot prompting of GLM and GPT-3 are compared with prior supervised style transfer methods.
+% In (b), we compare zero-shot, five-shot, and augmented zero-shot prompting for our GLM models. 
+% Candidate selection means that of the sixteen examples returned by the API, we choose the one with the highest BLEU with the source sentence (in the default case, we just use the first returned output).  
+}
+        \label{tab:summary_table}
     \setlength{\tabcolsep}{3pt}
     \centering \small 
         \begin{tabular}{l r r r}
@@ -36,13 +45,4 @@
         \bottomrule
         \end{tabular}
     % \vspace{3mm}
-\caption{
-Comparing augmented zero-shot prompting with supervised style transfer methods on the Yelp sentiment style transfer dataset using automatic evaluation.
-Acc: accuracy; PPL: perplexity.  The inference-only table shows our method applied to 3 different sizes of GPT-3, plus our own LLM. 
-% For sentiment style transfer, we show accuracy, BLEU, and perplexity (PPL) reported as the average of positive $\rightarrow$ negative and negative $\rightarrow$ positive. 
-% In (a), augmented zero-shot prompting of GLM and GPT-3 are compared with prior supervised style transfer methods.
-% In (b), we compare zero-shot, five-shot, and augmented zero-shot prompting for our GLM models. 
-% Candidate selection means that of the sixteen examples returned by the API, we choose the one with the highest BLEU with the source sentence (in the default case, we just use the first returned output).  
-}
-        \label{tab:summary_table}
 \end{table}

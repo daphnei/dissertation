@@ -1,4 +1,6 @@
 \begin{table}[t]
+\caption{When generating 100k sequences with no prompting, over $1\%$ of the tokens emitted from a model trained on the original dataset are part of a 50-token long sequence copied directly from the training dataset. This drops to $0.1\%$ for the deduplicated datasets.}
+\label{tab:memorizations_no_prompt}
     \centering
     \small
 % \begin{tabular}{rrrrrr}
@@ -18,6 +20,4 @@ XL-\Approx & 0.189\% & 0.264\% \\
 XL-\Exact & 0.138\% & 0.168\% \\
 \bottomrule
 \end{tabular}
-\caption{When generating 100k sequences with no prompting, over $1\%$ of the tokens emitted from a model trained on the original dataset are part of a 50-token long sequence copied directly from the training dataset. This drops to $0.1\%$ for the deduplicated datasets.}
-\label{tab:memorizations_no_prompt}
 \end{table}

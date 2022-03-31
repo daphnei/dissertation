@@ -1,37 +1,55 @@
 \chapter{Introduction} \label{chap:intro}
 
-Improvements to neural language modelling over the last half-decade have led to systems which are capable of generating incredibly fluent text.
-Natural languages generation systems have been successfu deployed in many practical applications, from machine translation and keyboard predicting to text summarization and specification.
+One of the oldest yet most elusive promises of AI is computers that can converse with humans, not just via rigidly structured templates and programming languages, but in natural language.
+This problem is formalized as Natural Language Generation (NLG), the task of writing novel sentences in a human language such as English. 
+Modelling developments over the last half-decade have led to natural language generation systems which are capable of producing incredibly fluent text.
+These systems have been applied to practical domains such as machine translation and text summarization and simplification, but they have also been applied to more fanciful ones, such as story generation, video games development, and tooling for creating writing.
 
-This dissertation addresses two main questions.
-
-\begin{itemize}
-\item{What problems arise when attempting to use language models for generation in real-world settings?}
-\item{How can neural language models be used to enable creativity}
-\end{itemize}
-
-The first problem I focus on is the ability to generate text that humans perceive as high quality but has the same diversity of language present in genuine human writing.
-
-The second problem is on what happens when generated text is \TODO{}. Are humans able to notice when they are reading language model-generated text?
-
-The third problem is the privacy implications of training on large, barely curated text datasets extracted from the internet.  
-
-
-
-% Moreover, the ability to finetune on corpora of in-domain text or to use few-shot learning to influence generation has created a deluge of exciting applications of these models.
-% These range from fun applications like machine-generated RPG games\footnote{\url{https://play.aidungeon.io/}} and fake presidential Tweets\footnote{\url{https://faketrump.ai/}} to practical tasks like closed-book Q\&A \cite{roberts2020much} and summarization \cite{zhang2019pegasus,fabbri2020improving}.
-% The first half of this thesis explores the capabilities of neural language models to assist humans in real-world writing tasks, with a specific focus on being able to use natural language generation (NLG) systems to aid in the creative process of storytelling and narrative construction.
-% However, amid the fast-paced advancements in this field it is vital that research into understanding and evaluating the generative capabilities of large language models keeps pace with their application to new tasks.
-% Thus, the second half of this thesis involves analyses to better understand the capabilities and relative strengths of NLG systems.
-
-% While computer-assisted creative writing has long been an interest of NLP researchers \cite{meehan1977tale,klein1973automatic}, it remains a very difficult task for a number of reasons.
-% First of all, good stories tend to have coherent narratives that span paragraphs, chapters, and even entire novel series, far beyond the sequence length most neural networks operating on word sequences can naively handle.
-% Section \ref{section:sentence_lms} proposes a method for capturing coherence across sentences, rather than across individual words as most standard language models do.
-% Second, replacing human story writers with ML is not nearly as interesting a goal as providing tools to assist in the creative writing process.
-% Assistance requires controllability--providing writers the ability to dictate what kind of text gets generated and decide how it interfaces with what they might have already written.
+Story generation and creative writing are a particularly interesting domain to investigate the strengths and weaknesses of natural language generation systems.
+Unlike in machine translation or summarization, where it is critical that the generated text is factual and stays faithful to the source material, in creative domains, the hallucinations and unusual word choices that are pervasive in modern NLG may be beneficial to a creative writer's process.
+Indeed, ideation tools, tools which suggest writing topics, are commonplace in creative writing circles.
+Furthermore, AI-assisted creative writing is a useful testbed for the strengths and limitations of modern NLG systems, one that challenges how controllable these systems are and whether they can be interacted with in useful ways.
 % Section \ref{section:infilling} introduces a method for allowing writers to modify existing text through a fill-in-the-blank task, rather than the more typical continue-the-prompt formulation used in many language model user interfaces.
 
-% Understanding the limitations of giant language models and the nature of the text they are capable of generating is also crucial to the ultimate use of these systems in real applications.
+Chapter \ref{chap:creativity} describes my contributions to the field of AI-assisted creative writing. 
+It discusses the importance of introducing controllability into natural language generation systems--providing writers the ability to dictate what kind of text gets generated and decide how it interfaces with what they might have already written.
+In particular, we introduce methods for efficiently supporting a fill-in-the-blank paradigm, where a writer can insert text into any position of their current text \TODO{citation}.
+We also describe a simple recipe for supporting style-transfer into any user-defined style without the need for costly training data acquisition and test-specific model training.
+Both these approaches are incorporated into Wordcraft, an AI-augmented text processor that provides several interfaces for writers to get feedback and suggestions from an NLG system.
+In studies with both amateur and skilled writers, we found Wordcraft to be a valuable assistive tool for creative writing.
+
+Modern natural language generation systems rely on neural language models, neural networks trained on billions of words of text in order to represent human language (Chapter \ref{chap:background}). 
+Understanding the limitations of these language models and the nature of the text they are capable of generating is crucial to the ultimate use of these systems in real applications such as Wordcraft.
+
+One significant limitation is the difficulty in generating text that is diverse (containing uncommon and interesting words and phrases) and high quality (as perceived by human readers).
+Chapter \ref{chap:detection} focuses on this challenge and its ramifications to the detectability of generated text.
+While many approaches have been proposed to, given a language model, try to improve the diversity of its generations without sacrificing quality, we show that none quite achieve this goal \citep{ippolito2019comparison}.
+Most often, practitioners choose approaches that err on the side of human-perceived quality at the expense of lexical diversity.
+This decision leaves subtle signatures in the generated text which make it easy for automatic classifiers to distinguish it from genuine human-written text.
+
+The remainder of Chapter \ref{chap:detection} focuses on this detection problem.
+The proliferation of machine-generated text, especially when it lacks attribution, is of significant concern to the public.
+As tools for generating text become more powerful and easier to use, they could enable nefarious uses such as fabricated product reviews and social media posts.
+In Ippolito et al. 2019 \citep{ippolito2020automatic}, we measure the ability of humans as well as automatic systems to detect machine-generated text.
+Understanding detectability is imperative because it gives us a proxy for how far along generative systems are at fooling humans and whether undesired use of machine-generated text can be mitigated.
+
+One difficulty in studying human ability to detect machine-generated text is that it can be very difficult to collect annotations.
+Many of the errors NLG systems make are subtle and require closely reading several sentences of text to be able to identify.
+Common strategies for soliciting human annotators, such as paying crowd workers a fixed dollar amount per annotation, do not tend to yield useful annotations since annotators are not incentivized to spend the extra time to do a close read.
+In order to be able to study human detection ability at scale, we built the Real or Fake Text game (RoFT), a website that gamifies the task of identifying machine-generated text \citep{dugan2020roft}.
+The RoFT platform allowed us to collect over 40,000 annotations of whether players could correctly identify when a passage of text transitioned from being human-written to being machine-generated .
+Chapter \ref{section:roft} presents a detailed analysis of the factors we found that most impacted detectability. 
+ 
+Another key concern with using neural language models for text generation is their ability to memorize and regurgitate significant amounts of their training data.
+For example, GPT-3, a popular model that has already been incorporated into several products, when prompted with the first sentence of \textit{Harry Potter} or \textit{Lord of the Rings} will accurately generate the first several paragraphs of each book,
+This behaviour is very worrying for the domain of AI-assisted creative writing, as writers using tools such as Wordcraft have the expectation that the generations they are being shown are unique and not plagiarized.
+Memorization also makes the task of studying the dectability of generated text more challenging.
+If an NLG system generates Chapter 1 of \textit{Harry Potter}, should this text be labeled as human-written or machine-generated?
+Chapter \ref{chap:memorization} focuses on this question of memorization.
+First, we show how performing thorough deduplication of training data results in models that are less likely to exhibit memorization .
+Then we conduct experiments showing how observable memorization scales with respect to the number of times a sequence occurs in the training set, the model size, and the length of conditioning prompt \TODO{citation}.
+
+
 % Section \ref{section:div-quality} discusses research that analyzes the inference-time tradeoff between generating interesting and diverse text and generating text that humans perceive as high-quality.
 % We show how this tradeoff was present in earlier LSTM-based sequence-to-sequence models and still persists in today's state-of-the-art neural language models.
 % The tradeoff exists because of the manner in which nearly all neural networks for language generation are trained.
@@ -63,9 +81,34 @@ The third problem is the privacy implications of training on large, barely curat
 % Lastly, in Section \ref{section:roft_plans}, I propose a largescale human evaluation study using the RoFT system to compare NLG abilities across different subject domains and trained neural networks.
 % This study will complement the proposed HCI research on methods of controllability for creative writing purposes.
 % While in RoFT all users see and evaluate the same set of pre-computed generations, the controllability project will analyze what generations users choose when they are presented with several candidates custom-tailored to each unique user-specified prompt text and control signals.
-%%%
 
 
 
-\section{Goals of this Work} \label{subsec:goalswork}
+This dissertation addresses two main questions.
+
+% \begin{itemize}
+% \item{What problems arise when attempting to use language models for generation in real-world settings?}
+% \item{How can neural language models be used to enable creativity}
+% \end{itemize}
+
+% The first problem I focus on is the ability to generate text that humans perceive as high quality but has the same diversity of language present in genuine human writing.
+
+% The second problem is on what happens when generated text is \TODO{}. Are humans able to notice when they are reading language model-generated text?
+
+% The third problem is the privacy implications of training on large, barely curated text datasets extracted from the internet.  
+
+
+% Moreover, the ability to finetune on corpora of in-domain text or to use few-shot learning to influence generation has created a deluge of exciting applications of these models.
+% These range from fun applications like machine-generated RPG games\footnote{\url{https://play.aidungeon.io/}} and fake presidential Tweets\footnote{\url{https://faketrump.ai/}} to practical tasks like closed-book Q\&A \cite{roberts2020much} and summarization \cite{zhang2019pegasus,fabbri2020improving}.
+% The first half of this thesis explores the capabilities of neural language models to assist humans in real-world writing tasks, with a specific focus on being able to use natural language generation (NLG) systems to aid in the creative process of storytelling and narrative construction.
+% However, amid the fast-paced advancements in this field it is vital that research into understanding and evaluating the generative capabilities of large language models keeps pace with their application to new tasks.
+% Thus, the second half of this thesis involves analyses to better understand the capabilities and relative strengths of NLG systems.
+
+% While computer-assisted creative writing has long been an interest of NLP researchers \cite{meehan1977tale,klein1973automatic}, it remains a very difficult task for a number of reasons.
+% First of all, good stories tend to have coherent narratives that span paragraphs, chapters, and even entire novel series, far beyond the sequence length most neural networks operating on word sequences can naively handle.
+% Section \ref{section:sentence_lms} proposes a method for capturing coherence across sentences, rather than across individual words as most standard language models do.
+% Second, replacing human story writers with ML is not nearly as interesting a goal as providing tools to assist in the creative writing process.
+
+
+\section{Summary of Contributions} \label{subsec:goalswork}
 something something something

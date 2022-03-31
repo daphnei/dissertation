@@ -18,6 +18,9 @@
 
 
 \begin{table}[]
+    \caption{For each model, the perplexity of the official validation set (\textit{Orig}), valid set examples which were identified by \Approx{} as matches of train set examples (\textit{Dups}), and valid set examples identified by \Approx{} as unique (\textit{Unique}).
+    Due to the size of the RealNews validation set, we evaluated on only the first 25k examples meeting each condition.}
+    \label{tab:ppl_sota_models}
     \centering
     \small
     \begin{tabular}{ll|rrr}
@@ -30,7 +33,4 @@
     GROVER-XL & RealNews & 9.15 & 7.68 & 9.45 \\
     \bottomrule
     \end{tabular}
-    \caption{For each model, the perplexity of the official validation set (\textit{Orig}), valid set examples which were identified by \Approx{} as matches of train set examples (\textit{Dups}), and valid set examples identified by \Approx{} as unique (\textit{Unique}).
-    Due to the size of the RealNews validation set, we evaluated on only the first 25k examples meeting each condition.}
-    \label{tab:ppl_sota_models}
 \end{table}
