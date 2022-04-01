@@ -366,7 +366,7 @@ Hence, there is a clear need for new methods that both reduce the training data 
 
 In this section, we present \textit{augmented zero-shot learning}, a prompting method that allows large language models to perform text style transfer to arbitrary styles, without any exemplars in the target style.
 Our method builds on prior work showing that sufficiently large LMs such as GPT-3 can perform various tasks ranging from classification to translation, simply by choosing a clever prompt to prepend to the input text for which the model is asked to continue \citep{DBLP:journals/corr/abs-2005-14165,branwen2020gpt}. 
-Although large LMs are trained only for continuation, recent work has shown that they can perform a variety of NLP tasks by expressing the task as a prompt that encourages the model to output the desired answer as the continuation \cite[][\textit{inter alia}; see \citet{,liu2021pre} for a survey]{puri2019zero,weller-etal-2020-learning,DBLP:journals/corr/abs-2005-14165,schick-schutze-2021-just}. 
+Although large LMs are trained only for continuation, recent work has shown that they can perform a variety of NLP tasks by expressing the task as a prompt that encourages the model to output the desired answer as the continuation \citep{liu2021pre,puri2019zero,weller-etal-2020-learning,DBLP:journals/corr/abs-2005-14165,schick-schutze-2021-just}. 
 The simplest approach, \textbf{zero-shot prompting}, directly uses natural language to ask the large LM to perform a task, as shown in Figure \ref{prompts}a. Zero-shot learning, however, can be prone to failure modes such as not returning well-formatted or logical outputs (see $\S$\ref{section:limitations}).
  However, zero-shot prompts are prone to failure modes such as not returning a well formatted or logical answer.
 This problem can often be overcome by prepending exemplars to the prompt that demonstrate what successful completions may look like.
@@ -470,7 +470,7 @@ We automatically evaluate \textbf{(1) transfer strength} using a sentiment class
 \begin{figure}[t]
     \includegraphics[width=\linewidth]{figures/style_standard_True.pdf}
     \includegraphics[width=\linewidth]{figures/meaning_standard_True.pdf}
-  \caption{Human evaluation of sentiment and formality transfer. Our method is rated comparably to human-written ground truth as well as prior methods. Error bars show Standard Error of the Mean. Unsup.~MT is \citet{{prabhumoye-etal-2018-style}}; Dual RL is \citet{DBLP:conf/ijcai/LuoLZYCSS19}. }
+  \caption{Human evaluation of sentiment and formality transfer. Our method is rated comparably to human-written ground truth as well as prior methods. Error bars show Standard Error of the Mean. Unsup.~MT is \citet{prabhumoye-etal-2018-style}; Dual RL is \citet{DBLP:conf/ijcai/LuoLZYCSS19}. }
   \label{human_eval_standard_style}
 \end{figure}
 \input{tables/yelp_baselines_summary}
