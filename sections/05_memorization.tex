@@ -56,7 +56,7 @@ By deduplicating the training dataset we reduce the rate of emitting memorized t
 \item Train-test overlap is common in non-deduplicated datasets.
 For example, we find \emph{a 61-word sequence}%
 \footnote{``by combining fantastic ideas, interesting arrangements, and follow the current trends in the field of that make you more inspired and give artistic touches. We'd be honored if you can apply some or all of these design in your wedding. believe me, brilliant ideas would be perfect if it can be applied in real and make the people around you amazed!''} 
-in C4 \citep{t52020} that is repeated $61{,}036$ times verbatim in the training dataset and $61$ times in the validation set ($0.02\%$ of the samples in each dataset).
+in C4 \citep{raffel2019exploring} that is repeated $61{,}036$ times verbatim in the training dataset and $61$ times in the validation set ($0.02\%$ of the samples in each dataset).
 This train-test set overlap not only causes researchers to over-estimate model accuracy, but also biases model selection towards models and hyperparameters that intentionally overfit their training datasets.
 %Models are therefore \emph{explicitly encouraged} to overfit on the (duplicate) training examples which are likely to appear in the (i.i.d. sampled) validation set as well.
 %This overfitting contrasts sharply with how humans learn language \citep{linzen2020can}.
@@ -69,7 +69,7 @@ these datasets are up to $19\%$ smaller, even including the deduplication runtim
 
 \item Deduplicating training data does not hurt perplexity: models trained on deduplicated datasets have no worse perplexity compared to baseline models trained on the original datasets. 
 In some cases deduplication reduces perplexity by up to $10\%$.
-Further, because recent LMs are typically limited to training for just a few epochs \cite{radford2019language,t52020},
+Further, because recent LMs are typically limited to training for just a few epochs \cite{radford2019language,raffel2019exploring},
 by training on higher quality data the models can reach higher accuracy faster.
 \end{enumerate}
 %There is therefore no reason to not perform deduplication, and every reason to perform deduplication.
@@ -88,7 +88,7 @@ A common dataset starting point is CommonCrawl, an index of public webpages.
 Among the models trained on CommonCrawl include
 GPT-3 \cite{brown2020language} with the addition of book datasets,
 GROVER \cite{zellers2019defending} on a restricted subset filtered to news domains called RealNews,
-and T5 \cite{t52020} on a cleaned version of common crawl called C4.
+and T5 \cite{raffel2019exploring} on a cleaned version of common crawl called C4.
 Other models are trained on more curated Internet sources---for example \citet{guo2020wiki40b} used high quality processed Wikipedia text from 40 different languages to train monolingual 141.4M parameter language models.
 Non-English models necessarily use different datasets; \citet{zeng2021pangualpha} for instance introduced PANGU-$\alpha$, a family of models with up to 200B parameters that were trained on a non-public corpus of cleaned and filtered Chinese-language documents from CommonCrawl and other sources.
 %Lastly, the T5 family of encoder-decoder models was trained on C4, a dataset of cleaned English CommonCrawl documents.
@@ -139,7 +139,7 @@ The average example length is 32 BPE tokens.
 While this dataset is extremely standard for benchmarking language models, \citet[Sec 4]{radford2019language} note it has 13.2\% overlap of the test set with the train set.
 
 \paragraph{Colossal Cleaned Common Crawl (C4)}
-is made up of 360M web documents, with an average length of 486 BPE tokens \citep{t52020}.
+is made up of 360M web documents, with an average length of 486 BPE tokens \citep{raffel2019exploring}.
 C4 was introduced as a pre-training dataset for T5, a set of encoder-decoder models which have been widely used in fine-tuned downstream tasks.
 The dataset was previously deduplicated in a more sophisticated process
 than the prior two datasets.
@@ -458,7 +458,7 @@ We evaluate the effect of this leakage on publicly released models in Section \r
 \subsection{Impact on Trained Models}
 \label{sec:impact-trained-models}.
 We trained 1.5B parameter ``XL", decoder-only, Transformer-based language models similar to GPT-2, on C4-\Original, C4-\Approx, and C4-\Exact, respectively.
-We use the T5 codebase and model architecture from \citet{t52020}, and each model was trained for about two epochs on its respective dataset.
+We use the T5 codebase and model architecture from \citet{raffel2019exploring}, and each model was trained for about two epochs on its respective dataset.
 To better understand the amount of variance in the perplexities of trained models, we also trained three different random seeds of the 110M parameter ``base" model for each of the above three datasets---for a total of nine base-sized models.
 
 For all experiments, we used a Byte Pair Encoding (BPE) vocabulary trained on C4-\Approx{} with a budget of 50K tokens, which resulted in a vocabulary the same size as GPT-2's.

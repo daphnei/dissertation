@@ -12,11 +12,14 @@ To test out how these and other NLG-based tools can be used in practice, we buil
 I will end by describing the features of Wordcraft and the results of a user study conducted with the tool.
 
 \section{Motivation}
-Artificial intelligence systems which can write stories have bee a goal of researchers since the early days of computing.
+Artificial intelligence systems which can write stories have been a goal of researchers since the early days of computing.
+However, much of the early work in this area was focused on building systems which could produce an entire story from scratch given an initial set of constraints.
 
 Rather than focusing on developing NLG systems which produce entire stories, my research in this area focuses on enabling better human-AI collaboration.
 
-\TODO{More background on AI-assisted writing}
+\section{Towards Sentence-Level Language Models}
+
+
 
 \section{Models for Infilling Text}
 \label{section:fitb}
@@ -336,13 +339,10 @@ building multi-task support without any finetuning, it is challenging to make wo
 % Consider dual use, i.e, possible benefits or harms that could arise when the technology is being used as intended and functioning correctly, benefits or harms that could arise when the technology is being used as intended but gives incorrect results, and benefits or harms following from (intentional or unintentional) misuse of the technology.
 % Consider citing previous work on relevant mitigation strategies for the potential risks of the work (e.g., gated release of models, providing defenses in addition to attacks, mechanisms for monitoring misuse, mechanisms to monitor how a system learns from feedback over time, improving the efficiency and accessibility of NLP).
 
-\section{Risks and Limitations}
-All neural language models, including the ones used in this paper, reflect the biases and other issues present in their training data.
-\citet{weidinger2021ethical} discuss these risks in detail.
-The models and datasets considered in this paper are all in the English, and the proposed methods may work differently in other languages. 
-In addition, the paper mostly focuses on showing results pertinent to the story writing domain; in other domains joint models for continuation and fill-in-the-blank might work worse. 
-Finally, the LLM used in this paper is not public, which to some extent limits reproducibility, though we expect our findings would have been similar had we evaluated with a public model such as GPT-2.
-We emphasize that the main contribution of this paper is a comparison of different methods, all of which are easily implementable, rather than new model checkpoints.
+\subsection{Summary of Contributions}
+The work described in this section was published in the 2022 Proceedings of the North American Association of Computational Linguistics \TODO{citation}.
+The work was performed with my collaborators \TODO{author names}.
+I led this project, designed and ran all experiments, and performed most of the analysis.
 
 \section{Supporting Arbitrary Style Transfer}
 \ref{section:style_transfer}
@@ -582,16 +582,6 @@ Thus, augmented zero-shot learning offers less fine-grained controllability in t
 \subsubsection{Large LM safety concerns} Large LMs themselves come with their own host of difficulties, barriers to entry, and potential safety concerns as discussed by \citet{10.1145/3442188.3445922}, which are also valid for this style transfer method. However, we also think that this method can be a useful tool in exploring and exposing the safety and boundaries of these models themselves: what happens if we try to force the large LM to make a text ``more racist'', ``more sexist'', or ``more incendiary''? It is important to keep pushing these models to their boundaries to see where they fail and where problems arise, and specific use cases that show a broader range of the model's capabilities also show a broader range of its failure modes.
 
 
-% \section{Conclusions}
-% We introduced augmented zero-shot learning, which we find shows shows strikingly promising performance considering its simplicity.
-% This prompting paradigm moves the needle in text style transfer by expanding the range of possible styles beyond the currently limited set of styles for which annotated data exists.
-% More broadly, we also hope that the strategy of prompting a large LM with non-task specific examples can inspire new inference-only methods for other NLP tasks.
-% % We present a series of experiments demonstrating that such models prompted with our method are able to attain results comparable to prior state of the art as well as human baselines across a range of text style transfer tasks both standard and novel. We show that our method is robust to alterations in prompt phrasing, and that our results point to a general feature of large generative language models as opposed to any particular model. 
-% With large generative language models, the study of text style transfer can move beyond the limited set of styles for which parallel data exists. This suggests a number of interesting questions and directions for future work. Are there certain text transformations which these models excel at more than others? Could they perform style transfer on longer passages of text? We also intend to explore using LLMs to bootstrap the creation of parallel training datasets for novel styles. Finally, we plan to expand our study of how writers seek to transform their text in the editing process in order to collect a large scale benchmark dataset of real-world style transfer needs. 
-% Could these models both discover and execute custom transformations tailored to a particular input? 
-
-
-
 \begin{table}[ht]
     \caption{Examples of users' arbitrary style transfer requests for which the model suggestion was accepted.}
     \label{tab:selected_usage_examples}
@@ -654,6 +644,13 @@ Thus, augmented zero-shot learning offers less fine-grained controllability in t
   \vspace{-0.1cm}
 \end{figure} 
 
+\subsection{Summary of Contributions}
+The work described in this section was published in the 2022 Proceedings of the Association of Computational Linguistics \TODO{citation}.
+The work was performed with my collaborators \TODO{author names}.
+I worked with Emily Reif to come up with the premise for the project: of formulating style transfer as an arbitrary rewriting operation.
+I helped to design the experiments and contributed significantly to analysis of the results.
+
+
 \section{Wordcraft: An editor for AI-assisted writing.}
 How do we evaluate natural language generation in realistic settings? In all the human evaluations discused so far in my thesis, we recruited annotators to evaluate text in artifical settings. In Sections \ref{section:detection} and \ref{section:roft}, university students were asked to label text as human-written or machine-generated in user interfaces custom-tailored to collect these sorts of annotations. In Sections \ref{section:fitb} and Section \ref{section:style_transfer}, novel natural language systems were evaluated by asking raters on Amazon Mechnical Turk to view and score generated text.
 Notably, the annotators were not asked to use the proposed NLG tools to accomplish a task of interest; they were only asked to evaluate pre-generated outputs.
@@ -671,6 +668,7 @@ I then describe how Wordcraft offers the chance for a more realistic evaluation 
 
 
 \subsection{Features of Wordcraft}
+\label{section:wordcraft_controls}
 Wordcraft uses few-shot learning techniques \cite{brown2020language} to support a variety of generative controls.
 The underlying neural language model backing all these interactions is LaMDA \cite{thoppilan2022lamda}, which is described in detail in Section \ref{subsection:lambda_description}.
 Each control shows several candidate generations, which the user can select between.
@@ -692,3 +690,12 @@ Foo
 \subsubsection{Custom Prompting}
 
 \subsection{User Study}
+
+
+\subsection{Summary of Contributions}
+The Wordcraft AI-assited writing tool was first published in the HCI+NLP Workshop colocated with the 2021 Meetings of the European Association of Computation Linguistics \citep{wordcraft}.
+The user study was subsequently published at the 2022 International Conference on Intelligent User Interfaces \citep{yuan2022wordcraft}.
+Wordcraft was built alongside by collaborators Ann Yuan, Emily Reif, and Andy Coenen,.
+In particular, Ann, Emily, and Andy did almost all the software engineering for Wordcraft, and Ann Yuan led the user study.
+I worked on designing features for the user interface and proposing and prototyping various of the controls described in Section \ref{section:wordcraft_controls}.
+I also assisted with designing the user study and analyzing its results.
