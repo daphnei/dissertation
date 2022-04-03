@@ -1,3 +1,9 @@
+# Daphne's notes
+
+[See the PDF here](https://github.com/daphnei/dissertation/blob/main/main.pdf)
+
+# Carlos's README
+
 This project has the Thesis template for UPenn CIS students, that I got by modifying the template [here](https://guides.library.upenn.edu/dissertation_manual/formatting).
 As far as I can tell by inspecting earlier theses before me, this template is correct. 
 
