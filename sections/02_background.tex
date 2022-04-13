@@ -115,7 +115,7 @@ Table \ref{tab:tokenization} shows the same string under a few different tokeniz
 
 \begin{table}[h]
     \centering
-    \caption{Examples of the string ``A hippopotamus ate my homework." tokenized using three different vocabularies. With the subword tokenizer, the rare word ``hippopotamus" gets broken up into multiple tokens. If the word hippopotamus occurred very infrequently in the corpus used to build the vocabulary (or perhaps the writer of the sentenced misspelled it), word-level tokenization strategies would typically replace it with an out-of-vocabulary token (row 4).}
+    \caption{Examples of the string ``A hippopotamus ate my homework." tokenized using three different vocabularies. With the subword tokenizer, the rare word ``hippopotamus" gets broken up into multiple tokens. For word-level tokenizers, if the word ``hippopotamus'' occurred very infrequently in the corpus used to build the vocabulary (or perhaps the writer of the sentenced misspelled it), it would typically get replaced with an out-of-vocabulary token (row 4).}
     \label{tab:tokenization}
     \begin{tabular}{l|p{5in}}
         Vocab Type & Example \\
@@ -174,7 +174,7 @@ Actually computing the most likely sequence is intractable due to the exponentia
 In practice, these techniques tend to lead to text that is bland and repetitive,
 Chapter \ref{section:dediv} goes into detail about why this is the case.
 
-\section{Methods for Controllability and Task-Specific Generation}
+\section{Controllability and Task-Specific Generation}
 
 In the early days of neural language modelling, it was common to train a separate neural language model for each generative task of interest.
 For example, if one wanted a system capable of producing chatbot dialog, one would train their neural language model on a dialog dataset such as OpenSubtitles \citep{vinyals2015neural}.
