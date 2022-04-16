@@ -224,7 +224,7 @@ However, after conducting a large-scale study of many possible few-shot prompts,
 
 Choosing appropriate examples for a few-shot prompt is very challenging because task performance is often sensitive to minor changes in prompt design \citep{zhao2021calibrate}.
 We experimented with prompts randomly selected from the C4, Reddit Writing Prompts, and ROC Stories training sets, as well as prompts consisting of examples we hand-wrote with the goal of story-writing in mind.
-For each prompt source, we randomly generated five possible prompts, each with three examples (more details in Appendix).
+For each prompt source, we randomly generated five possible prompts, each with three examples, using the method descrribed in Section \ref{section:few_shot_prompt_selection}.
 To simplify the task, we conditioned on desired length but did not include goal conditioning.
 
 An example prompt is shown in Figure \ref{fig:few_shot_prompt}.
@@ -289,9 +289,19 @@ Human evaluation was conducted on 70 examples, 35 from \rwpFITB{} and 35 from \r
 For \rwpFITB{} evaluation tasks, the rater was presented an input context and several possible sequences that could go in the blank. 
 They were asked to rate each sequence first, on how well it fit the text before it, and second, on how well it fit with the text following it, according to a 5-point slider 
 For \rwpFITB{}, the task was almost the same, except that the rater was presented only a left context and asked to rate how well it continued the prompt.
-More details are in the Appendix.
-Figure \ref{fig:human_eval_results} shows the results.
+A screenshot of the Human Intelligence Task (HIT) used for annotations is shown in Figure \ref{fig:amturk_ui}. Workers were paid originally paid \$1.85 per HIT, but since the average HIT duration ended up being 15 minutes, we awarded each rater a bonus to raise their pay to an average of \$10 per hour.
+Each example was shown to three raters, and annotations were rejected if the rater gave a lower overall score to the random output than to the ground-truth one.
+A total of 3 annotations were rejected.
+Overall, the Fleiss' kappa agreement of pairs of annotators giving the same numerical score to the same question was 0.26.
 
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.49\textwidth, frame]{figures/amt_screenshot.png}
+    \caption{A screenshot of the question structure for human evaluation.}
+    \label{fig:amturk_ui}
+\end{figure}
+
+Figure \ref{fig:human_eval_results} shows the results.
 On the \FitB{} task, the pre-trained and finetuned T5 models were indistinguishable in terms of quality.
 The \LLM{} that formed continuations prompted with only the left context did somewhat better than the few-shot \LLM{}, indicating that few-shot learning is not yet a feasible alternative to finetuning.
 On the continuation task, the \LLM{} has the highest rating, which is unsurprising since it is a much larger model than T5.
@@ -341,7 +351,7 @@ building multi-task support without any finetuning, it is challenging to make wo
 
 \subsection{Summary of Contributions}
 The work described in this section was published in the 2022 Proceedings of the North American Association of Computational Linguistics \TODO{citation}.
-The work was performed with my collaborators \TODO{author names}.
+The work was performed with my collaborators Daphne Ippolito, Liam Dugan, Emily Reif, Ann Yuan, Andy Coenen, and Chris Callison-Burch.
 I led this project, designed and ran all experiments, and performed most of the analysis.
 
 \section{Supporting Arbitrary Style Transfer}
@@ -409,9 +419,8 @@ Decoding was done with top-$k$=40.
 To show that the success of augmented zero-shot learning is not restricted to these two large LMs, we also perform experiments with GPT-3 (Table \ref{tab:candidate_select}).
 For GPT-3, decoding was done with nucleus sampling using $p$=0.6 \citep{holtzman2019curious}.
 
-The prompts used for \textit{LLM} and GPT-3 are shown in Figure \ref{prompts}.
+The full prompts used for \textit{LLM} and GPT-3 are shown in Figure \ref{tab:fullprompt}.
 For \textit{LLM-Dialog}, the prompt was instead formulated as a conversation between one agent who is requesting rewrites and another who is performing the rewrites.
-See Table \ref{tab:fullprompt} in the Appendix for the full non-abbreviated prompts.
 
 % \subsection{Evaluation}
 % We evaluate the quality of our style transfers on three main axes.
@@ -439,8 +448,15 @@ See Table \ref{tab:fullprompt} in the Appendix for the full non-abbreviated prom
 For our six non-standard styles, we asked six professional raters to assess  <input sentence, target style, output sentence> tuples. These raters are fluent in English, live in India, and work full time labeling and evaluating data. To decrease inter-rater discrepancy and ensure that our instructions were clear, we had an initial calibration session where they test-rated a small portion of the data (around 10 datapoints which were then omitted from the results) and asked us any clarifying questions. For each style, we compare outputs from our method plus the three baselines for 50 sentences.
 
 
-Each tuple was scored by three raters (3,600 ratings total) on the following three axes which are standard to textual style transfer \citep{DBLP:journals/corr/abs-1904-02295}: \textbf{(1) transfer strength} (the amount that the output actually matches the target style), \textbf{(2) semantic preservation} (whether the underlying meaning of the output text, aside from style, matches that of the input), and \textbf{(3) fluency} (whether the text is coherent and could have been written by a proficient English speaker). Following \citet{sakaguchi-van-durme-2018-efficient}, transfer strength and semantic preservation were rated on a scale from 1--100. A screenshot of the evaluation UI is shown in Figure \ref{fig:rater_ui} in the Appendix.
+Each tuple was scored by three raters (3,600 ratings total) on the following three axes which are standard to textual style transfer \citep{DBLP:journals/corr/abs-1904-02295}: \textbf{(1) transfer strength} (the amount that the output actually matches the target style), \textbf{(2) semantic preservation} (whether the underlying meaning of the output text, aside from style, matches that of the input), and \textbf{(3) fluency} (whether the text is coherent and could have been written by a proficient English speaker). Following \citet{sakaguchi-van-durme-2018-efficient}, transfer strength and semantic preservation were rated on a scale from 1--100. A screenshot of the evaluation UI is shown in Figure \ref{fig:rater_ui}.
 We use \textit{dialog-LLM}, and compare it with three other methods: \textbf{(1) zero-shot} (a baseline), \textbf{(2) paraphrase} (our normal augmented zero shot prompt, but with the target style of \textit{``paraphrased''}, as a control) and \textbf{(3) human} (ground-truth transformations written by the authors).
+
+\begin{figure}[!htb]
+  \centering
+  \fbox{\includegraphics[width=1\linewidth]{figures/rater_ui.png}}
+  \caption{The rating UI used for human evaluation. The user may be shown a number of blue squares at once with the same original text and different outputs.}
+  \label{fig:rater_ui}
+\end{figure} 
 
 Figure \ref{human_eval_other_styles} shows these results. %, and all raw outputs can be found at \url{https://bit.ly/3fLDuci}.
 We found that the outputs of our method were rated almost as highly as the human-written ground truth for all three evaluations. The zero-shot baseline performed the worst in all categories: 25.4\% of the time, it did not return a valid response at all (see $\S$\ref{section:limitations}), compared with 0.6\% for augmented zero shot.
@@ -450,7 +466,7 @@ Overall, the average length of the input sentences was 66 characters, whereas th
     \includegraphics[width=\linewidth]{figures/style_standard_False.pdf}
     \includegraphics[width=\linewidth]{figures/meaning_standard_False.pdf}
   \vspace{-0.7cm}
-  \caption{Human evaluation of style transfer for six atypical styles. Our method is rated comparably to the human-written ground truth. Error bars show Standard Error of the Mean. Evaluation of fluency is shown in Figure \ref{human_eval_other_styles_fluency} in the Appendix.}
+  \caption{Human evaluation of style transfer for six atypical styles. Our method is rated comparably to the human-written ground truth. Error bars are mean standard error.}
   \label{human_eval_other_styles}
 \end{figure}
 
@@ -552,9 +568,7 @@ Our editor has a freeform text box for users to specify how they would like a se
 We asked 30 people from a creative writing group to use our UI to write a 100-300 word story,  collecting 333 rewrite requests in total. 
 Table \ref{tab:unique_requests} shows a list of unique rewrite requests collected from 30 early users recruited from a creative writing mailing list.
 These were as diverse as asking for the text ``\textit{to be about mining}'' or ``\textit{to be less diabolical}.''
-% We also present a sample of users' requests in Table \ref{tab:selected_usage_examples} in the Appendix. 
-% Overall, we collected 333 rewrite requests, of which the users added 18 (5.4\%) to their stories.
-% In future work, we plan to expand our use of \textit{augmented zero-shot learning} to support a greater variety of rewriting tasks that deepen collaborative potential between human writers and an AI system.
+Overall, we collected 333 rewrite requests, of which users chose to insert the model's response into their story 18 (5.4\%) times.
 
 
 \subsection{Limitations and Failure Modes}
