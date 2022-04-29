@@ -231,6 +231,31 @@ Figure \ref{figure:mturk_example} shows the instructions given to the human rate
     \label{figure:mturk_example}
 \end{figure}
 
+\begin{table*}[t]
+    \centering
+    \small
+    \begin{tabular}{|cc||ccc|ccccc|}
+    \hline
+    \textbf{Method} & \textbf{Strategy} & \textbf{Fluency} & \textbf{Adequacy} & \textbf{Interestingness} & \textbf{Ppl} & \textbf{Dist-1} & \textbf{Dist-2} & \textbf{Ent-2} & \textbf{Ent-4} \\ \hline
+    Reference & -- & 0.795 & 0.732 & 0.636 & -- & -- & -- & -- & -- \\ \hline\hline
+    \multirow{3}{*}{RS 0.5} & 10 & 0.780 & 0.446 & \td{0.383} & 52.46 & 0.54 & 0.70 & 3.84 & 3.70 \\
+    & 100 & \textbf{0.928} & \td{0.541} & 0.329 & 19.87 & 0.50 & 0.63 & 3.46 & 3.20 \\
+    & 100,PDC & 0.844 & 0.521 & 0.372 & 29.53 & 0.57 & 0.70 & 3.65 & 3.34 \\ \hline\hline
+    \multirow{3}{*}{RS 0.7} & 10 & 0.758 & 0.399 & \td{0.388} & 35.98 & 0.63 & 0.80 & 4.08 & 3.84 \\
+    & 100 & 0.911 & \td{0.547} & 0.329 & 9.72 & 0.53 & 0.68 & 3.56 & 3.20 \\
+    & 100,PDC & 0.850 & 0.488 & 0.366 & 14.64 & 0.64 & 0.76 & 3.75 & 3.31 \\ \hline\hline
+    \multirow{3}{*}{RS 1.0} & 10 & 0.550 & 0.303 & \td{0.386} & 67.99 & \textbf{0.74} & \textbf{0.87} & \textbf{4.35} & \textbf{4.08} \\
+    & 100 & 0.886 & 0.506 & \textbf{0.390} & 8.66 & 0.63 & 0.76 & 3.73 & 3.27 \\
+    & 100,PDC & 0.797 & 0.437 & \td{0.388} & 16.15 & \td{0.73} & 0.81 & 3.86 & 3.36 \\ \hline\hline
+    \multirow{3}{*}{RS 1.0,top10} & 10 & 0.745 & 0.418 & \td{0.387} & 10.33 & 0.60 & 0.80 & 4.12 & 3.91 \\
+    & 100 & 0.922 & \textbf{0.548} & 0.347 & \textbf{5.10} & 0.52 & 0.68 & 3.54 & 3.18 \\
+    & 100,PDC & 0.852 & 0.494 & 0.372 & 6.96 & 0.63 & 0.76 & 3.74 & 3.27 \\ \hline
+    \end{tabular}
+    \caption{
+     Results for all random sampling methods that were evaluates. These include temperatures 0.5, 0.7, and 1.0, as well as Top-10 random sampling. For each method, we show results with for generating 10 samples; generating 100 samples followed by selecting the 10 most likely outputs; and generating 100 samples followed by post-decoding clustering to select 10 outputs. In each section, the highest value is bolded, and statistical ties are marked \textdagger.}
+     \label{tab:results_random_sampling}
+\end{table*}
+
 \begin{table}[t]
     \centering
     \tiny
@@ -431,9 +456,99 @@ I don't know what's going on. \\
 
 \hline
     \end{tabular}
-    \caption{Responses to an example prompt for selected methods. More examples can be seen in the appendix.}
+    \caption{Responses to the prompt ``Look, nobody knows we did it.'' for several different decoding methods.}
     \label{examples}
 \end{table}
+
+\begin{table*}[t]
+    \small
+    \begin{tabular}{|l|l|l|}
+    \hline
+    \multicolumn{3}{|l|}{\rule{0pt}{0.35cm} \textbf{Prompt:} I'd love to drive through New England in the fall.}  \\ 
+    \hline \hline
+    \textbf{RS 0.5} &  \textbf{Standard BS} &  \textbf{Top3Cap BS} \\
+    \hline
+\makecell[l]{
+I wish i could have a little talk with you.\\
+I've been on the road for three years.\\
+I'd be dead for a long time.\\
+I'm not a.\\
+It's a lovely day.\\
+}&
+\makecell[l]{
+I don't know what to say.\\
+I don't know what to say to you.\\
+I don't know what to do.\\
+I don't know what I'm gonna do.\\
+I don't know if I can do it.\\
+}&
+\makecell[l]{
+If I were you I'd be the first to know.\\
+If I were you I'd go back to the.\\
+I've got to go to the bathroom.\\
+I'd like to go to the movies.\\
+If I were you I'd go back to England.\\
+}
+ \\
+    \hline
+    \hline
+    \textbf{RS 1.0} & \textbf{Standard BS with PDC} &  \textbf{Cluster5 BS} \\
+    \hline
+    
+\makecell[l]{
+I'm in love with the world I love.\\
+I'd be very happy of you and Kim.\\
+I see and I'd never sleep.\\
+I'd be dangerous too.\\
+When mademoiselle would guide the land.\\
+}&
+\makecell[l]{
+I don't know what to say.\\
+I don't know what to do.\\
+Where are you going?\\
+I'll be right back.\\
+I'd like to go home.\\
+}&
+\makecell[l]{
+I'll be back in a few days.\\
+I don't know what to say.\\
+I don't know what to do.\\
+I'll be back in a minute.\\
+I'll be back in a few minutes.\\
+}
+\\
+    \hline
+    \hline
+    \textbf{RS 1.0,top10} & \textbf{RS 1.0,top10 with PDC} &  \textbf{NPAD0.3 BS} \\
+    \hline
+\makecell[l]{
+I think you're going to be fine.\\
+I'm a very busy man\\
+I don't wanna be in there\\
+The of the fall fall fall fall.\\
+And I would've told you to come to Paris.\\
+}&
+\makecell[l]{
+Why don't you show me how it's done?\\
+No I'll talk to you later.\\
+I'd like to forget all about it.\\
+You know I was thinking.\\
+That's what I do.\\
+}
+&
+\makecell[l]{
+I'd like to know what's going on.\\
+I don't know what to do.\\
+I don't know what to do with it.\\
+I don't know what to say.\\
+I don't know how to thank you.\\
+}\\
+\hline
+    \end{tabular}
+    \caption{Responses to the prompt ``I'd love to drive through New England in the fall.'' for several decoding methods.}
+    \label{examples}
+\end{table*}
+
 
 \subsubsection{The Quality Diversity Tradeoff}
 
@@ -488,7 +603,10 @@ However, interestingness scores go down, and while the outputs are still more di
 In the beam search methods that use a beam size of 100 then filter down to 10, human-judged quality is on par with beam size 10 results, but diversity is considerably higher.
 
 When comparing the two types of filtering, PDC results in higher interestingness and diversity statistics, while log-likelihood re-ranking improves fluency and adequacy.
-This again demonstrates the trade-off between quality and diversity.\footnote{In the appendix, we show results with every method where we generate 10 samples; generate 100 samples followed by selecting the 10 most likely outputs; and generate 100 samples followed by post-decoding clustering to select 10 outputs.}
+This again demonstrates the trade-off between quality and diversity.
+
+Table \ref{tab:results_random_sampling} shows the results with every method where we generate 10 samples; generate 100 samples followed by selecting the 10 most likely outputs; and generate 100 samples followed by post-decoding clustering to select 10 outputs.
+We see that \TODO{}
 
 For image captioning, over-sampling with reranking does not consistently improve quality as it does in the dialog domain.
 Mean SPICE score is improved for random sampling but not for beam search. 
@@ -583,7 +701,26 @@ By picking text that resembles GPT-2's train set, we ensure that our classifiers
 
 For each decoding method, we construct a training dataset by pairing 250,000 generated samples with 250,000 excerpts of web text.
 5,000 additional paired samples are kept aside for validation and test datasets.
-Lastly, we filter out excerpts with fewer than 192 WordPiece tokens \citep{wu2016google} (excerpts might be quite short if the model produces an end-of-text token early on). See Appendix~1 for final dataset sizes.
+Lastly, we filter out excerpts with fewer than 192 WordPiece tokens \citep{wu2016google} (excerpts might be quite short if the model produces an end-of-text token early on).
+The final dataset sizes are shown in Table \ref{tab:dataset_sizes}.
+
+\begin{table}[t]
+    \small
+    \centering
+    \begin{tabular}{l|l|l|l}
+    \hline
+    \textbf{Method} & \textbf{\# train} & \textbf{\# valid} & \textbf{\# test} \\ \hline \hline
+    large-744M-k40-1wordcond & 211148 & 4226 & 4191 \\
+    large-744M-k40-nocond & 218825 & 4362 & 4360 \\
+    large-744M-p0.96-1wordcond & 210587 & 4248 & 4208 \\ 
+    large-744M-p0.96-nocond & 209390 & 4174 & 4185 \\ 
+    large-744M-p1.0-1wordcond & 209334 & 4169 & 4173 \\ 
+    large-744M-p1.0-nocond & 208219 & 4187 & 4168 \\ \Xhline{\arrayrulewidth}
+    human-written & 201344 & 4031 & 4030 \\ \hline
+    \end{tabular}
+    \caption{The number of excerpts used for training, validation, and testing.}
+    \label{tab:dataset_sizes}
+\end{table}
 
 A crucial question when generating text with a language model is whether or not to provide a priming sequence which the language model should continue.
 Unconditioned samples, where no priming text is provided, in conjunction with top-$k$ sampling, lead to pathological behavior for discriminators as the first token of the generated text will always be one of $k$ possible options.
@@ -649,7 +786,8 @@ An excerpt is predicted as machine-generated if its likelihood according to GPT-
 
 \subsubsection{Method for Human Detection}
 The human evaluation task is framed similarly to the automatic one.
-We ask the raters to decide whether a passage of text was written by a human or by a computer algorithm. (Full instructions are in the Appendix.)
+We ask the raters to decide whether a passage of text was written by a human or by a computer algorithm.
+Figure \ref{fig:amt_screenshot} shows screenshots of the instructions and user interface for the annotation task.
 Raters are allowed to choose between four options: ``definitely" or ``possibly" machine-generated and  ``definitely" or ``possibly" human-written.
 They are first shown an excerpt of length 16 WordPiece tokens.
 After they make a guess, the length of the excerpt is doubled, and they are asked the same question again.
@@ -658,13 +796,32 @@ Passages are equally likely to be human-written or machine-generated, with the m
 
 Initially, Amazon Mechanical Turk (AMT) raters were employed for this task, but rater accuracy was poor with over 70\% of the ``definitely" votes cast for ``human" despite the classes being balanced.
 Accuracy, even for the longest sequences, hovered around 50\%.
-The same study was then performed with university students who were first walked through ten examples (see Appendix Table 4) as a group.
+The same study was then performed with university students who were first walked through ten examples (Table \ref{tab:expert_rater_training}) as a group.
 Afterward, they were asked to complete the same tasks that had been sent to the AMT workers.
 No additional guidance or direction was given to them after the initial walk-through.
 We will refer to this group as the ``expert raters."
 Among them, 52.1\% of ``definitely" votes were cast for human, and accuracy on the longest excerpt length was over 70\%.
 
-\begin{figure}[t]
+The human evaluation dataset consisted of 150 excerpts of web text and 50 excerpts each from the three decoding strategies.
+Each question was shown to at most three raters, leading to 900 total annotations from the untrained workers and 475 from the expert raters.
+A more detailed breakdown can be found in Table \ref{tab:amt_counts}.
+
+\begin{figure}
+    \center
+    \fbox{\includegraphics[width=0.49\textwidth]{figures/amt_task_2}}%
+    \fbox{\includegraphics[width=0.49\textwidth]{figures/amt_task}}%
+    \caption{The interface of the task used for human evaluation. Each time the user presses next, the passage's length is doubled. On the left, we show the first step of evaluation, on the right, the second to last.}
+    \label{fig:amt_screenshot} 
+\end{figure}
+
+\begin{figure}
+    \center
+    \fbox{\includegraphics[width=0.5\textwidth]{figures/amt_task_honeypot}}%
+    \caption{For some of the questions, the text "Dear AMT Worker: to show you're reading, please select definitely [X] for this one." was inserted into the last text segment, and "Did you read carefully?" was appended to the end.}
+    \label{fig:amt_honeypot} 
+\end{figure}
+
+\begin{figure}
 \begin{subfigure}{.495\textwidth}
     \center
     \includegraphics[width=\textwidth]{figures/bert_accuracy}
@@ -681,9 +838,123 @@ Among them, 52.1\% of ``definitely" votes were cast for human, and accuracy on t
 In \textbf{(b)}, we see that the BERT fine-tuned discriminator predicts about the same number of false-positives as false-negatives when trained with samples generated using top-$p$ sampling. However, for top-$k$, it more often mistakes machine-generated text to be human-written, while for untruncated random sampling the opposite is the case.}
 \end{figure}
 
-The human evaluation dataset consisted of 150 excerpts of web text and 50 excerpts each from the three decoding strategies.
-Each question was shown to at most three raters, leading to 900 total annotations from the untrained workers and 475 from the expert raters.
-A more detailed breakdown can be found in the Appendix.
+\begin{table}
+\small
+  \centering
+    \begin{tabular}{lrr}
+    \hline
+    \textbf{\# Annotations} & \textbf{Expert Raters} & \textbf{AMT Workers} \\
+    \hline\hline
+    webtext & 239   & 450 \\
+    \hline
+    k0-1wordcond & 87    & 150 \\
+    k40-1wordcond & 75    & 150 \\
+    p0.96-1wordcond & 74    & 150 \\
+    total machine & 236   & 450 \\
+    \hline
+    \end{tabular}%
+  \label{tab:amt_counts}%
+  \caption{The number of human annotations collected. In total, there were 50 examples from each sampling strategy and 150 examples of web text. Each example was shown to at most three raters.}
+\end{table}
+
+\begin{table}[]
+    \centering
+    \tiny
+    \begin{tabular}{c|p{5.5in}}
+    \hline
+Human & I recently got the chance to try the new Oil Essentials line. With six potent blends to choose from--at \$13 each--these cute little bottles offer a great, affordable way to partake in the skin and hair care oil craze.
+
+I tested each product in the line, massaging them onto my face every night before bed and running any leftover oil through my hair to tame frizziness. You could also add a few drops to your bath, favorite moisturizer, or even your shampoo and conditioner.
+
+Here's a quick rundown of each oil.
+
+Revitalize: Omega 3, 6, 9 \& Evening Primrose
+
+This was the first one I tried (I went in ROYGBIV order to keep things straight) and my first impression was that it smells lovely but a little strong. The fragrance smells genuinely like flowers.
+\\
+\hline
+Machine
+&
+Red Lanterns, the lead exposure to a movie starring the Batman solo movie alum Margot Robbie taken under Wonder Woman's wing have reignited that rivalry with their whispery premiere. They played it as much as they possibly could, even though people who didn't ever watch Justice League or might have missed it waiting in line for the theater were still talking about as I spilled coffee.
+
+The gist? An overextended (OK, a sore) Adam West films set up a Legion of Super-Heroes situation. How aggro? Super laws and paramilitary groups watch over the world's superheroes, which is a mix of that schtick ending, Planet Of The Apes II bit, and the Batman/Venom bit of last appeared in The Seventh Seal when Chris O'Donnell infiltrated one of the teams at some point, also wearing Staff.
+\\
+\hline
+Machine
+&
+He is considered to be the most terrifying man on the planet and people stay away from him. A guy asks him to do something and he says, "My girlfriend's so important to me... I don't need to fight her any more." And then, boom, there's some in a corner crying inappropriately.
+
+Men: It's gone in five minutes. Why do I have to be so sad? It's cute," says female member, who asks to remain anonymous. "It's what grew up to drive me crazy when I was a kid, seeing these women become the nurturing, wealthy things they are in this professional world I truly love."
+
+And it's nothing to do with her success. These men still actively fear being around the idea of a woman who might win Oscars, make movies or be audacious drivers. 
+\\
+\hline
+Human
+&
+Dropbox and Google Drive are very different services that appeal to different users. While Drive is connected to the entire Google Apps (now known as G Suite) ecosystem, Dropbox is a lightweight, simple alternative for file storage. While both are useful, users need to look beyond features, and make sure the service they choose can adequately protect their data. Here's how Dropbox encryption and Google Drive encryption stack up.
+
+Dropbox and Google Drive Encryption
+
+To their credit, both Dropbox and Google Drive protect user files with encryption. Both also allow users to enable two-step verification, which requires an extra code texted to the user's phone to access the account, making it harder for hackers to access a user's data. 
+\\
+\hline
+Human
+&
+EVE Isk Per Hour(Eveiph) is hands down the best tool I've ever used to make isk in New Eden. It is a market helper program that is able to do a great deal of the work that is typically done by a traders spreadsheet. I've used it to go from a 200m/month trading income to 3b/month on my main trading character.
+
+Above you can see the blueprint manufacturing page which is located on the first tab of Eveiph. Here you can see the components required to make an item, the settings for the blueprint, and a brief market analysis of what you can expect to make manufacturing the item and selling it at the market you've selected. You can enter the amount of runs you want to make, the ME and PE of your blueprint and click add to shopping list, and it will be added to a list of items to purchase when you are next at a trade hub.
+\\
+\hline
+Machine
+&
+So, not only was the speech a thoroughly mediocre diatribe about what he now thinks we should do for the next 45 minutes, but also how much credit we should give to Mumford and Sons for bringing Obama to the campaign trail. Behold:
+
+At the DNC, we drew strength from something even more powerful than the power of words. We drew strength from the power of families in this country. We drew strength from the power of family values. We drew strength from the power of a common purpose--We drew strength from our shared commitment to fighting against everything that undermines our potential in this country and our freedom. It is with that same conviction that we launch this campaign today and we urge every American in America to join us tonight.
+
+To allow the same attempt to succeed in this election.
+\\
+\hline
+Machine
+&
+The year is twenty-eight, and the boy is Harry, the sixth year at Hogwarts School of Witchcraft and Wizardry. He can't walk without spells covering his feet (or in his case, his feet are so badly burned that he, for practical purposes, can't even walk for that long without them) and he's just starting to feel more secure about things. This is a pretty dull aspect of the book, I'd say. They probably spent way too much time on the fact that he can't use the stick of silver from his wand, despite his friends bewitching all the knives they had.
+
+Harry had been having some difficulty getting to sleep until Hermione pulled him out of his state of near-death-conversation. Thanks to Hermione's meddling, he's gotten some sleep for the past two days. They also learnt a fair amount about getting used to his new surroundings.
+\\
+\hline
+Machine
+&
+Coincidentally, just a few days after the first tweet came out, a fellow named Kevin McReynolds sent out an interview with GQ to promote their upcoming issue.
+
+McReynolds describes himself as "a conservative Catholic" who "cannot fathom this guy being a real person and should be ashamed that he was able to be elected president."
+
+It's true. If you believe Hillary Clinton gave away 20 percent of the American Uranium to Russia, then you should be ashamed that you voted for Trump. No one should be able to give or receive anything that's not supposed to, so long as they have a warrant. If you've been in a relationship for more than six months with a person who's also convicted of being a felon (or convicted of stealing), that's just stupid, especially as a married man. If you're married to someone convicted of a crime, and they go on their honeymoon with you, that's a felony, not a honeymoon.
+\\
+\hline
+Human
+&
+CHIP DESIGNER Texas Instruments unveiled a family of system on chip (SoC) processors aimed at automakers today, which are designed for use in self-driving cars.
+
+Named the TDA2x, the SoC family integrates safety features, such as aiding auto designers to create advanced driver assistance systems (ADAS), which in turn help "reduce the number of collisions on the road and enable autonomous driving experiences".
+
+"TDA2x device family combines an optimal mix of high performance, vision analytics, video, graphics and general purpose processing cores in a low power envelope, enabling a broad range of ADAS applications including front camera, surround view and sensor fusion," Texas Instruments said in its release.
+\\
+\hline
+Machine
+&
+Description
+
+This classic blend of coffee, cream, and sugar is the perfect drink! It is a smooth and creamy coffee with hints of cream and sweet sugar that can be enjoyed even after a full day of work or playing! The sugar provides a wonderful texture to the coffee beans, so that it can be scooped out into a cup.
+
+Available in four flavours: vanilla cream, caramel cream, coffee creme, and chocolate cream.
+
+Note: Coffee can be prepared in less than 120 minutes.
+Note: Serves one.
+\\
+\hline
+    \end{tabular}
+    \caption{The 10 examples that ``expert" raters were guided through before they were asked to perform the detection task. These are hand-selected to showcase the spectrum of generated text and human-written text.}
+    \label{tab:expert_rater_training}
+\end{table}
 
 
 \subsection{Results}
@@ -989,7 +1260,8 @@ Once the sentences transition to being machine-generated, they will stay so for 
 After being shown each sentence, the player must guess whether that sentence was machine-generated or human-written.
 If the user selects ``human-written,'' another sentence is displayed.
 If the player deems the current sentence to be written by a machine, the game round ends and the true author (machine or human) for each sentence is revealed.
-Before submitting their selection, the player is able to select a reason to explain their choice of sentence\footnote{See Table \ref{tab:reasons_text} in the Appendix for a full list of reasons given with their accompanying description text.}.
+Before submitting their selection, the player is able to select a reason to explain their choice of sentence.
+They may select from a pre-defined set of reasons (Table \ref{tab:reasons_text}) or else write a custom reason.
 Thus, the player's goal in \ROFT{} is to correctly identify the sentence at which a passage transitions from being human written to being generated by a language model.
 This setting is considerably more realistic than prior work, since in the real world, generating with a prompt is the standard way to achieve controllability, and malicious actors will not reveal what portion of a generation is the human-written prompt.
 
@@ -1024,7 +1296,9 @@ Players were awarded 5 points for correctly choosing the boundary sentence and $
 Players were not awarded points for guessing a sentence before the boundary.
 Players were able to see how many points they earned in each category on their profile page and compare their performance with fellow players on the leaderboard page.
 In the Findings section (Section \ref{section:roft_results}), we report mean score earned as the predominant evaluation metric. 
-This metric has high correlation with other more standard metrics (Appendix \ref{app:metric}).
+Table \ref{tab:correlations_with_other_metrucs} shows the correlation between mean score and other sensible metrics.
+We see that mean score is strongly positively correlated with both perfect guess accuracy and correct side of boundary. Mean score is only weakly correlated with distance after boundary due to the harsh scaling of points; only guesses within five sentences to the right of the boundary receive any points. While imperfect, this harsh scaling is by design, as without it later sentences will give significantly more points in expectation.
+
 % Users are additionally given profiles, and are able to collect "trophies" for various accomplishments during the annotation task (e.g. getting the boundary exactly correct) in a manner to incentivize additional annotation collection.
 
 \subsubsection{Player Recruitment and Annotation Filtering}
@@ -1051,7 +1325,6 @@ If a player guessed the same boundary position for a series of 5 or more rounds 
 We also removed annotations from the two players cheated by exploiting Javascript vulnerabilities.
 Finally, for the recipes genre, a bug during dataset curation resulted in an over-representation of ``all-human'' game rounds played;
 for better balance during analysis, we randomly removed a portion of these annotations.
-More details on filtering are in Appendix \ref{app:filtering}.
 Our final filtered dataset consisted of 21,646 annotations over 7,257 game rounds.
 For News, Stories, and Recipes, we had on average over 2 annotations per game round, while for Speeches, a smaller dataset, we had on average 16.
 Table \ref{tab:dataset_stats} gives a detailed breakdown of the dataset across genres and generation systems.
@@ -1129,9 +1402,8 @@ Overall & 241 & 21,646 & 90 & 2.083 & {6.338} \\
 
 In order to answer questions related to how model attributes affect generated text we employed different methods of text generation for each category.
 For Recipes, New York Times, and Stories, we generated continuations with GPT-2 XL using nucleus sampling \citep{holtzman2019curious} with $p=0.4$ and a repetition penalty of $1.2$ \citep{keskar2019ctrl}.
-For Recipes, we additionally generated continuations with a GPT-2 XL model finetuned on recipes\footnote{See Appendix \ref{app:gen_filter} for finetuning details.}.
-
 For New York Times and Stories, we experimented with varying the $p$ used for decoding, testing out $p=0.0$ (argmax) and $p=1.0$ (sampling directly from the model's predicted distribution).
+For Recipes, we additionally generated continuations with a GPT-2 XL model finetuned on recipes.
 
 We also added 100 attention-check game rounds (10 for each possible context length), where rather than transitioning to machine-generated text, the passage transitioned to sentences from a randomly selected news article.
 We refer to this as the ``random'' model in our analysis and expect these game rounds to be trivial for players.
@@ -1142,14 +1414,26 @@ CTRL has the option to specify a control code indicating what domain to generate
 Table \ref{tab:dataset_stats} gives the statistics of the generations included. Note that not all generations received annotations.
 
 
-
-% \TODO{(Checklist) Mention the exit survey explicitly and mention that all players in our data are anonymized and that they consented to their data being used in our research? Also mention the intended use of our dataset. (maybe include that in \S3.6?)}
+\begin{table}
+    \centering
+    \small
+    \begin{tabular}{c|c}
+    \toprule
+    Metric & $\rho$ \\
+    \midrule
+    (a) Correct side of boundary &  0.74 \\
+    (b) Perfect guess & 0.88 \\
+    (c) Distance after boundary & 0.31  \\
+    \bottomrule
+    \end{tabular}
+    \caption{Average points earned is the main metric reported in the Results section. This table shows the Spearman's rank correlation between average points per user and several other possible metrics: (a) the fraction of times the user correctly guessed on or after the boundary; (b) the fraction of times the user guessed exactly on the boundary; and (c) the average number of sentences after the boundary of the user's guess (giving new score for guesses before the boundary).}
+    \label{tab:correlations_with_other_metrucs}
+\end{table}
 
 \subsection{Results}
 \label{section:roft_results}
 The collected annotations allow us to investigate several questions.
 Error bars on all figures and tables are 95\% confidence intervals.
-Appendix \ref{app:graph_values} gives the exact values for all bar graphs.
 
 \subsubsection{Can humans detect generated text?}
 Players correctly guessed exactly on the boundary sentence 23.4\% of the time.
@@ -1159,7 +1443,7 @@ Players incorrectly identified 61.3\% of all-human game rounds as containing mac
 The average number of points (\S\ref{sec:points}) received per round by our players was 2.08, well above random chance.
 As baselines, if a player uniform randomly guessed every round, their expected per-round score would be 1.31, and
 if they always guessed the last sentence, their expected per-round score would be 1.5.\footnote{These expectations assume that the true boundary position is equally likely to be at any position. Figure \ref{fig:distribution_true_boundaries} shows the true distribution of boundaries, which was not quite uniform.}
-For the remaining analyses, we will use average points earned as the primary measure of detection ability.
+For the remaining analyses, we use average points earned as the primary measure of detection ability.
 This measure correlates with other possible metrics (Table \ref{tab:correlations_with_other_metrucs}).
 
 As an additional sanity check on annotator skill, we included game rounds in the News domain where instead of transitioning to an LM-generated continuation, the text transitioned to a completely different news article selected at random.
@@ -1337,7 +1621,46 @@ Table \ref{tab:reasons} shows for each reason, the average number of points earn
 Like \citet{clark2021all}, we see that conditioning on bad grammar is by far the least reliable way to detect generated text.
 In addition, we see that over 30\% of all reasons given for generated text were ``irrelevant,'' a result that stayed consistent across all models and domains.
 We note that the three most reliable reasons given (``common\_sense,'' ``irrelevant,'' and ``contradicts\_sentence'') were also the three most common, indicating that improving these attributes will lead to the biggest improvements in generation performance.
-A more detailed breakdown, as well as several examples of custom reasons, can be found in Appendix \ref{app:reasons}.
+
+Figure \ref{tab:reasons_text} shows the full text of the reasons players could choose between for their boundary decisions, as well as some ``other'' responses we received. 
+Figure \ref{fig:reasons_per_model} hows a more detailed breakdown of the percentage of errors made by different models. We see that using $p=1.0$ results in a higher percentage of ``irrelevant'' errors (36\%) than $p=0.0$ (31\%) and $p=0.4$ (28\%) while models decoded using $p=0.0$ in turn have a higher percentage of ``generic'' errors. We also see that smaller models tend to make more ``irrelevant'' errors than larger models (39\% vs. 28\%).
+More research is necessary to understand not only the distribution of the types of errors made by certain generative models but also the ways in which that distribution changes given factors such as domain, model size, and decoding strategy.
+
+\begin{table}[tb]
+    \centering
+    \small
+    \begin{tabular}{l|p{30em}}
+    \toprule
+    Reason & Description \\
+    \midrule
+    grammar &  is not grammatical \\
+    repetition & substantially repeats previous text or itself \\
+    irrelevant & is irrelevant or unrelated to the previous sentences \\
+    contradicts\_sentence & contradicts the previous sentences \\
+    contradicts\_knowledge & contradicts your understanding of the people, events, or concepts involved \\
+    common\_sense & contains common-sense or basic logical errors \\
+    coreference & mixes up characters' names or other attributes \\
+    generic & contains language that is generic or uninteresting \\
+    \midrule
+    other & $\whitepointerright$Bacon is not sauted \\
+     & $\whitepointerright$Mr. vs President Clinton \\
+     & $\whitepointerright$navel and sternum seem like very unusual word choices \\
+     & $\whitepointerright$It's unlikely that President Nixon will be quoting a one-month old report when he talks about progress made to date   \\
+     & $\whitepointerright$lemon, zest of some things dont sound right? 34 cups of splenda and 14 cups of vinegar? \\
+     & $\whitepointerright$doesn't rhyme like rest \\
+     & $\whitepointerright$Grammar substantially improves from the previous sentences \\
+    \bottomrule
+    \end{tabular}
+    \caption{\textbf{(top)} The possible reasons players could select for why text was machine generated, and \textbf{(bottom)} several examples of custom reasons players wrote.}
+    \label{tab:reasons_text}
+\end{table}
+
+\begin{figure*}[tb]
+    \centering
+    \hbox{\hspace{6.0em} \includegraphics[scale=0.6]{figures/reasons_per_model.pdf}}
+    \caption{The reasons provided by players as to why a given example was generated broken up per model that generated the text}
+    \label{fig:reasons_per_model}
+\end{figure*}
 
 \begin{table}[tb]
 \small
