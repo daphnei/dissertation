@@ -953,22 +953,22 @@ The primary contributions of this section are as follows:
 
 % Evaluation of natural language generation remains a difficult task to organize. However, the growing subfield that studies the identification of machine-written text has offered a more practical human-centric approach to model evaluation.
 Previous research on understanding the ability of humans to detect machine generated text has mostly posed the task as a classification task--given a text example that is either entirely human-written or entirely machine-generated (aside from an initial prompt), annotators must predict whether it is human-written or machine-generated.
-On this task, \citet{ippolito-etal-2020-automatic} reported that trained evaluators were able to achieve an accuracy of at best 71.4\%, using generation from GPT-2 Large \citep{radford2019language}.
-\citet{clark2021all} demonstrated that annotators are able to distinguish GPT-2 XL generations with at best 62\% accuracy, but they perform no better than random chance on GPT-3 outputs \citep{brownetal2020}.
+On this task, \citet{ippolito2020automatic} reported that trained evaluators were able to achieve an accuracy of at best 71.4\%, using generation from GPT-2 Large \citep{radford2019language}.
+\citet{clark2021all} demonstrated that annotators are able to distinguish GPT-2 XL generations with at best 62\% accuracy, but they perform no better than random chance on GPT-3 outputs \citep{brown2020language}.
 Even after training evaluators to improve their detection abilities, detection accuracy on GPT-3 was only able to converge to around 55\%.
-A study by \citet{brownetal2020} reported similarly low performance (52\%) on the detection of machine-generated news articles.
+A study by \citet{brown2020language} reported similarly low performance (52\%) on the detection of machine-generated news articles.
 
-Our work builds directly off of the RoFT detection game introduced by \citet{roft}; we contribute expanded analysis across a variety of genres and generative systems.
-A similar detection task, where annotators guess whether turns in a conversation were generated, was posed as a way to evaluate dialog systems \citep{deriu-etal-2020-spot}.
+Our work builds directly off of the RoFT detection game introduced by \citet{dugan2020roft}; we contribute expanded analysis across a variety of genres and generative systems.
+A similar detection task, where annotators guess whether turns in a conversation were generated, was posed as a way to evaluate dialog systems \citep{deriu2020spot}.
 
 Another related area of research is asking annotators to explain why they think generated text is generated.
-\citet{he-etal-2021-tgea} created a dataset of generated text annotated with the errors that humans found in it, and \citet{dou2021scarecrow} proposed an error annotation schema for generated text.
+\citet{he2021tgea} created a dataset of generated text annotated with the errors that humans found in it, and \citet{dou2021scarecrow} proposed an error annotation schema for generated text.
 The errors we allow players to report in our experiments were inspired by this schema.
 
 % In this paper, we expand on the findings of previous research by altering the evaluation methodology from a classification task over an entire text to a boundary detection task, where human evaluators are asked to identify the sentence at which a passage transitions from being human-written to machine generated. We also display the effect of annotator ``training'', where we investigate whether repeated attempts at the task with feedback yields better performance over time. We provide additional insight into detection performance, by controlling for variables such as hyperparameter value, model parameter size, and textual domains.
 
 \subsection{The Real or Fake Text Game}
-In order to facilitate data collection, we follow \citet{roft} and pose the detection task as a game.
+In order to facilitate data collection, we follow \citet{dugan2020roft} and pose the detection task as a game.
 In each game round, players were shown one sentence at a time and earned points for guessing close to the true boundary (Figure \ref{fig:pg1}).
 They were also asked to select reasons for why they made their decision.
 In total we collected over 20,000 annotations.
@@ -978,7 +978,7 @@ Furthermore, we examine some of the the trends and errors which distinguish real
 
 
 
-Our study uses data collected through the ``Real or Fake Text'' (\ROFT{}) annotation platform \citep{roft}.
+Our study uses data collected through the ``Real or Fake Text'' (\ROFT{}) annotation platform \citep{dugan2020roft}.
 \ROFT{} is a turn-based game where a player first selects a domain of text (news articles, recipes, short stories, or speeches).
 The player then plays a series of game rounds.
 In each round, the player is shown a starting sentence which they are told comes from a real human-written document.
@@ -1128,7 +1128,7 @@ Overall & 241 & 21,646 & 90 & 2.083 & {6.338} \\
 \subsubsection{Continuation Sources}
 
 In order to answer questions related to how model attributes affect generated text we employed different methods of text generation for each category.
-For Recipes, New York Times, and Stories, we generated continuations with GPT-2 XL using nucleus sampling \citep{holtzmanetal2020} with $p=0.4$ and a repetition penalty of $1.2$ \citep{keskar2019ctrl}.
+For Recipes, New York Times, and Stories, we generated continuations with GPT-2 XL using nucleus sampling \citep{holtzman2019curious} with $p=0.4$ and a repetition penalty of $1.2$ \citep{keskar2019ctrl}.
 For Recipes, we additionally generated continuations with a GPT-2 XL model finetuned on recipes\footnote{See Appendix \ref{app:gen_filter} for finetuning details.}.
 
 For New York Times and Stories, we experimented with varying the $p$ used for decoding, testing out $p=0.0$ (argmax) and $p=1.0$ (sampling directly from the model's predicted distribution).
@@ -1231,8 +1231,8 @@ Indeed, we found that players scored significantly higher when generations came 
 
 
 \subsection{Are diverse generations easier to detect?}
-Choice of decoding strategy is known to have significant impact on text quality \citep{zhang2020trading} and detectability \citep{ippolito-etal-2020-automatic}.
-Choosing a lower value of $p$ when generating with a nucleus sampling \citep{holtzmanetal2020} decoding strategy produces less diverse but also less noisy text than choosing a higher value of $p$.
+Choice of decoding strategy is known to have significant impact on text quality \citep{zhang2021trading} and detectability \citep{ippolito2020automatic}.
+Choosing a lower value of $p$ when generating with a nucleus sampling \citep{holtzman2019curious} decoding strategy produces less diverse but also less noisy text than choosing a higher value of $p$.
 In our experiments, we did not find statistically significant differences in player skill between $p$=0.0 (greedy) and $p$=0.4 sampling (Figure \ref{fig:genre_top_p}).
 However, players were significantly better at $p$=1 (pure random sampling) than the lower values, 
 validating claims from earlier papers that LMs struggle to generate high-quality text with similar diversity to human-written text.
@@ -1363,7 +1363,7 @@ We see that when players select reasons like ``grammar'' or ``generic,'' they ar
 \subsection{Discussion}
 \label{section:roft_discussion}
 In this section, we have demonstrated the viability of the boundary detection task as a framework for soliciting human evaluation of natural-language generation systems.
-We conducted the largest study of generated text detectability to date and, in the process, replicated many previous major results in the field, such as the improved performance of bigger models \citep{kaplan2020scaling}, the importance of decoding strategy selection \citep{ippolito-etal-2020-automatic}, and the difficulty in incentivizing annotators to improve over time \citep{clark2021all}.
+We conducted the largest study of generated text detectability to date and, in the process, replicated many previous major results in the field, such as the improved performance of bigger models \citep{kaplan2020scaling}, the importance of decoding strategy selection \citep{ippolito2020automatic}, and the difficulty in incentivizing annotators to improve over time \citep{clark2021all}.
 In addition, we have provided new insights into the ways in which humans interact with partially-generated text.
 
 In terms of ethics, work on the detectability of machine-generated text sits at an interesting balancing point.
@@ -1380,7 +1380,7 @@ One alternative system which could reduce this bias would be to show all ten sen
 The player would get a certain number of tries to guess the index of the boundary sentence and would be scored based on the number of tries this takes.
 This would resolve the bug in our current system that some sentence positions have a high point value in expectation.
 
-In addition to the game design aspect of the study, there are many more areas for future work to investigate. To start, our study tested only a limited subset of models and domains. It would be interesting to see if larger models, such as GPT-3 \citep{brownetal2020}, continue to show similar results across the variables we investigated (finetuning, topic control, decoding strategy). Another area of improvement is in the nature of the boundaries. Our study was limited in that we assumed continuations always happened on the sentence boundary, but that is not always necessarily the case. Future work should look at continuations that do not happen exactly on the boundary between sentences. While this would require major edits to the detection task, interface, and incentive structure, it would allow for a much more realistic representation of what generated text looks like in the real world if done properly. 
+In addition to the game design aspect of the study, there are many more areas for future work to investigate. To start, our study tested only a limited subset of models and domains. It would be interesting to see if larger models, such as GPT-3 \citep{brown2020language}, continue to show similar results across the variables we investigated (finetuning, topic control, decoding strategy). Another area of improvement is in the nature of the boundaries. Our study was limited in that we assumed continuations always happened on the sentence boundary, but that is not always necessarily the case. Future work should look at continuations that do not happen exactly on the boundary between sentences. While this would require major edits to the detection task, interface, and incentive structure, it would allow for a much more realistic representation of what generated text looks like in the real world if done properly. 
 
 Finally, we believe that future work should develop techniques to betetr investigate what exactly annotators are thinking when they make their decisions. Researchers need to help give annotators the language to properly explain how and why they come to select the sentences that they do, whether this be in the form of better error categorization or in free text responses. In addition, future work should seek to draw from a more diverse pool of annotators. We acknowledge that university students (many of whom have studied computer science) may not be representative of the larger population and we hope that future work can take on a larger user study on a more diverse population and investigate how the unique backgrounds of different annotators contribute to how they detect generated text.
 
