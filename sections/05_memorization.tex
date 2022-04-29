@@ -55,7 +55,7 @@ GPT-J model \citep{gpt-neo,gpt-j} memorized at least $1\%$ of its training datas
 
 In addition to these loose estimates of models' memorization capabilities, there is a limited understanding of how memorization varies across different neural language models and datasets of different scales.
 %
-Prior studies of memorization in language models either focus on models or datasets of a fixed size~\citep{carlini2019secret, zhang2021counterfactual, thakkar2020understanding} or identify a narrow memorization-versus-scale relationship~\citep{carlini2020extracting, 2021dedup}.
+Prior studies of memorization in language models either focus on models or datasets of a fixed size~\citep{carlini2019secret, zhang2021counterfactual, thakkar2020understanding} or identify a narrow memorization-versus-scale relationship~\citep{carlini2020extracting, lee2021deduplicating}.
 \citet{mccoy2021raven} broadly study the extent to which language models memorize, but their focus is on how to avoid the problem and ensure novelty of model outputs, rather than on studying model risk through identifying maximum memorization.
 %how to maximize memorization to study model risk.
 
@@ -94,7 +94,7 @@ Our paper aims to establish much tighter approximations to the fraction of a dat
 
 Our analysis is relevant to the broad literature on privacy attacks on machine learning.
 For example, membership inference attacks~\citep{shokri2017membership, yeom2018privacy} allow an adversary to detect the presence of a given example in a model's training dataset, and other forms of data leakage permit an adversary to learn dataset properties \citep{ganju2018property,fredrikson2015model}.
-We focus on extraction attacks due to their relevance for language modeling---extraction demonstrates significant leakage from a model, and grows with data duplication \citep{2021dedup}, a common feature of large-scale text datasets.
+We focus on extraction attacks due to their relevance for language modeling---extraction demonstrates significant leakage from a model, and grows with data duplication \citep{lee2021deduplicating}, a common feature of large-scale text datasets.
 
 %TODO
 %\cite{} show that the performance of code understanding models suffers when training sets have duplicates.
@@ -224,7 +224,7 @@ us to draw meaningful conclusions from the data.
 Yet, naively sampling from the data independently at random to construct a representative subset of the data distribution is not the best approach.
 Indeed, prior work has identified that one of the most important factors that contributes to training data memorization is how often that data has been \emph{duplicated} (i.e., how often the same sequence is repeated either exactly or approximately-exactly).
 %
-Because the frequency of training data duplication follows an exponential distribution \citep{2021dedup}, a fully random sample of only 50,000 sequences
+Because the frequency of training data duplication follows an exponential distribution \citep{lee2021deduplicating}, a fully random sample of only 50,000 sequences
 (accounting for $\le 0.02\%$ of the dataset)
 is unlikely to contain \emph{any} signal that would allow us to 
 accurately measure the tail of this distribution.
@@ -247,7 +247,7 @@ Note that constructing this duplicate-normalized data subset requires some work,
 as efficiently identifying duplicate substrings in an $800$GB training dataset is
 computationally challenging.
 %
-We make use of the suffix array construction from \citet{2021dedup} (see Appendix).
+We make use of the suffix array construction from \citet{lee2021deduplicating} (see Appendix).
 
 For each sequence length between $50$ and $500$ tokens, this collection process gives us roughly $50,000$ examples duplicated varying numbers
 of times,
@@ -314,7 +314,7 @@ it is because they have memorized the data; it is not simply because the larger 
 
 \subsubsection{Repeated Strings are Memorized More}
 \label{sec:duplicates}
-Prior work has provided preliminary evidence that memorization in language models increases with the number of times sequences are repeated in the training set \citep{carlini2020extracting, 2021dedup}.
+Prior work has provided preliminary evidence that memorization in language models increases with the number of times sequences are repeated in the training set \citep{carlini2020extracting, lee2021deduplicating}.
 %
 We expand on this observation and systematically measure the effect number of repetitions has on memorization.
 %
@@ -327,7 +327,7 @@ Figure~\ref{fig:main-res-dups} shows an analysis of our results, aggregated over
 We find a clear log-linear trend in memorization. While the model struggles to regurgitate strings which are repeated just a handful of times, this probability increases dramatically as strings have more repetitions.
 %
 %Strings repeated only once are memorized by the 1.3B parameter model with probability $TODO$, and even at 5 repetitions this probability is still only 8\%. 
-These small memorization values at low numbers of repetitions corroborate the impact of training dataset deduplication on memorization observed by \citet{2021dedup}.
+These small memorization values at low numbers of repetitions corroborate the impact of training dataset deduplication on memorization observed by \citet{lee2021deduplicating}.
 %
 However, we find that memorization does still happen, even with just a few duplicates---thus, deduplication will not perfectly prevent leakage.
 %
@@ -502,7 +502,7 @@ Since the goal of our study is to maximize discoverability---an antithetical goa
     
 \end{figure*}
 
-\minisection{Alternate definition of extractability.}
+\subsubsection{Alternate Definition of Extractability}
 Our main experiments report a sequence as ``extractable'' if the model's generated continuation is identical to the true suffix within that training example.
 This method is a loose lower bound on memorization.
 Consider two sequences $x_1$, $x_2$ both contained in the training dataset.
@@ -532,7 +532,7 @@ The maximum difference between these approaches is 28.4\%, at 2{,}200 repetition
 
 We refrain from using this approach for our main experiments,
 %First, studying repetition in internet datasets requires understanding how so many repetitions of an example came to be. 
-%There are many approximate duplicates such as those containing text generated from templates~\cite{2021dedup}.
+%There are many approximate duplicates such as those containing text generated from templates~\cite{lee2021deduplicating}.
 %Thus, $80\%$ memorization when checking in the entire dataset and also nearly $60\%$ memorization when comparing with the groundtruth are both not as concerning as the raw numbers might suggest.
 %
 % First, the total gap between the two methodologies is rather small---this improvement
@@ -600,7 +600,7 @@ We now replicate this analysis for different language model families trained on 
 and with different training objectives, and performed the same memorization analysis on
 \begin{enumerate}[noitemsep,topsep=0pt]
 \item The T5 family of models trained on the C4 dataset~\citep{t52020}, and
-\item The language models from \citet{2021dedup}, trained on a deduplicated version of the C4 dataset.
+\item The language models from \citet{lee2021deduplicating}, trained on a deduplicated version of the C4 dataset.
 \end{enumerate}
 %
 We expected our results to cleanly generalize across settings---and this was indeed the case for model scale. Yet, we found the situation to be more complicated when considering training data duplication.
@@ -716,13 +716,13 @@ This effect, to a lesser extent, can be found in other buckets which contain man
 
 \subsubsection{Language Models Trained on Deduplicated Data}
 
-The models used in \citet{2021dedup} are 1.5B parameter causal language models.
+The models used in \citet{lee2021deduplicating} are 1.5B parameter causal language models.
 This model family consists of one model trained on C4 (the same dataset as T5), one model trained on a version of C4 that was deduplicated by removing all documents which were near-duplicates of other documents, and one model trained on a version of C4 that was deduplicated by deleting any string of length-50 tokens that occurred more than once.
-\citet{2021dedup} found that both types of deduplication reduced the likelihood of memorization.
+\citet{lee2021deduplicating} found that both types of deduplication reduced the likelihood of memorization.
 
 We were most interested in whether models trained on deduplicated data would still exhibit increased memorization of examples which were repeated frequently in the original, non-deduplicated C4 dataset.
-% Because \citet{2021dedup} trained models with few model sizes, we did not perform experiments investigating memorization as a function of scale.
-% Because \citet{2021dedup} only trained models of a fixed size\kl{technically 2 scales}, we are unable to perform experiments that investigate memorization as a function of scale.
+% Because \citet{lee2021deduplicating} trained models with few model sizes, we did not perform experiments investigating memorization as a function of scale.
+% Because \citet{lee2021deduplicating} only trained models of a fixed size\kl{technically 2 scales}, we are unable to perform experiments that investigate memorization as a function of scale.
 %
 Figure~\ref{fig:other-models-dedup} plots this fraction of sequences memorized by each of the three models.
 %
@@ -773,7 +773,7 @@ Given that current state-of-the-art models contain more than 200$\times$ as many
 %
 At the same time, we have shown that this memorization is often hard to discover, and for an attack to actually extract this data it will be necessary to develop qualitatively new attack strategies.
 %
-Fortunately, it appears that (for the comparatively small models we study) training data inserted just once is rarely memorized, and so deduplicating training datasets~\citep{2021dedup} is likely a practical technique to mitigate the harms of memorization.
+Fortunately, it appears that (for the comparatively small models we study) training data inserted just once is rarely memorized, and so deduplicating training datasets~\citep{lee2021deduplicating} is likely a practical technique to mitigate the harms of memorization.
 
 
 \section{Deduplicating Training Data Reduces Memorization}
