@@ -46,6 +46,7 @@
     BCOR=5mm,
     paper=letter,
     fontsize=11pt,
+    unknownkeysallowed
     ]{scrreprt}
 %********************************************************************
 % Note: Make all your adjustments in here
@@ -86,6 +87,7 @@
 }
 
 % mine
+\usepackage{stix}
 \usepackage{subfiles} % To be better able to manage large projects by compiling the separate files included in the final document
 \usepackage{tikz-cd}
 \usepackage[capitalize]{cleveref}
@@ -105,6 +107,7 @@
 \usepackage{tensor}
 % compact symbols for 1/2, etc.
 \usepackage{nicefrac}
+
 % this disables old style figures everywhere
 % \usepackage{tgpagella}
 % does not work; skip some paragraphs and envs for some reason

@@ -234,6 +234,13 @@ For each evaluation set, examples with inputs longer than 212 tokens were exclud
 For our hand-written prompt, we wrote the 7 examples shown in Table \ref{tab:custom_examples}.
 We generated 5 possible prompts by randomly subsampling 3 examples out of these 7.
 
+\begin{figure}
+    \centering
+    \includegraphics[width=0.48\textwidth]{figures/fsprompt}
+    \caption{In blue, one of the few-shot prompts that was derived from handwritten examples, and in green, the target example we would like to perform infilling on.}
+    \label{fig:few_shot_prompt}
+\end{figure}
+
 Table \ref{tab:generative_ppl_results_full} shows the perplexity of the generations from each few-shot prompt.
 We note that even leaving room for 212 tokens worth of context text, some evaluation examples did not fit in the prompt length, and these examples were skipped when doing this analysis.
 Figure \ref{fig:skipped_fs_examples} shows a histogram of the fraction of validation set examples that remained for each few-shot prompt after the too-long examples were filtered out.
