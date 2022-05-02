@@ -1,11 +1,15 @@
 \def\mytitle{Understanding the Limitations of Using\\Large Language Models for Text Generation} % Make sure this is in all caps
 \def\myauthor{Daphne Ippolito}
 \def\myauthorfull{Daphne Ippolito}
-\def\mysupervisorname{Chris Callison-Burch}
-\def\mysupervisortitle{Professor, Computer and Information Science}
+
+\def\mysupervisornamea{Chris Callison-Burch}
+\def\mysupervisortitlea{Professor, Computer and Information Science}
+\def\mysupervisornameb{Douglas Eck}
+\def\mysupervisortitleb{Senior Research Director, Google Research}
+
 % \def\mysupervisortitle{Ruth Yalom Stone Professor of Computer and Information Science}
 \newlength{\superlen}   % a "scratch" length
-\settowidth{\superlen}{\mysupervisorname, \mysupervisortitle} % Width of signature line for supervisor
+\settowidth{\superlen}{\mysupervisornamea, \mysupervisortitlea} % Width of signature line for supervisor
 \def\gradchairname{Mayur Naik}
 % \def\gradchairtitle{Zisman Family Professor of Computer and Information Science}
 \def\gradchairtitle{Professor of Computer and Information Science}
@@ -73,7 +77,8 @@ Supervisor of Dissertation\\%[\signatures] % Space for signature, you can fiddle
 \begin{table}[h]
 \begin{tabularx}{\maxlen}{l}
 %\toprule
-\mysupervisorname, \mysupervisortitle\\ %Space between advisor and graduate chair, you can fiddle with this as you like
+\mysupervisornamea, \mysupervisortitlea\\
+\mysupervisornameb, \mysupervisortitleb\\ %Space between advisor and graduate chair, you can fiddle with this as you like
 \end{tabularx}
 \end{table}
 

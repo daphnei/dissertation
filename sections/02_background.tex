@@ -143,7 +143,7 @@ This approach eliminates the need for an out-of-vocabulary token and results in 
 
 \section{Generating Text with a Language Model}
 
-Neural language models in themselves are not generative.
+Neural language models in themselves are capable of generating text.
 As described in the previous sections, most language models provide a probability distribution for what the next token in the sequence \textit{could} be, given the previous tokens.
 To perform generation, an algorithm for decoding sequences from these predicted probability distributions is needed.
 At each step of decoding, the decoding algorithm performs a forward pass on the neural network using the existing prompt text as input, selects a next token based on the neural network's predictions, adds this token to the prompt, and repeats until the desired number of tokens have been generated.
@@ -176,7 +176,7 @@ Chapter \ref{section:dediv} goes into detail about why this is the case.
 
 \section{Controllability and Task-Specific Generation}
 
-In the early days of neural language modelling, it was common to train a separate neural language model for each generative task of interest.
+In the early days of neural language modeling, it was common to train a separate neural language model for each generative task of interest.
 For example, if one wanted a system capable of producing chatbot dialog, one would train their neural language model on a dialog dataset such as OpenSubtitles \citep{vinyals2015neural}.
 If one wanted a system able to perform text summarization, one would likewise train a model from scratch on a dataset such at Gigaword \cite{nallapati2016abstractive}.
 At the time, the neural networks being used for these sorts of tasks were relatively small, and training and maintaining one model per task, was mostly feasible.
@@ -200,3 +200,33 @@ Brown et al. \citep{brown2020language} introduce the technique of few-shot promp
 By constructing a textual prompt which contains several examplars of the goal task, a general-purpose language model can be made to perform the task.
 Chapter \ref{section:style_transfer} uses this technique for the task of textual style, while Chapter \ref{section:wordcfaft} shows how it can be used for a variety of story editing operations.
 Lester et al. \citep{lester2021power} introduce \textit{prompt tuning} as an improvement over few-shot prompting that trains a small neural network to produce an optimal prompt in embedding-space for the goal task.
+
+\section{Language Generation Tasks in This Dissertation}
+The chapters of this dissertation address several different tasks in language generation.
+A brief summary of each task, as well is the means by which performance on it is evaluated, is provided here.
+
+\paragraph{Continuation}
+An NLG system is asked to generate a continuation for a prompt. It is then evaluated on how close the generated continuation is to the true continuation. Automatic evaluation can either be performed using word overlap metrics such as BLEU score \citep{papineni2001bleu}, or by measuring fluency (computing the perplexity of the prompt plus the true continuation). Human evaluation usually involves showing a rater the prompt and generation and asking them to make some decision about it. In Chapter \ref{section:detection} the decision is on trying to distinguish whether the presented text was machine-generated or not.
+
+\paragraph{Fill-in-the-blank}
+The fill-in-the-blank or infilling task is similar to continuation, except that the system also has access to the text which should occur \textit{after} the generation.
+Evaluation is similar to evaluating continuation.
+Chapter \ref{section:fitb} describes this task in detail.
+
+\paragraph{Chitchat Dialog}
+Chitchat dialog is the task of predicting the next utterance in a conversation given the previous turns.
+In Chapter \ref{section:dediv}, we evaluate how choice of decoding strategy impacts the ability of an NLG system to produce an utterance that is both high quality and diverse.
+In addition to conducting automatic evaluation with BLEU and perplexity, human evaluation can be performed by asking raters to evaluate each generated utterance in terms of fluency, adequacy, and interestingness.
+
+\paragraph{Image Captioning}
+Image captioning is the task of writing a caption that describes an image.
+Early work.
+In Chapter \ref{section:dediv}, we evaluate how choice of decoding strategy impacts the captions that get generated.
+One popular automatic evaluation metric is SPICE score \citep{Anderson2016SPICE}, which measures how well the semantic scene graph induced by the proposed caption matches one induced by the ground truth.
+Human evaluation usually involves showing rater an image and several possible captions, then asking them to rate each caption.
+
+\paragraph{Textual Instruction Following}
+Textual instruction following is the name I am giving to the suite of tasks which involve specifying a natural language instruction for how to transform an input text.
+An example is the task of style transfer, where the style is specified in terms such as "more positive" or "more Shakespearean."
+Chapter \ref{section:wordcraft}, which introduces the Wordcraft application, uses textual instruction following to support a wide variety of re-writing tasks.
+Evaluation can either be done using similar methods to the above, or it can be done holistically--studying whether textual instruction following systems are useful to human writers in their writing goals.

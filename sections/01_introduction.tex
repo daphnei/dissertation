@@ -44,11 +44,23 @@ Of course, machine-generated text is most undetectable when it looks \textit{exa
 Large languages are worryingly capable of memorizing and regurgitating significant amounts of their training data.
 For example, GPT-3, a popular model that has already been incorporated into several products, when prompted with the first sentence of \textit{Harry Potter} or \textit{Lord of the Rings} will accurately generate the first several paragraphs of each book,
 This behaviour is especially problematic for the domain of AI-assisted creative writing, as writers using tools such as Wordcraft have the expectation that the generations they are being shown are unique and not plagiarized.
-Memorization also makes the task of studying the dectability of generated text more challenging.
+Memorization also makes the task of studying the detectability of generated text more challenging.
 If an NLG system generates Chapter 1 of \textit{Harry Potter}, should this text be labeled as human-written or machine-generated?
 Chapter \ref{chap:memorization} focuses on this question of memorization.
 First, we show how performing thorough deduplication of training data results in models that are less likely to exhibit memorization .
 Then we conduct experiments showing how observable memorization scales with respect to the number of times a sequence occurs in the training set, the model size, and the length of conditioning prompt \citep{carlini2022quantifying}.
+
+
+\section{Thesis Statement}
+In this thesis, I argue that we need to build a deeper understanding of the nature of the text that gets emitted by neural network-powered language generation systems before it is safe to deploy these systems widely.
+In particular, it is crucial to understand how machine-generated text differs from the text a human would write given the same task.
+My work focuses on two of these differences: (1) how subtle differences in word choices impact generated text's detectability and (2) the tendency of NLG systems to plagiarize verbatim from their training data when asked to produce novel content.
+\TODO{some negative ramifications of these tendencies}
+
+Finally, I argue that we should be using NLG systems to \textit{assist} human writers in tasks rather than trying to replace them.
+I present a case study for human-AI writing collaboration in the domain of creative writing.
+
+% specific limitations and what I tried to prove about them.
 
 
 % Section \ref{section:div-quality} discusses research that analyzes the inference-time tradeoff between generating interesting and diverse text and generating text that humans perceive as high-quality.
@@ -109,6 +121,6 @@ Then we conduct experiments showing how observable memorization scales with resp
 % Section \ref{section:sentence_lms} proposes a method for capturing coherence across sentences, rather than across individual words as most standard language models do.
 % Second, replacing human story writers with ML is not nearly as interesting a goal as providing tools to assist in the creative writing process.
 
-
 \section{Summary of Contributions} \label{subsec:goalswork}
-something something something
+List of papers.
+What did I contribute relative to my collaborators.
