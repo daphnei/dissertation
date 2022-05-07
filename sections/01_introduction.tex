@@ -1,14 +1,19 @@
 \chapter{Introduction} \label{chap:intro}
 
 One of the oldest yet most elusive promises of AI is computers that can converse with humans, not just via rigidly structured templates and programming languages, but in natural language.
-This problem is formalized as Natural Language Generation (NLG), the task of writing novel sentences in a human language such as English. 
-Modelling developments over the last half-decade have led to natural language generation systems which are capable of producing incredibly fluent text.
+In 1950, Alan Turing, one of the fathers of modern computing, framed this goal as an imitation game--computers ought to be able to imitate real human interaction so well that ``an average interrogator will not have more than 70 per cent, chance of making the right identification after five minutes of questioning.''
+He expected that by 1950 this game would be solved.
+
+Natural Language Generation (NLG) is a critical component to solving the imitation game.
+NLG is the task of writing novel sentences in a human language such as English. 
+Modeling developments over the last half-decade have led to natural language generation systems which are capable of producing incredibly fluent text.
 These systems have been applied to practical domains such as machine translation and text summarization and simplification, but they have also been applied to more fanciful ones, such as story generation, video games development, and tooling for creating writing.
 
-Story generation and creative writing are a particularly interesting domain to investigate the strengths and weaknesses of natural language generation systems.
+AI-assisted creative writing is a particularly interesting testbed for how far we have come toward achieving Turing's goal.
 Unlike in machine translation or summarization, where it is critical that the generated text is factual and stays faithful to the source material, in creative domains, the hallucinations and unusual word choices that are pervasive in modern NLG may be beneficial to a creative writer's process.
 Indeed, ideation tools, tools which suggest writing topics, are commonplace in creative writing circles.
-Furthermore, AI-assisted creative writing is a useful testbed for the strengths and limitations of modern NLG systems, one that challenges how controllable these systems are and whether they can be interacted with in useful ways.
+This domain allows us to evaluate whether NLG systems are useful for accomplishing real writing tasks and whether they can be \textit{controlled} by non-technical users, in addition to evaluating more generally the strengths and limitations of machine-generated text. 
+
 % Section \ref{section:infilling} introduces a method for allowing writers to modify existing text through a fill-in-the-blank task, rather than the more typical continue-the-prompt formulation used in many language model user interfaces.
 
 Chapter \ref{chap:creativity} describes my contributions to the field of AI-assisted creative writing. 
@@ -52,13 +57,26 @@ Then we conduct experiments showing how observable memorization scales with resp
 
 
 \section{Thesis Statement}
-In this thesis, I argue that we need to build a deeper understanding of the nature of the text that gets emitted by neural network-powered language generation systems before it is safe to deploy these systems widely.
+In this thesis, I argue for the need to build a deeper understanding of the nature of the text that gets emitted by neural network-powered language generation systems before it is safe to deploy these systems widely.
 In particular, it is crucial to understand how machine-generated text differs from the text a human would write given the same task.
-My work focuses on two of these differences: (1) how subtle differences in word choices impact generated text's detectability and (2) the tendency of NLG systems to plagiarize verbatim from their training data when asked to produce novel content.
-\TODO{some negative ramifications of these tendencies}
-
-Finally, I argue that we should be using NLG systems to \textit{assist} human writers in tasks rather than trying to replace them.
+My work focuses on two particular issues: (1) how subtle differences in word choices impact the detectability of generated text and (2) the tendency of NLG systems to plagiarize verbatim from their training data when asked to produce novel content.
+Understanding what makes generated text stand out from genuine human writing is critical both to building more capable NLG systems and to warding against the negative societal ramifications of generated text's proliferation.
+Finally, I argue the importance of targeting NLG systems at \textit{assisting} human writers in tasks rather than trying to replace them.
 I present a case study for human-AI writing collaboration in the domain of creative writing.
+
+\section{Summary of Contributions}
+The work described in this thesis has been published in following conference papers:
+
+\begin{itemize}
+  \item \cite{ippolito2019comparison} \fullcite{ippolito2019comparison}
+  \item \cite{ippolito2020automatic} \fullcite{ippolito2020automatic}
+  \item \cite{lee2021deduplicating} \fullcite{lee2021deduplicating}
+  \item \cite{reif2021recipe} \fullcite{reif2021recipe}
+  \item \cite{wordcraft} \fullcite{wordcraft}
+  \item \cite{yuan2022wordcraft} \fullcite{yuan2022wordcraft}
+  \item \cite{carlini2022quantifying} \fullcite{carlini2022quantifying}
+  \item \cite{dugan2020roft} \fullcite{dugan2020roft}
+\end{itemize}
 
 % specific limitations and what I tried to prove about them.
 
@@ -120,7 +138,3 @@ I present a case study for human-AI writing collaboration in the domain of creat
 % First of all, good stories tend to have coherent narratives that span paragraphs, chapters, and even entire novel series, far beyond the sequence length most neural networks operating on word sequences can naively handle.
 % Section \ref{section:sentence_lms} proposes a method for capturing coherence across sentences, rather than across individual words as most standard language models do.
 % Second, replacing human story writers with ML is not nearly as interesting a goal as providing tools to assist in the creative writing process.
-
-\section{Summary of Contributions} \label{subsec:goalswork}
-List of papers.
-What did I contribute relative to my collaborators.

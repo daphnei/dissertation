@@ -234,6 +234,36 @@ For each evaluation set, examples with inputs longer than 212 tokens were exclud
 For our hand-written prompt, we wrote the 7 examples shown in Table \ref{tab:custom_examples}.
 We generated 5 possible prompts by randomly subsampling 3 examples out of these 7.
 
+\definecolor{lg}{rgb}{0.6,0.6,0.6}
+
+\begin{table}
+    \centering
+    \small
+    \begin{tabular}{|p{0.5\linewidth}|p{0.3\linewidth}|}
+         \hline
+         \textbf{Context} & \textbf{Target} \\
+         \hline
+An elderly man was sitting alone on a dark path. The man looked down at his feet, and realized \_\_\_\_ . It was a plain pine box and looked as if it had been there for a long time. The man was afraid to look inside the box. & he was holding a bright red box made of pine \\
+\arrayrulecolor{lg} \hline \arrayrulecolor{black}
+The mantle was cluttered with objects: \_\_\_\_ and more than one vase of dried flowers. The bejeweled lamp was at the very back, nearly invisible. & picture frames showing grandchildren and long-ago weddings, knickknacks collected from all over the world, \\
+\arrayrulecolor{lg} \hline \arrayrulecolor{black}
+"We have to leave now!" Sarah shouted. \_\_\_\_ The only way out was up. We climbed flight after flight. The sound of the monsters banging on the door below became more distant but no less threatening. & "The zombies are going to break through any moment, and then we'll all be goners." \\
+\arrayrulecolor{lg} \hline \arrayrulecolor{black}
+The sun was shining, and little gusts of wind brought through the window \_\_\_\_ shocking contrast from the stale city smells she had grown used to. & the faint scents of honeysuckle and freshly turned soil. It was a \\
+\arrayrulecolor{lg} \hline \arrayrulecolor{black}
+I was minding my business at the park, when I was approached by a little girl who was crying because she had lost \_\_\_\_ so of course I helped search. & her cat, which she had just received for her birthday. She did not want her parents to know she'd already lost him. I'm a good person \\
+\arrayrulecolor{lg} \hline \arrayrulecolor{black}
+It was a cold night, and a storm was raging out at sea. A lightning bolt lit up the sky, briefly illuminating the lighthouse \_\_\_\_ plummeted but just before reaching the churning water, he disappeared in a poof of purple flame! & and the young man peering hesitantly over the sheer cliff. Before the next peal of thunder he jumped. At first he  \\
+\arrayrulecolor{lg} \hline \arrayrulecolor{black}
+The magician pulled out of his pocket \_\_\_\_ and then a second one and a third. He didn't stop until soon the ground was covered with them. & a scarlet handkerchief  \\
+         \hline
+    \end{tabular}
+    \caption{Hand-written fill-in-the-blank examples used for ``custom'' prompt during few-shot learning.}
+    \label{tab:custom_examples}
+\end{table}
+
+
+
 \begin{figure}
     \centering
     \includegraphics[width=0.48\textwidth]{figures/fsprompt}
@@ -251,6 +281,15 @@ Unfortunately, it is computationally impossible to conduct an exhaustive search 
 While none of the prompts we tried led to strong performance at the fill-in-the-blank task, we cannot rule out the possibility there might exist a prompt we did not test for which this performance might have been significantly better.
 For example, we did not conduct formal experiments to systematically vary the prompt wording/formatting shown in Figure \ref{fig:few_shot_prompt}.
 We can conclude that the process of finding an ideal prompt requires time-consuming trial-and-error and is quite difficult!
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.49\textwidth]{figures/fs_eval_sets_sizes}
+    \caption{For many of the (validation set, few-shot prompt) combinations, not all validation set examples fit into the maximum sequence length for the \LLM.
+    The x-axis on this figure is the fraction of validation set examples which were retained after too-long examples were filtered out.
+    The y-axis is the count of (validation set, few-shot prompt) pairs.}
+    \label{fig:skipped_fs_examples}
+\end{figure}
 
 \begin{table}[htbp]
 \caption{Perplexity of evaluation sets when the blank has been filled in using \LLM{} with few-shot prompting (top) and  our best fine-tuned T5 model ((bottom).
@@ -326,6 +365,14 @@ In contrast, finetuned T5 was able to produce generations in the target length b
 Goal conditioning, while not strictly necessary for either either task, has been shown to be useful for generative commonsense reasoning \citep{lin2020commongen} and may empower users in downstream applications such as AI-assisted creative writing \citep{roemmele2021inspiration}. 
 Finetuned T5 is able to use all of the specified goal words over 79\% of the time.
 
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/t5_lengths}
+    \caption{For each of the \FitB{} validation sets, a histogram of the distribution of sequence lengths (measured in words) of the {groundtruth} blanked out text and the proposed infills from T5 {after} and {before} finetuning). We see that pre-trained T5 tends to produce text that is shorter than the groundtruth.}
+    \label{fig:t5_lengths}
+\end{figure}
+
 \subsubsection{Domain Transfer}
 Prior work on \FitB{} tends to only evaluate models trained on data from the same domain as the validation set.
 Our results show that despite training exclusively on C4, T5 models have strong transferability to more targeted domains such as Reddit Writing Prompts.
@@ -362,7 +409,8 @@ The work was performed with my collaborators Daphne Ippolito, Liam Dugan, Emily 
 I led this project, designed and ran all experiments, and performed most of the analysis.
 
 \section{Supporting Arbitrary Style Transfer}
-\ref{section:style_transfer}
+\label{section:style_transfer}
+
 Text style transfer is the task of rewriting text to incorporate additional or alternative stylistic elements while preserving the overall semantics and structure.
 % Although style transfer has garnered increased interest due to the success of deep learning, these approaches usually require a substantial amount of labeled training examples, either as parallel text data \citep{zhu-etal-2010-monolingual,rao-tetreault-2018-dear} or non-parallel text data of a single style. \citep{li-etal-2018-delete,jin-etal-2019-imat, liu2020revision,style-transfer-as-paraphrase-2020}. 
 Early approaches to style transfer required \textit{parallel} text data \citep{zhu-etal-2010-monolingual,rao-tetreault-2018-dear}, where every input in the source style has a corresponding output in the target style.
@@ -416,7 +464,7 @@ We use the Yelp polarity dataset \citep{zhangCharacterlevelConvolutionalNetworks
 These datasets allow us to evaluate performance of augmented zero-shot learning in the context of prior supervised methods which have been used on these tasks.
 
 \subsubsection{Model}
-\ref{subsection:lambda_description}
+\label{subsection:lambda_description}
 Augmented zero-shot learning requires a large language model.
 We primarily use LaMDA, a left-to-right decoder-only transformer language model \citep{DBLP:journals/corr/VaswaniSPUJGKP17} with a non-embedding parameter count of 137B \citep{thoppilan2022lamda}. 
 The pre-trained LaMDA model, which we refer to as \textit{LLM}, was trained on a corpus comprising 1.95B public web documents, including forum and dialog data and Wikipedia.
@@ -526,6 +574,8 @@ We were also significantly more fluent than all other methods.
 % However, this is hardly surprising and should be taken with a grain of salt: GPT-2 is another generative language model, so it stands to reason that the token probabilities would be similar to our model's.
 Finally, our method fell short on semantic preservation compared to other methods. However, BLEU is known to penalize long sentences, and the scores do not always align with human judgements.
 For example, our model's worse performance could be because it was not explicitly trained on Yelp data, so its generations are less likely to be in the style of Yelp reviews than models that were.
+
+\input{tables/yelp_comparisons_with_length}
 
 \subsubsection{Comparison across Different LLMs}
 We also compared between three varieties of model: GPT-3 \citep{DBLP:journals/corr/abs-2005-14165}, LLM, and  LLM-Dialog. We adjusted the prompt template slightly to accommodate these differences: for  LLM and GPT-3, the prompt template replaced {\small
@@ -673,6 +723,8 @@ I helped to design the experiments and contributed significantly to analysis of 
 
 
 \section{Wordcraft: An editor for AI-assisted writing.}
+\label{section:wordcraft}
+
 How do we evaluate natural language generation in realistic settings? In all the human evaluations discused so far in my thesis, we recruited annotators to evaluate text in artifical settings. In Sections \ref{section:detection} and \ref{section:roft}, university students were asked to label text as human-written or machine-generated in user interfaces custom-tailored to collect these sorts of annotations. In Sections \ref{section:fitb} and Section \ref{section:style_transfer}, novel natural language systems were evaluated by asking raters on Amazon Mechnical Turk to view and score generated text.
 Notably, the annotators were not asked to use the proposed NLG tools to accomplish a task of interest; they were only asked to evaluate pre-generated outputs.
 
