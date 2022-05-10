@@ -53,12 +53,13 @@ Then we conduct experiments showing how observable memorization scales with resp
 
 \section{Thesis Statement}
 In this thesis, I argue that we need to build a deeper understanding of the nature of the text that gets emitted by neural network-powered language generation systems before it is safe to deploy these systems widely.
-In particular, it is crucial to understand how machine-generated text differs from the text a human would write given the same task.
-My work focuses on two of these differences: (1) how subtle differences in word choices impact generated text's detectability and (2) the tendency of NLG systems to plagiarize verbatim from their training data when asked to produce novel content.
-\TODO{some negative ramifications of these tendencies}
-
-Finally, I argue that we should be using NLG systems to \textit{assist} human writers in tasks rather than trying to replace them.
-I present a case study for human-AI writing collaboration in the domain of creative writing.
+In particular, it is crucial to understand how machine-generated text differs from the text a human would write given the same writing task.
+My research focuses on two such differences: (1) how the word choices made by NLG systems cause generated text to be distinguishable from human-written text, and (2) the tendency of NLG systems to plagiarize verbatim from their training data when asked to produce novel content.
+Both of these issues make it difficult to evaluate machine-generated text.
+In the first case, the tradeoff between generating high-quality versus generating lexically diverse text makes it challenging to simultaneously optimize for text that is pleasing to human readers and text that is statistically indistinguishable from human-written text.
+In the second case, memorization leads to us over-representing the strength of NLG systems by attributing generalization ability to what is actually memorization ability.
+To this end, I argue that we should be evaluating NLG systems holistically as part of larger tools mean to \textit{assist} human writers in tasks they wish to accomplish (in addition to evaluating on isolated individual tasks).
+I present a case study evaluation of human-AI writing collaboration in the domain of creative writing.
 
 % specific limitations and what I tried to prove about them.
 
