@@ -880,9 +880,9 @@ by training on higher quality data the models can reach higher accuracy faster.
 \end{enumerate}
 %There is therefore no reason to not perform deduplication, and every reason to perform deduplication.
 To summarize, data duplication offers significant advantages and no observed disadvantages.
-In the remainder of this paper we present our text deduplication framework in \S\ref{sec:methods}, and study the extent of duplicate content in common NLP datasets (e.g., C4, Wiki-40B, and LM1B) in \S\ref{sec:deduplication-results}.
-We then examine the impact of deduplication on test perplexity (\S\ref{sec:perplexity-results}) and on the frequency of emitting memorized content (\S\ref{sec:memorization-results}).
-Finally, we analyze to what extent perplexity on existing, released models are skewed as a result of overlap between the train and test/validation splits (\S\ref{sec:eval-existing-models}).
+In the remainder of this section, we present our text deduplication framework and study the extent of duplicate content in common NLP datasets (e.g., C4, Wiki-40B, and LM1B).
+We then examine the impact of deduplication on test perplexity and on the frequency of emitting memorized content.
+Finally, we analyze to what extent perplexity on existing, released models are skewed as a result of overlap between the train and test/validation splits.
 
 \subsection{Related Work}
 \subsubsection{Large Language Model Datasets}
@@ -1028,6 +1028,19 @@ We choose $50$ tokens as the threshold to be conservative:
 the ``bend in the knee'' occurs at $10$ tokens, and manual inspection of
 length-$25$ matches found no false positives.
 We then doubled this value to have an exceptionally large margin for error.
+
+\begin{figure}
+    \centering
+    \includegraphics[scale=.8]{figures/match_length.pdf}
+    \caption{For each substring of length $k$,
+    we plot the probability that there exists a second identical length-$k$ substring in the same train set.
+    Matches with length under $10$ subword tokens are common, and account for $90\%$ of tokens.
+    We choose a threshold of 50 for experiments.
+    % For future experiments, we use $50$ tokens as the threshold for memorization.
+    }
+    \label{fig:suffix-match-len}
+\end{figure}
+
 
 \subsubsection{Implementation}
 \paragraph{Parallel linear time construction.}
@@ -1177,12 +1190,6 @@ Document pairs with edit similarity higher than 0.8 were identified as duplicate
 After some experimentation, we chose to use $b=20$, and $r=450$, so $k=9,000$, so as to make sure a collision at the desired Jaccard index threshold of 0.8 had a high probability of occurring
 % $k=9,000$, $b=20$, and $r=450.
 % $k=800$, $b=20$, and $r=40$.
-
-We also tested an alternative configuration---filtering to document pairs with Jaccard index of at least 0.9 and edit similarity of at least 0.9.
-In this case, we used $b=20$, $r=40$, and $k=800$.
-Figure \ref{fig:neardup-hist} shows the histogram of Jaccard similarities and edit similarities for all document pairs which collided in min-hash space, for our chosen configuration (blue) and for the alternative configuration (orange).
-This allows us verify if the threshold chosen has few comparisons around the chosen threshold, then we've likely captured the majority of actual near duplicates above that threshold. To verify that yourself, look at the left hand tails of the distributions. Since both 0.8 and 0.9 begin to vanish at the same point (in spite of the fact that the two thresholds are optimized for accuracy around different thresholds), we feel comfortable saying that we're capturing the majority of actual near duplicates. 
-
 
 \subsubsection{Computational Analysis}
 % Our Minhash algorithm works by generating $B$ hash signatures for each document, grouping the documents by each signature to form buckets, randomly sampling $K$ documents within each bucket. Pairwise comparisons are made between the elements within each sample.

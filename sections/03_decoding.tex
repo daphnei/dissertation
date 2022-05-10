@@ -806,6 +806,7 @@ The human evaluation dataset consisted of 150 excerpts of web text and 50 excerp
 Each question was shown to at most three raters, leading to 900 total annotations from the untrained workers and 475 from the expert raters.
 A more detailed breakdown can be found in Table \ref{tab:amt_counts}.
 
+
 \begin{figure}
     \center
     \fbox{\includegraphics[width=0.49\textwidth]{figures/amt_task_2}}%
@@ -1450,6 +1451,15 @@ As an additional sanity check on annotator skill, we included game rounds in the
 Out of the 214 annotations we collected for this ``sanity check'' system, the mean score was 2.75, significantly higher than any of the true LM-backed systems.
 Also, for these annotations, the error type ``irrelevant'' was selected about twice as often as all other error types combined, validating that players were paying attention to the task at hand.
 
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/available_game_rounds.pdf}
+    \includegraphics[width=0.8\linewidth]{figures/played_game_rounds.pdf}
+    \includegraphics[width=0.8\linewidth]{figures/analyzed_game_rounds.pdf}
+    \caption{The distribution of boundary sentence positions over all game rounds available on RoFt (top), all game rounds that received annotations (middle), and all game rounds included in this paper's analysis after filtering out problematic annotations (bottom).}
+    \label{fig:distribution_true_boundaries}
+\end{figure}
+
 \subsubsection{How much does player ability vary?}
 There was a large variance in the skill of individual players.
 Out of the 116 players who completed 50 game rounds, 19 earned a total score of 70 or fewer points (one std below the mean score) in their first 50 rounds, while 15 earned a total score 127 or greater points (one standard deviation above the mean score). Four of these raters scored two standard deviations above the mean score.
@@ -1506,6 +1516,22 @@ It is worth noting that this result slightly contradicts the one reported by \ci
 We believe the speech genre was easier for players not because speeches are intrinsically more difficult to generate but because we struggled to get CTRL to produce high-quality, non-repetitive generations, even though it is about the same size model as GPT-2 XL.
 It was necessary to incorporate repetition penalties during generation with CTRL, which helped but did not
 solve the quality issues.
+
+\begin{table}
+\small
+\begin{center}
+\begin{tabular}{SSSS} \toprule
+    {Dataset} & {$p$} & {$n$} & {Mean Score}\\ \midrule
+    {News} & {0.4} & {1,197} & {1.793$\pm$0.109} \\
+    {Stories} & {0.4} & {468} & {1.645$\pm$0.168} \\
+    {Speeches*} & {0.4} & {4,252} & {2.171$\pm$0.062}\\
+    {Recipes} & {0.4} & {1,811} & {2.004$\pm$0.098} \\
+    \bottomrule
+\end{tabular}
+\caption{The mean scores for each domain on annotations involving XL-sized models for $p$=0.4. Asterisk denotes generation by CTRL. Interval is $\alpha=0.95$ confidence.}
+\label{tab:scores_per_domain}
+\end{center}
+\end{table}
 
 \subsection{Does model size make a difference?}
 Previous work has shown that language model performance scales with number of parameters \citep{kaplan2020scaling}, so we expected players to be worse at detecting generations from larger models.
@@ -1613,6 +1639,46 @@ Third, there was not much difference in ability between native and non-native En
 The very strongest players were not native English speakers.
 Finally, we did not observe any correlation between self-reported familiarity with a given genre and detection skill on that genre.
 % We see that a larger degree of domain familiarity does not have a statistically significant effect on mean score. However, we see that those who did not read the provided help guide did much worse on average and those that gave a custom response to their familiarity with NLG did much better on average. Finally, while native English speakers did do better on average than non-native speakers, the variance for non-natives was much higher resulting in many of our best players being non-native speakers.
+
+\begin{table}
+    \centering
+    \small
+    \begin{tabular}{l|l}
+    \toprule
+    Question & Response Type \\
+    \midrule
+    What did you (or what are you planning to) major/minor in? & Free Text \\\midrule
+    Are you a native English speaker? & Yes/No \\\midrule
+    How often do you consult a recipe when preparing food? & Daily (5) \\
+    & Once to a few times per week (4) \\
+    & Once to a few times per month (3) \\
+    & Once to a few times per year (2) \\
+    & Never (1) \\\midrule
+    How often do you read news from credible news publishers & Daily (5) \\
+    (Wall Street Journal, New York Times, etc.)? & Once to a few times per week (4) \\
+    & Once to a few times per month (3) \\
+    & Once to a few times per year (2) \\
+    & Never (1) \\\midrule
+    How often do you read fiction on the internet & Daily (5) \\
+    (fan fiction, creative writing sub-reddits, ebooks, etc.)? & Once to a few times per week (4) \\
+    & Once to a few times per month (3) \\
+    & Once to a few times per year (2) \\
+    & Never (1) \\\midrule
+    What is your familiarity with GPT-2 and GPT-3? & I’ve used them before (OpenAI API, HuggingFace, etc.) (4) \\ 
+    & I’ve been excitedly following them. (3) \\
+    & I've read about them in the news or a blog post. (2) \\
+    & I've never heard of them. (1) \\\midrule
+    Did you read the RoFT Guide before you tried the game? & Yes/No \\\midrule
+    Do you agree for the data being collected on this form & Yes/No \\
+    along with any annotations you make to be used & \\
+    in an anonymized, aggregated way for research on students' ability & \\
+    to detect machine-generated text? Your answer on this question & \\ 
+    will not affect your grade. & \\
+    \bottomrule
+    \end{tabular}
+    \caption{The text of the exit survey questions given to players after completing their annotations}
+    \label{tab:survey_questions}
+\end{table}
 
 \subsection{What are the most reliable errors to look for when detecting generated text?}
 \label{sec:reasons}

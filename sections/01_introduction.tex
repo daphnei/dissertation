@@ -1,14 +1,19 @@
 \chapter{Introduction} \label{chap:intro}
 
 One of the oldest yet most elusive promises of AI is computers that can converse with humans, not just via rigidly structured templates and programming languages, but in natural language.
-This problem is formalized as Natural Language Generation (NLG), the task of writing novel sentences in a human language such as English. 
-Modelling developments over the last half-decade have led to natural language generation systems which are capable of producing incredibly fluent text.
+In 1950, Alan Turing, one of the fathers of modern computing, framed this goal as an imitation game--computers ought to be able to imitate real human interaction so well that ``an average interrogator will not have more than 70 per cent, chance of making the right identification after five minutes of questioning.''
+He expected that by 1950 this game would be solved.
+
+Natural Language Generation (NLG) is a critical component to solving the imitation game.
+NLG is the task of writing novel sentences in a human language such as English. 
+Modeling developments over the last half-decade have led to natural language generation systems which are capable of producing incredibly fluent text.
 These systems have been applied to practical domains such as machine translation and text summarization and simplification, but they have also been applied to more fanciful ones, such as story generation, video games development, and tooling for creating writing.
 
-Story generation and creative writing are a particularly interesting domain to investigate the strengths and weaknesses of natural language generation systems.
+AI-assisted creative writing is a particularly interesting testbed for how far we have come toward achieving Turing's goal.
 Unlike in machine translation or summarization, where it is critical that the generated text is factual and stays faithful to the source material, in creative domains, the hallucinations and unusual word choices that are pervasive in modern NLG may be beneficial to a creative writer's process.
 Indeed, ideation tools, tools which suggest writing topics, are commonplace in creative writing circles.
-Furthermore, AI-assisted creative writing is a useful testbed for the strengths and limitations of modern NLG systems, one that challenges how controllable these systems are and whether they can be interacted with in useful ways.
+This domain allows us to evaluate whether NLG systems are useful for accomplishing real writing tasks and whether they can be \textit{controlled} by non-technical users, in addition to evaluating more generally the strengths and limitations of machine-generated text. 
+
 % Section \ref{section:infilling} introduces a method for allowing writers to modify existing text through a fill-in-the-blank task, rather than the more typical continue-the-prompt formulation used in many language model user interfaces.
 
 Chapter \ref{chap:creativity} describes my contributions to the field of AI-assisted creative writing. 
@@ -58,8 +63,22 @@ My research focuses on two such differences: (1) how the word choices made by NL
 Both of these issues make it difficult to evaluate machine-generated text.
 In the first case, the tradeoff between generating high-quality versus generating lexically diverse text makes it challenging to simultaneously optimize for text that is pleasing to human readers and text that is statistically indistinguishable from human-written text.
 In the second case, memorization leads to us over-representing the strength of NLG systems by attributing generalization ability to what is actually memorization ability.
-To this end, I argue that we should be evaluating NLG systems holistically as part of larger tools mean to \textit{assist} human writers in tasks they wish to accomplish (in addition to evaluating on isolated individual tasks).
+To this end, I argue that we should be evaluating NLG systems holistically as part of larger tools meant to \textit{assist} human writers in tasks they wish to accomplish (in addition to evaluating on isolated individual tasks).
 I present a case study evaluation of human-AI writing collaboration in the domain of creative writing.
+
+\section{Summary of Contributions}
+The work described in this thesis has been published in following conference papers:
+
+\begin{itemize}
+  \item \cite{ippolito2019comparison} \fullcite{ippolito2019comparison}
+  \item \cite{ippolito2020automatic} \fullcite{ippolito2020automatic}
+  \item \cite{lee2021deduplicating} \fullcite{lee2021deduplicating}
+  \item \cite{reif2021recipe} \fullcite{reif2021recipe}
+  \item \cite{wordcraft} \fullcite{wordcraft}
+  \item \cite{yuan2022wordcraft} \fullcite{yuan2022wordcraft}
+  \item \cite{carlini2022quantifying} \fullcite{carlini2022quantifying}
+  \item \cite{dugan2020roft} \fullcite{dugan2020roft}
+\end{itemize}
 
 % specific limitations and what I tried to prove about them.
 
@@ -121,7 +140,3 @@ I present a case study evaluation of human-AI writing collaboration in the domai
 % First of all, good stories tend to have coherent narratives that span paragraphs, chapters, and even entire novel series, far beyond the sequence length most neural networks operating on word sequences can naively handle.
 % Section \ref{section:sentence_lms} proposes a method for capturing coherence across sentences, rather than across individual words as most standard language models do.
 % Second, replacing human story writers with ML is not nearly as interesting a goal as providing tools to assist in the creative writing process.
-
-\section{Summary of Contributions} \label{subsec:goalswork}
-List of papers.
-What did I contribute relative to my collaborators.
