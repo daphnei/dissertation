@@ -748,16 +748,42 @@ Each control shows several candidate generations, which the user can select betw
 When a generation is chosen, it will be inserted into the text at the location of the user's cursor.
 
 \subsubsection{Continuation}
-As described in Section \ref{}, continuation is the default action of a left-to-right neural language model such as LaMDA, achieved simply by prompting the LM with a text passage, and decoding a possible continuation.
-A continuation generator is useful for writers who want text appended to the end of what they have written so far, and thus this control is only available when the user's cursor is at the end of the text passage.
+As described in Section \ref{section:background_gen}, continuation is the default action of a left-to-right neural language model such as LaMDA, achieved simply by prompting the LM with a text passage, and decoding a possible continuation.
+A continuation generator is useful to writers who want text appended to the end of what they have written so far.
+This control is available when the user's cursor is at the end of the text passage.
 
 \subsubsection{Story Ideas}
-When the user has no text inputted, a few-shot learning prompt is used to suggest story ideas. The following prompt is used:
+When the user has no text inputted, a few-shot learning prompt is used to suggest story ideas. Here is the prompt:
 \begin{verbatim}
-Foo
+> Here is some text: {The man stood outside the grocery store, ringing the bell.} Rewrite it to be about clowns.
+> {The man stood outside the circus, holding a bunch of balloons.}
+> Here is some text:  {against the tree} Rewrite it to include the word \"snow\".
+> {against the snow-covered bark of the tree}
+> Here's a new story: {The car came bouncing down the hill and came to an abrupt stop in my driveway.} Describe the car.
+> {It was an old, old Model-T Ford, with brass fittings, and no doors}
+> Here's a new story:  {The preacher took a long breath, and let it out} Tell me what comes next.
+> {slowly through his nose. \"It wasn't long ago,\" he said, \"that those boys would've been dead and buried.}
+> Here's a new story: {<USER'S STORY>} <WRITING REQUEST>
 \end{verbatim}
+This is based on the arbitrary style transfer technique dexcribed in Section \ref{section:style_transfer}.
 
 \subsubsection{Fill in the blank}
+The user is able to select some text and see alternatives that fit into the place of their selection.
+While this is exactly the fill-in-the-blank task described in Section \ref{section:fitb}, for computational reasons, we also support this task with a few-shot learning prompt:
+
+\begin{verbatim}
+ve to leave now!\" Sarah shouted.  ____ The only way out was up. We climbed flight after flight. The sound of the monsters banging on the door below became more distant but no less threatening.} Finish the following sentence by filling in the blank with a phrase. {\"We have to leave now!\" Sarah shouted.  }
+> {\"Let's get out of here!\"}
+> Here's a new story: {The sun was shining, and little gusts of wind brought through the window  ____ shocking contrast from the stale city smells she had grown used to.} Finish the following sentence by filling in the blank with a phrase. {The sun was shining, and little gusts of wind brought through the window  ____ shocking contrast from the stale city smells she had grown used to.}
+> {the faint scent of huneysuckle. It was a}
+> Here's a new story: {I was minding my business at the park, when I was approached by a little girl who was crying because she had lost  ____ so of course I helped search.} Finish the following sentence by filling in the blank with a phrase. {I was minding my business at the park, when I was approached by a little girl who was crying because she had lost  ____ so of course I helped search.}
+> {her new kitten.}
+> Here's a new story: {It was a cold night, and a storm was raging out at sea. A lightning bolt lit up the sky, briefly illuminating the lighthouse  ____ plummeted but just before reaching the churning water, he disappeared in a poof of purple flame!} Finish the following sentence by filling in the blank with a phrase. {A lightning bolt lit up the sky, briefly illuminating the lighthouse  ____ plummeted but just before reaching the churning water, he disappeared in a poof of purple flame!}
+> {in a sharp silhouette.}
+> Here's a new story: {The magician pulled out of his pocket  ____  and then a second one and a third. He didn't stop until soon the ground was covered with them.} Finish the following sentence by filling in the blank with a phrase. {The magician pulled out of his pocket  ____  and then a second one and a third. }
+> {a scarlet handkerchief }
+> Here's a new story: {Once upon a time, there was a rabbit princess. The  ____  lives in the little cottage. Just outside of town.} Finish the following sentence by filling in the blank with a phrase. {The  ____  lives in the little cottage.
+\end{verbatim}
 
 \subsubsection{Elaboration}
 \subsubsection{Custom Prompting}

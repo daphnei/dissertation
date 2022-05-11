@@ -5,25 +5,19 @@ In 1950, Alan Turing, one of the fathers of modern computing, framed this goal a
 He expected that by 1950 this game would be solved.
 
 Natural Language Generation (NLG) is a critical component to solving the imitation game.
-NLG is the task of writing novel sentences in a human language such as English. 
-Modeling developments over the last half-decade have led to natural language generation systems which are capable of producing incredibly fluent text.
+NLG is the task of writing novel text in a human language such as English. 
+Improvements over the last half-decade have led to natural language generation systems which are capable of producing incredibly fluent text.
 These systems have been applied to practical domains such as machine translation and text summarization and simplification, but they have also been applied to more fanciful ones, such as story generation, video games development, and tooling for creating writing.
 
 AI-assisted creative writing is a particularly interesting testbed for how far we have come toward achieving Turing's goal.
-Unlike in machine translation or summarization, where it is critical that the generated text is factual and stays faithful to the source material, in creative domains, the hallucinations and unusual word choices that are pervasive in modern NLG may be beneficial to a creative writer's process.
-Indeed, ideation tools, tools which suggest writing topics, are commonplace in creative writing circles.
-This domain allows us to evaluate whether NLG systems are useful for accomplishing real writing tasks and whether they can be \textit{controlled} by non-technical users, in addition to evaluating more generally the strengths and limitations of machine-generated text. 
+Unlike in machine translation or summarization, where it is critical that the generated text is factual and stays faithful to the source material, in creative domains, the "hallucinations" and unusual word choices that are pervasive in modern NLG may be beneficial to a creative writer's process.
+Indeed, ideation tools, such as decks of cards which suggest writing topics, are commonplace in creative writing circles.
+The creative writing domain allows us to evaluate whether NLG systems are useful for accomplishing real writing tasks and whether systems can be easily \textit{controlled} by non-technical users.
+This allows us to more holistically evaluate the strengths and limitations of machine-generated text than the narrowly targeted evaluation tasks typically employed the academic literature.
 
-% Section \ref{section:infilling} introduces a method for allowing writers to modify existing text through a fill-in-the-blank task, rather than the more typical continue-the-prompt formulation used in many language model user interfaces.
-
-Chapter \ref{chap:creativity} describes my contributions to the field of AI-assisted creative writing. 
-It discusses the importance of introducing controllability into natural language generation systems--providing writers the ability to dictate what kind of text gets generated and decide how it interfaces with what they might have already written.
-In particular, we introduce methods for efficiently supporting a fill-in-the-blank paradigm, where a writer can insert text into any position of their current text \TODO{citation}.
-We also describe a simple recipe for supporting style-transfer into any user-defined style without the need for costly training data acquisition and test-specific model training.
-Both these approaches are incorporated into Wordcraft, an AI-augmented text processor that provides several interfaces for writers to get feedback and suggestions from an NLG system.
-In studies with both amateur and skilled writers, we found Wordcraft to be a valuable assistive tool for creative writing.
-
-Modern natural language generation systems rely on neural language models, neural networks trained on billions of words of text in order to represent human language (Chapter \ref{chap:background}). 
+However, before discussing the application of assisted writing, this thesis first considered two important considerations around the use of modern NLG systems.
+Modern NLG relies on neural language models, neural networks trained on billions of words of text in order to represent human language.
+Chapter \ref{chap:background} gives an overview of these systems work. 
 Understanding the limitations of these language models and the nature of the text they are capable of generating is crucial to the ultimate use of these systems in real applications such as Wordcraft.
 
 A significant limitation for creative applications like Wordcraft is the difficulty in generating text that is diverse (containing uncommon and interesting words and phrases) and high quality (as perceived by human readers).
@@ -36,7 +30,7 @@ The remainder of Chapter \ref{chap:decoding} focuses on this detection problem.
 The proliferation of machine-generated text, especially when it lacks attribution, is of significant concern to the public.
 As tools for generating text become more powerful and easier to use, they could enable nefarious uses such as fabricated product reviews and social media posts.
 In Ippolito et al. 2019 \citep{ippolito2020automatic}, we measure the ability of humans as well as automatic systems to detect machine-generated text.
-Understanding detectability is imperative because it gives us a proxy for how far along generative systems are at fooling humans and whether undesired use of machine-generated text can be mitigated.
+Understanding detectability is imperative because it gives us a proxy for how far along NLG systems are at fooling humans and whether undesired use of machine-generated text can be mitigated.
 
 One difficulty in studying human ability to detect machine-generated text is that it can be very difficult to collect annotations.
 Many of the errors NLG systems make are subtle and require closely reading several sentences of text to be able to identify.
@@ -55,6 +49,16 @@ Chapter \ref{chap:memorization} focuses on this question of memorization.
 First, we show how performing thorough deduplication of training data results in models that are less likely to exhibit memorization .
 Then we conduct experiments showing how observable memorization scales with respect to the number of times a sequence occurs in the training set, the model size, and the length of conditioning prompt \citep{carlini2022quantifying}.
 
+Finally, Chapter \ref{chap:creativity} describes my contributions to the field of AI-assisted creative writing. 
+It discusses the importance of introducing controllability into natural language generation systems--providing writers the ability to dictate what kind of text gets generated and decide how it interfaces with what they might have already written.
+In particular, we introduce methods for efficiently supporting a fill-in-the-blank paradigm, where a writer can insert text into any position of their current text \TODO{citation}.
+We also describe a simple recipe for supporting style-transfer into any user-defined style without the need for costly training data acquisition and test-specific model training.
+Both these approaches are incorporated into Wordcraft, an AI-augmented text processor that provides several interfaces for writers to get feedback and suggestions from an NLG system.
+In studies with both amateur and skilled writers, we found Wordcraft to be a valuable assistive tool for creative writing.
+
+
+
+
 
 \section{Thesis Statement}
 In this thesis, I argue that we need to build a deeper understanding of the nature of the text that gets emitted by neural network-powered language generation systems before it is safe to deploy these systems widely.
@@ -66,19 +70,21 @@ In the second case, memorization leads to us over-representing the strength of N
 To this end, I argue that we should be evaluating NLG systems holistically as part of larger tools meant to \textit{assist} human writers in tasks they wish to accomplish (in addition to evaluating on isolated individual tasks).
 I present a case study evaluation of human-AI writing collaboration in the domain of creative writing.
 
-\section{Summary of Contributions}
-The work described in this thesis has been published in following conference papers:
+\section{Publications Presented}
+The work described in this thesis has been published in several conference papers. In all cases, the work was completed jointly with collaborators at University of Pennsylvania and/or Google Research.
+At the end of each chapter section, I include a summary of my primary contributions to the work.
 
 \begin{itemize}
   \item \cite{ippolito2019comparison} \fullcite{ippolito2019comparison}
   \item \cite{ippolito2020automatic} \fullcite{ippolito2020automatic}
+  \item \cite{dugan2020roft} \fullcite{dugan2020roft}
   \item \cite{lee2021deduplicating} \fullcite{lee2021deduplicating}
+  \item \cite{carlini2022quantifying} \fullcite{carlini2022quantifying}
   \item \cite{reif2021recipe} \fullcite{reif2021recipe}
   \item \cite{wordcraft} \fullcite{wordcraft}
   \item \cite{yuan2022wordcraft} \fullcite{yuan2022wordcraft}
-  \item \cite{carlini2022quantifying} \fullcite{carlini2022quantifying}
-  \item \cite{dugan2020roft} \fullcite{dugan2020roft}
 \end{itemize}
+
 
 % specific limitations and what I tried to prove about them.
 
