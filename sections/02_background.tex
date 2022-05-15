@@ -45,6 +45,7 @@ Neural language models, described in the following sections, overcome many of th
 
 
 \section{What is a Neural Language Model?}
+\label{section:what_is_a_nlm}
 
 Neural network-based language models replace the statistical models described in the previous section with a learned function (the neural network) whose output can be used to predict the likelihood of a word sequence.
 In contrast to $n$-gram models, neural language models are capable of assigning non-zero probability to sequences never seen in their training corpora, and thus they can be used to model sequences of hundreds or even thousands of words.
@@ -98,7 +99,13 @@ where $\bx_1, \ldots, \bx_n$ is the additional input sequence.
 The most popular application of encoder-decoder models is machine translation, where to convert some text from French to English, the language model predicts the next word of the English sequence given the entirety of the French sequence and the preceedings words of the English sequence.
 
 Most state-of-the-art neural language models uses a variant of the Transformer architecture \cite{vaswani2017attention} as the neural network $f_\theta$.
-All of the research presented in this dissertation uses the Transformer architecture, except for Chapter \ref{section:dediv}, which uses an older LSTM-based recurrent architecture \citep{hochreiter1997long}.
+Prior to the development of Transformers, recurrent neural architectures, typically based on Long Short Term Memory units \citep{hochreiter1997long} were most commonly employed.
+Transformers have several advantages over their recurrent predecessors, most notably that operations are parallelized across all tokens in the sequence.
+This immensely speeds up computation time during training, and computation time is no longer dependent on the length of the sequence.
+Transformers also are much better than recurrent models at making connections between information that may be very far apart in the sequence.
+Recurrent architectures keep track of a ``hidden state'' which gets updated for every position in the sequence, which means it may no longer encode much information about the beginning of the sequence by the time it arrives at the end.
+In contrast, Trasnformers use an ``attention mechanism'' that allows any position in the input sequence to easily ``attend'' to any other position.
+
 
 \section{Encoding Text into a Vocabulary}
 
@@ -157,8 +164,9 @@ To perform generation, an algorithm is needed that chooses words to output given
 We refer to this family of algorithms as \textbf{decoding methods} because they ``decode'' a sequence of discrete words from the model's predictions.
 At each step of decoding, the decoding algorithm performs a forward pass on the neural network using the existing prompt text as input, selects a next token based on the neural network's predictions, adds this token to the prompt, and repeats until the desired number of tokens have been generated.
 
-There are many possible strategies for making a token selection at each step.
-The simplest strategy is to take the $\arg \max$ of the distribution, greedily picking the token with the highest probability according to the model.
+\subsection{Greedy Approaches}
+The simplest strategies for generating text from a language model involve greedily choosing a token at each step.
+The easiest way to do this is to take the $\arg \max$ of the distribution, repeatedly picking the token with the highest probability according to the model.
 This approach is simple but only allows a single generation to be produced for any given prompt.
 Alternatively, one can randomly sample from the vocabulary, where each vocab item is assigned a sampling probability proportional to its probability predicted by the language model.
 This method allows for many different sequences to be generated from the same prompt.
@@ -176,13 +184,119 @@ Nucleus sampling, also referred to as top-$p$ random sampling, accomplishes this
 For all three of these techniques there is a parameter ($\tau$, $k$, or $p$) which controls the amount of randomness we want to permit in the generation.
 Choosing a low value for these parameters results in an increasingly peaky distribution, which, at its extreme, is the same as taking the $\arg \max$. 
 Choosing a high value for these parameters results in the distribution that looks closer and closer to the original scores produced by the model.
-The diversity-quality tradeoff that results from choice of these parameters is described in detail in Chapter \ref{section:detection}.
 Figure \TODO{Add figure showing some probability distributions.} shows how these different strategies affect the shape of the distribution.
 
-Lastly, search methods such as beam search can be used to try and find the most likely overall sequence.
-Actually computing the most likely sequence is intractable due to the exponential search space, but algorithms such as beam search so a good job of approximating it.
-In practice, these techniques tend to lead to text that is bland and repetitive,
-Chapter \ref{section:dediv} goes into detail about why this is the case.
+\subsection{Search-Based Approaches}
+Before the transition to Transformer-based architectures (Section \ref{section:what_is_a_nlm}), the standard convention for generation was to try to generate the most likely overall sequence from the language model.
+This approach made a lot of sense for the predominant use case of machine translation, where generating one correct translation was considered more important than generating several diverse translations.
+Since computing the overall most likely output sequence is intractable, early work in neural machine translation found that beam search was an effective strategy to heuristically sample sufficiently likely sequences from these probabilistic models \cite{sutskever2014sequence}.
+Algorithm \ref{alg:beam-search-inference} gives an overview of the beam search algorithm. 
+
+\begin{algorithm}
+\caption{Beam Search Inference}
+\label{alg:beam-search-inference}
+
+\begin{algorithmic}[1]
+\Procedure{Beam Search}{}
+\State $B \gets \{SOS\}$
+\State $k \gets $ BeamWidth
+\State $out \gets k$-best output list
+\While{$|out| < k$}
+    \State $front \gets \text{remove all nodes from} B$
+    \For{$w \in front$}
+    \State $succ \gets w$'s $k$-best successors
+    \For{$s \in succ$}
+    \If{$s == EOS$}
+        \State $out \gets out \cup \{s\}$
+    \Else
+        \State $B \gets B \cup \{s\}$
+    \EndIf
+    \EndFor
+    \EndFor
+    \State Sort $B$
+    \If{$|B| > k$}
+        \State Prune $B$ to $k$-best successors
+    \EndIf
+\EndWhile
+
+\Return out
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+As neural language models came to be applied increasingly to open-ended tasks, such as chatbot dialog or story generation, beam search was found to be ill-suited to generating a set of diverse candidate sequences
+Since beam search only explores a limited portion of the overall search space, it tends to yield multiple variants of the same high-likelihood sequence, sequences that often only differ in punctuation or minor morphological changes \cite{li2016mutual}.  
+To try and solve this problem, many researchers proposed modification to beam search to encourage it to produce more diverse sets of candidate generations.
+We summarize several of these here:
+
+\begin{itemize} 
+\item \textbf{Noisy Parallel Approximate Decoding.}\quad
+Introduced by \citet{cho2016noisy}, NPAD is a technique than can be applied to any decoding setting.
+The main idea is that diversity can be achieved more naturally by taking advantage of the continuous manifold on which neural nets embed language.
+Instead of encouraging diversity by manipulating the probabilities outputted from the model, diverse outputs are instead produced by adding small amounts of noise to the hidden state of the decoder at each step.
+The noise is randomly sampled from a normal distribution. The variance is gradually annealed from a starting $\sigma_0$ to 0 as decoding progresses (that is $\sigma_t = \frac{\sigma_0}{t}$) under the reasoning that uncertainty is greatest at the beginning of decoding.
+NPAD can be used in conjunction with any decoding strategy, though the paper in which it was introduced primarily showed its performance in conjunction with beam search.
+
+\item \textbf{Top-$g$ Capping.}\quad
+In beam search, it is often the case that one hypothesis $h$ is assigned a much higher probability than all other hypotheses, causing all hypotheses in the next step to have $h$ as their parent. Li et al. \citep{li2016mutual, li2016simple} proposed adding an additional constraint to standard beam search to encourage the model to choose options from diverse candidates.
+At each step $t$, current hypotheses are grouped according to the parental hypothesis they come from.
+After grouping candidates, only the top $g$ from each grouping are considered. The resulting $b \times g$ candidates are ranked, and the top $b$ are selected as hypotheses for the next beam step.
+
+\item \textbf{Hamming Diversity Reward.}\quad
+\citet{vijayakumar2016diverse} proposed adding an additional diversity-promoting term, $\theta$, to the sequence log-likelihoods before the reranking step of beam search.
+This term measures how different a candidate hypothesis $c^{(i)}_{\leq t}$ is from the partial hypotheses selected in the previous step. Let $\mathcal{H}_{t-1} = \{c^{(1)}_{\leq t-1}$, \ldots $c^{(b)}_{\leq t-1}\}$ be these partial hypotheses.
+Then the beam search scoring function for the $i$th candidate at timestep $t$ becomes:
+\begin{align*}
+    \text{score}(c^{(i)}_{\leq t}) = \sum_{j=1}^t \big(\log P(c^{(i)}_j | c^{(i)}_{<j}, \textbf{x})\big) \\+ \lambda\theta(c^{(i)}_{\leq t}, \mathcal{H}_{t-1})
+\end{align*}
+where $\lambda$ is a tunable hyperparameter. \citet{vijayakumar2016diverse} try a variety of definitions for $\theta$, including embedding diversity and $n$-gram diversity, but they find that Hamming distance, the number of tokens in the candidate sequence which exist in the previously selected partial hypotheses, is most effective. 
+
+\item \textbf{Iterative Beam Search.}\quad
+In an attempt to improve the size of the search space explored without sacrificing runtime, Kulikov et al. \citep{kulikov2018importance} propose an iterative beam search method.
+Beam search is run many times, where the states explored by subsequent beam searches are restricted based on the intermediate states explored by previous iterations.
+Formally, they define the set of all partial hypotheses for beam search instance $i$ at time step $t$ as $\mathcal{H}_t^{(i)}$. From here, the search space explored by beam search instance $i$ can be expressed as $S_i = \cup_{t=1}^T \mathcal{H}_t^{(i)}$.
+The $i$th beam search is prevented from generating any partial hypothesis that has previously been generated, that is, any hypothesis found in $S_{<i} = \cup_{i^{\prime}=0}^{i-1}S_{i^{\prime}}$.
+
+\item \textbf{Clustered Beam Search.}\quad
+Tam et al. \citet{tam2019clustered} proposed a clustering-based beam search method to help condense and remove meaningless responses from chatbots.
+Specifically, at each decoding step $t$, this method initially considers the top $2*b$ candidates. From there, each candidate sequence is embedded\footnote{We follow \citet{tam2019clustered} and used averaged GloVe word embeddings \cite{pennington2014glove}.}, and the embeddings are clustered into $c$ clusters using $K$-means. Finally, we take the top $\frac{b}{c}$ candidates from each cluster. Note that in the case any clusters have size less than $\frac{b}{c}$, we then include the highest-ranked candidates not found after clustering.
+
+\subsection{The Diversity-Quality Tradeoff}
+In experiments conducted with Reno Kriz \citep{ippolito2019comparison}, we found that none of the diversity-promoting search methods accomplished their stated goal of improving diversity without significant penalty to generation quality.
+In our experiments, we compared all of the diverse beam search methods described above with standard beam search as well as several settings of random sampling with temperature.
+On an open-ended dialog task, we showed that human-judged generation quality was inversely correlated with three measures of diversity (Figure \ref{fig:correlations}).
+
+For each utterance in the dialog task validation set, we generate 10 candidate outputs using each decoding method.
+To measure the diversity across the generated candidate sequences for a given input utterance, we compute \textbf{Dist-k}, the total number of distinct k-grams divided by the total number of produced tokens in all of the candidate responses for a prompt \citep{li2016diversity}. 
+We use $k$=2.
+A limitation of Dist-$k$ is that all $k$-grams that appear at least once are weighted the same, ignoring the fact that infrequent $k$-grams contribute more to diversity than frequent ones. 
+Therefore, we also report Zhang et al.'s \citep{zhang2018generating} proposed entropy metric, \textbf{Ent-k}, defined as:
+ \begin{align*}
+ \textit{Ent-k} = \frac{-1} {\sum_{w \in S}F(w)} \sum_{w \in S} F(w) \log \frac{F(w)} {\sum_{w' \in S} F(w')}
+ \end{align*}
+ where $S$ is the set of all $k$-grams that appear in candidate responses for an example, and $F(w)$ denotes the frequency of $w$ in the candidate responses.
+Finally, we report perplexity (PpL), averaged over \textit{all} the top 10 outputs for each example.
+
+\begin{figure}[ht]
+    \centering
+    \begin{subfigure}[l]{5cm}
+        \includegraphics[width=5cm]{figures/dist2_vs_human.pdf}
+    \end{subfigure}
+    \begin{subfigure}[l]{5cm}
+        \includegraphics[width=5cm]{figures/ent4_vs_human.pdf}
+    \end{subfigure}
+    \begin{subfigure}[l]{5cm}
+        \includegraphics[width=5cm]{figures/perplexity_vs_human.pdf}
+    \end{subfigure}
+    \caption{Each point corresponds to the outputs from one decoding strategy. 
+     The x-axes give the dist-2, ent-4, and perplexity scores of the generated text.
+     The y-axes give the human-judged fluency, coherence, and interestingness of the outputs on a scale from 0 to 1.
+     The Pearson Correlation coefficients between each statistic and the average of fluency, coherence, and interestingness are shown in parentheses.}
+    \label{fig:correlations}
+\end{figure}
+
+One important ramification of the diversity-quality tradeoff is how detectable the generated text is to humans and automatic discriminators.
+The relationship between detectability and the lexical diversity of model generations is described in detail in Chapter \ref{section:detection}.
 
 \section{Controllability and Task-Specific Generation}
 
@@ -193,12 +307,12 @@ At the time, the neural networks being used for these sorts of tasks were relati
 
 In 2018, Howard and Ruder \citep{howard2018universal} and Radford et al. \citep{radford2018improving} concurrently proposed the idea of pre-training a single universal task-agnostic language model.
 To accomplish any specific language task of interest, that model could subsequently be trained for extra steps on the training data of the desired task, a process known as finetuning.
-The idea of finetuning a general model for a specific task had already taken off in computer vision, where researchers had shown a convolutional neural network trained on the ImageNet task of classifying the contents of images could be finetuned for tasks ranging from image segmentation to \TODO{}.
+The idea of finetuning a more general model for a specific task had already taken off in computer vision, where researchers had shown a convolutional neural network trained on the ImageNet task of classifying the contents of images could be finetuned for tasks ranging from image segmentation to cancer detection.
 
 General purpose language models intended for generation tasks tend to be trained on massive datasets scraped from the internet (Table \label{tab:dataset_list}).
 It is common to use both decoder-only models trained only to predict the next token given the previous ones \citep{radford2019language}, as well as encoder-decoder architectures trained with a de-noising loss, where the input is a corrupted version of the text, and the task is to recover the uncorrupted text \citep{raffel2019exploring,lewis2020bart}.
 Table \ref{tab:common_pretrained_models} gives examples of several pre-training objectives that have been employed by popularly-used pre-trained models.
-These pre-trained models are then trained further on data for a specific task.
+Each of these models has been finetuned for a large diversity of downstream tasks.
 
 \begin{table*}[htbp]
   \centering
@@ -206,7 +320,7 @@ These pre-trained models are then trained further on data for a specific task.
     \begin{tabular}{lllll}
     \toprule
     Dataset & \multicolumn{1}{l}{Size} & \multicolumn{1}{l}{Public?} & \multicolumn{1}{l}{Models trained on it} \\
-    \midrule
+    % \midrule
     C4    &       & {Yes} & {T5} \\
     mC4   &       & {Yes} & {mT5} \\
     The Pile &       & {Yes} & {GPT-Neo, Megatron-Turing} \\
@@ -214,7 +328,7 @@ These pre-trained models are then trained further on data for a specific task.
     PanGu-$\alpha$ train set & {1.1TB} & {No} & {PanGu-$\alpha$} \\
     WebText &       & {No} & {GPT-2} \\
     GPT-3 train set & {500B tokens} & {No} & {GPT-3} 
-    \bottomrule
+    % \bottomrule
     \end{tabular}%
   \caption{A survey of datasets which have been used to train large general-purpose neural language models. \TODO{fill in}}
   \label{tab:dataset_list}%
@@ -224,14 +338,14 @@ These pre-trained models are then trained further on data for a specific task.
 \begin{table}
     \centering
     \begin{tabular}{l|l|p{2in}|p{2in}}
-        \toprule 
+        % \toprule 
         Model & Objective & Input & Target \\
         \hline
         BERT & \TODO{} & \TODO{} & \TODO{} \\
         T5 & \TODO{} & \TODO{} & \TODO{} \\
         BART & \TODO{} & \TODO{} & \TODO{} \\
         GPT-2 & Next-token predictions & \TODO{} & \TODO{} \\
-        \bottomrule
+        % \bottomrule
     \end{tabular}
     \caption{Examples of training objectives from popular general-purpose models which have been used for finetuning.}
     \label{tab:common_pretrained_models}
