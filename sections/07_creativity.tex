@@ -17,9 +17,6 @@ However, much of the early work in this area was focused on building systems whi
 
 Rather than focusing on developing NLG systems which produce entire stories, my research in this area focuses on enabling better human-AI collaboration.
 
-\section{Towards Sentence-Level Language Models}
-
-
 
 \section{Models for Infilling Text}
 \label{section:fitb}
@@ -63,17 +60,17 @@ Finetuning T5 further improves its ability and also allows for the incorporation
   \small
   \caption{Examples of the finetuning objectives. ``8" is the approximate length in words of the target sequence. During finetuning, about 25\% of training examples took each of these formats.}
     \begin{tabular}{p{0.12\textwidth}p{0.57\textwidth}p{0.20\textwidth}}
-    \hline
+    \midrule
     Example Type & Input & Target \\
-    \hline
+    \midrule
      \cFITB{} no goal & fill: I love avocados. I ate a sandwich covered in them. {\textbf \_8\_} I talked to my doctor about it later. It turned out I was allergic to avocados. & After I ate it, my mouth was itchy and tingly. \\
-    \hline
+    \midrule
      \cFITB{}  with goal & fill: I love avocados. I ate a sandwich covered in them.  {\textbf \_8\_} I talked to my doctor about it later. It turned out I was allergic to avocados.  {\textbf Goal: mouth was itchy} & After I ate it, my mouth was itchy and tingly. \\
-    \hline
+    \midrule
      \cFITB{} no goal& fill: I love avocados. I ate a sandwich covered in them. After I ate it, my mouth was itchy and tingly. I talked to my doctor about it later.  {\textbf \_8\_}  & It turned out I was allergic to avocados. \\
-    \hline
+    \midrule
      \cFITE{} with goal & fill: I love avocados. I ate a sandwich covered in them. After I ate it, my mouth was itchy and tingly. I talked to my doctor about it later.  {\textbf \_8\_}   {\textbf Goal: allergic to} & It turned out I was allergic to avocados. \\
-    \hline
+    \midrule
     \end{tabular}
    \vspace{-0.6em}
   \label{tab:task_examples}
@@ -147,16 +144,16 @@ Example generations for all evaluation sets can be found at \url{https://bit.ly/
     & \textsc{C4Fill} & \textsc{RwpFill} & \textsc{RocFill} \\ % & \textsc{RwpFill} \\
     & \textsc{Blank} & \textsc{Middle} & \textsc{Blank} \\ % & \textsc{Blank}-Sent \\
     % \cline{2-5}
-    \hline
+    \midrule
     {Few-shot \LLM} & 14.14 & 19.48 & 18.21 \\ % & 16.36 \\
     % {Pre-trained T5 XL} & 10.27 & 13.94 & 21.75 \\ % & TODO \\
     {Pre-trained T5} & 10.38 & 14.08 & 22.62 \\ % & 10.49 \\
-    \hline
+    \midrule
     % {\FITBFITE{} XL} & 11.49 & 15.05 & 24.87 \\ % & 10.33 \\
     {Finetuned T5} & 10.33 & 14.08 & 20.47 \\ % & 10.37 \\
     {\citet{donahue2020enabling}} & N/A & N/A & 23.28 \\ % & N/A \\
     
-    \hline
+    \midrule
     {Groundtruth} & 9.41 & 12.99 & 16.90 \\
 
     \bottomrule
@@ -174,14 +171,14 @@ Example generations for all evaluation sets can be found at \url{https://bit.ly/
     & \textsc{C4Fill} & \textsc{RwpFill} & \textsc{RocFill} \\
     & \textsc{End} & \textsc{End} & \textsc{End}  \\
     % \cline{2-5}
-    \hline
+    \midrule
     % {\LLM} & TODO  & TODO & TODO \\
     {Pre-trained T5}  & 10.09 & 13.51 & 21.71 \\
-    \hline
+    \midrule
     % {\FITBFITE{} XL}  & 10.77 & 14.66 & 22.66 \\
     {T5 \FITBFITE{}} & 10.04 & 13.74 & 19.60 \\
     {T5 \textsc{Lm-Adaption}} & 10.06  & 13.71 & 19.68 \\
-    \hline
+    \midrule
     {Groundtruth} & 9.41 & 12.99 & 16.90 \\
     \bottomrule
     \end{tabular}
@@ -204,10 +201,10 @@ Example generations for all evaluation sets can be found at \url{https://bit.ly/
     \toprule
     % & \multicolumn{2}{c|}{Large} \\
     \textbf{Finetuned T5} & Context & Length \\
-     \hline
+     \midrule
     \cFITB & 0.860 & 0.877 \\
     \rwpFITB & 0.797 & 0.881 \\
-    \hline
+    \midrule
     \cFITE & 0.858 & 0.775 \\
     \rwpFITE & 0.791 & 0.746 \\
     \bottomrule
@@ -240,23 +237,23 @@ We generated 5 possible prompts by randomly subsampling 3 examples out of these 
     \centering
     \small
     \begin{tabular}{|p{0.5\linewidth}|p{0.3\linewidth}|}
-         \hline
+         \midrule
          \textbf{Context} & \textbf{Target} \\
-         \hline
+         \midrule
 An elderly man was sitting alone on a dark path. The man looked down at his feet, and realized \_\_\_\_ . It was a plain pine box and looked as if it had been there for a long time. The man was afraid to look inside the box. & he was holding a bright red box made of pine \\
-\arrayrulecolor{lg} \hline \arrayrulecolor{black}
+\arrayrulecolor{lg} \midrule \arrayrulecolor{black}
 The mantle was cluttered with objects: \_\_\_\_ and more than one vase of dried flowers. The bejeweled lamp was at the very back, nearly invisible. & picture frames showing grandchildren and long-ago weddings, knickknacks collected from all over the world, \\
-\arrayrulecolor{lg} \hline \arrayrulecolor{black}
+\arrayrulecolor{lg} \midrule \arrayrulecolor{black}
 "We have to leave now!" Sarah shouted. \_\_\_\_ The only way out was up. We climbed flight after flight. The sound of the monsters banging on the door below became more distant but no less threatening. & "The zombies are going to break through any moment, and then we'll all be goners." \\
-\arrayrulecolor{lg} \hline \arrayrulecolor{black}
+\arrayrulecolor{lg} \midrule \arrayrulecolor{black}
 The sun was shining, and little gusts of wind brought through the window \_\_\_\_ shocking contrast from the stale city smells she had grown used to. & the faint scents of honeysuckle and freshly turned soil. It was a \\
-\arrayrulecolor{lg} \hline \arrayrulecolor{black}
+\arrayrulecolor{lg} \midrule \arrayrulecolor{black}
 I was minding my business at the park, when I was approached by a little girl who was crying because she had lost \_\_\_\_ so of course I helped search. & her cat, which she had just received for her birthday. She did not want her parents to know she'd already lost him. I'm a good person \\
-\arrayrulecolor{lg} \hline \arrayrulecolor{black}
+\arrayrulecolor{lg} \midrule \arrayrulecolor{black}
 It was a cold night, and a storm was raging out at sea. A lightning bolt lit up the sky, briefly illuminating the lighthouse \_\_\_\_ plummeted but just before reaching the churning water, he disappeared in a poof of purple flame! & and the young man peering hesitantly over the sheer cliff. Before the next peal of thunder he jumped. At first he  \\
-\arrayrulecolor{lg} \hline \arrayrulecolor{black}
+\arrayrulecolor{lg} \midrule \arrayrulecolor{black}
 The magician pulled out of his pocket \_\_\_\_ and then a second one and a third. He didn't stop until soon the ground was covered with them. & a scarlet handkerchief  \\
-         \hline
+         \midrule
     \end{tabular}
     \caption{Hand-written fill-in-the-blank examples used for ``custom'' prompt during few-shot learning.}
     \label{tab:custom_examples}
@@ -305,14 +302,14 @@ Among the few-shot results, the best method for each dataset is bolded, as well 
     & \textsc{C4Fill} & \textsc{RocFill} & \textsc{RwpFill} & \textsc{RwpFill} \\
     \textbf{Few-shot source:} & \textsc{Blank} & \textsc{Middle} & \textsc{Blank} & \textsc{Blank}-Sent \\
     \cline{2-5}
-    % \hline
+    % \midrule
     % \textbf{\cFITB} & 15.67 & \textcolor[rgb]{ 1,  0,  0}{19.72} & \textbf{19.65} & \textbf{16.82} \\
     {\cFITB} & 15.67 & 19.72 & \textbf{19.65} & \textbf{16.82} \\
     {\rocFITB} & \textbf{14.14} & 19.61 & \textbf{19.48} & \textbf{16.36} \\
     {\rwpFITB} & 24.39 & 20.29 & 32.33 & 28.13 \\
     {\rwpFITB-Sent} & 18.91 & \textbf{18.21} & 24.44 & 19.87 \\
     {\textsc{FS Custom}} & 17.98 & 19.80 & 21.72 & 18.38 \\
-    \hline
+    \midrule
     {Finetuned T5 XL} & 9.99 & 19.00 & 13.64 & 10.03 \\
     Finetuned T5 Large & 10.33 & 20.47 & 14.08 & 10.37 \\
     % \textbf{\FITB{}  Large} & 10.34 & 20.61 & 14.08 & 10.35 \\
@@ -609,9 +606,9 @@ In a real world setting, our augmented zero-shot approach allows users to effort
 \def\arraystretch{1.5}% 
 \begin{tabular}{p{1.0\columnwidth}}
 % \textbf{Rewrite requests (user completions of `Rewrite this...')} \\
-\hline
+\midrule
 into paragraphs • to be a bit clearer • to be a little less angsty • to be a word for a song • to be about mining • to be about vegetables • to be better written • to be less descriptive • to be less diabolical • to be more absurd • to be more adventurous • to be more angry • to be more cheerful • to be more descriptive • to be more Dickensian • to be more emotional • to be more fancy • to be more flowery • to be more interesting • to be more joyful • to be more magical • to be more melodramatic • to be more philosophical • to be more revolutionary • to be more scary • to be more subtle • to be more surprising • to be more suspenseful • to be more technical • to be more violent • to be more whimsical • to be warmer • to fit better grammatically with the rest of the story • to make more sense • to use a more interesting word • with a few words \\
-\hline
+\midrule
 \end{tabular}
 % }
 % \vspace*{3mm}
@@ -661,10 +658,10 @@ Thus, augmented zero-shot learning offers less fine-grained controllability in t
     \def\arraystretch{1.5}% 
     \begin{tabular}{p{0.41\linewidth} p{0.45\linewidth}}
     \toprule
-      \textbf{Input} & \textbf{Model suggestion} \\ \hline
-      You honor me,'' said Bruno. As he spoke, he began to laugh. His laugh was merry sounding and melodic. He took a deep breath. When he spoke again, his voice was low and strong. ``I take this great task on and with my brothers shall lead us on to victory! \newline \textbf{Rewrite it to be about mining.} & You honor me, said Bruno. As he spoke, he began to laugh. His laugh was deep and gravely, as if from the bowels of the earth. He took a deep breath. When he spoke again, his voice was deep and dark.`I take this great task on and with my brothers shall delve into the mines!'' \\ \hline
-      I reckon,' smiled Toe, 'you'd have to say the same for icicles, wouldn't you? \newline \textbf{Rewrite it to be more interesting.} & ‘I reckon,’ smiled Toe, ‘you’d have to say the same for icicles, wouldn’t you?’ These words were barely out of his mouth before the others realized exactly what they meant.\\ \hline
-      with its southern perfume \newline \textbf{Rewrite it to be more descriptive} & A mixture of sweet honeysuckles and jasmine  with  a  hint  of  tobacco  and warm mesquite smoke. It was his southern perfume, with a hint of a memory of simpler times.\\ \hline
+      \textbf{Input} & \textbf{Model suggestion} \\ \midrule
+      You honor me,'' said Bruno. As he spoke, he began to laugh. His laugh was merry sounding and melodic. He took a deep breath. When he spoke again, his voice was low and strong. ``I take this great task on and with my brothers shall lead us on to victory! \newline \textbf{Rewrite it to be about mining.} & You honor me, said Bruno. As he spoke, he began to laugh. His laugh was deep and gravely, as if from the bowels of the earth. He took a deep breath. When he spoke again, his voice was deep and dark.`I take this great task on and with my brothers shall delve into the mines!'' \\ \midrule
+      I reckon,' smiled Toe, 'you'd have to say the same for icicles, wouldn't you? \newline \textbf{Rewrite it to be more interesting.} & ‘I reckon,’ smiled Toe, ‘you’d have to say the same for icicles, wouldn’t you?’ These words were barely out of his mouth before the others realized exactly what they meant.\\ \midrule
+      with its southern perfume \newline \textbf{Rewrite it to be more descriptive} & A mixture of sweet honeysuckles and jasmine  with  a  hint  of  tobacco  and warm mesquite smoke. It was his southern perfume, with a hint of a memory of simpler times.\\ \midrule
       But Sally remained unmoved--and lonely. \newline \textbf{Rewrite it to be more emotional} & Her tears rolled and rolled down her cheek, mixing with the saltwater around her, until the water was a rich mixture of the two. She wanted her poem to be cheerful like it used to be, but couldn't find the right words. \\
     \bottomrule
     \end{tabular}
@@ -678,13 +675,13 @@ Thus, augmented zero-shot learning offers less fine-grained controllability in t
     \centering
     \tiny
     \begin{tabular}{p{.9\linewidth}}
-\hline
+\midrule
 \multicolumn{1}{c}{Augmented Zero-shot Prompt: LLM}
 \\
 \texttt{Here is some text: \{When the doctor asked Linda to take the medicine, he smiled and gave her a lollipop.\}. Here is a rewrite of the text, which is more scary. \{When the doctor told Linda to take the medicine, there had been a malicious gleam in her eye that Linda didn't like at all.\} Here is some text: \{they asked loudly, over the sound of the train.\}. Here is a rewrite of the text, which is more intense. \{they yelled aggressively, over the clanging of the train.\} Here is some text: \{When Mohammed left the theatre, it was already dark out\}. Here is a rewrite of the text, which is more about the movie itself. \{The movie was longer than Mohammed had expected, and despite the excellent ratings he was a bit disappointed when he left the theatre.\} Here is some text: \{next to the path\}. Here is a rewrite of the text, which is about France. \{next to la Siene\} Here is some text: \{The man stood outside the grocery store, ringing the bell.\}. Here is a rewrite of the text, which is about clowns. \{The man stood outside the circus, holding a bunch of balloons.\} Here is some text: \{the bell ringing\}. Here is a rewrite of the text, which is more flowery. \{the peales of the jangling bell\} Here is some text: \{against the tree\}. Here is a rewrite of the text, which is include the word "snow". \{against the snow-covered bark of the tree\}} 
 \textcolor{blue}{\texttt{Here is some text: \{That is an ugly dress\}. Here is a rewrite of the text, which is more positive."}}
 \\
-\hline
+\midrule
 \multicolumn{1}{c}{Augmented Zero-shot Prompt: LLM-dialog}
 \\
 \texttt{> Here is some text: \{When the doctor asked Linda to take the medicine, he smiled and gave her a lollipop.\}. Rewrite it to be more scary. \newline
@@ -704,7 +701,7 @@ Thus, augmented zero-shot learning offers less fine-grained controllability in t
 }
 \textcolor{blue}{\texttt{> Here is some text: \{That is an ugly dress\}. Rewrite it to be more positive."}}
 \\
-\hline
+\midrule
 \end{tabular}
 \end{table}
 
@@ -765,11 +762,12 @@ When the user has no text inputted, a few-shot learning prompt is used to sugges
 > {slowly through his nose. \"It wasn't long ago,\" he said, \"that those boys would've been dead and buried.}
 > Here's a new story: {<USER'S STORY>} <WRITING REQUEST>
 \end{verbatim}
-This is based on the arbitrary style transfer technique dexcribed in Section \ref{section:style_transfer}.
+This is based on the arbitrary style transfer technique described in Section \ref{section:style_transfer}.
 
 \subsubsection{Fill in the blank}
-The user is able to select some text and see alternatives that fit into the place of their selection.
-While this is exactly the fill-in-the-blank task described in Section \ref{section:fitb}, for computational reasons, we also support this task with a few-shot learning prompt:
+When the user has some text selected in the editory, they are able to see alternatives that fit into the place of their selection.
+This is exactly the fill-in-the-blank task described in Section \ref{section:fitb}.
+Though in Section \ref{section:fitb} we showed that finetuned models perform much better at this than few-shot prompting techniques, due to the computational complexities of hosting multiple models, we ended up also supporting this operation with a few-shot learning prompt:
 
 \begin{verbatim}
 ve to leave now!\" Sarah shouted.  ____ The only way out was up. We climbed flight after flight. The sound of the monsters banging on the door below became more distant but no less threatening.} Finish the following sentence by filling in the blank with a phrase. {\"We have to leave now!\" Sarah shouted.  }
@@ -786,9 +784,256 @@ ve to leave now!\" Sarah shouted.  ____ The only way out was up. We climbed flig
 \end{verbatim}
 
 \subsubsection{Elaboration}
-\subsubsection{Custom Prompting}
+\subsubsection{Free-form style transfer}
+\subsubsection{Custom prompting}
+As mentioned in Section \ref{sec:novel_prompt}, we also developed a prompt that enables users to ask the AI to perform arbitrary tasks on-the-fly via the ``\texttt{use your own prompt}'' control.
+For example, one participant in our user study was writing a story about a character named Daniel.
+They asked the AI agent: \textit{Tell me more about Daniel}. Figure \ref{fig:interface_meta_custom} (right) shows the custom prompt control in the Wordcraft interface.
+Figure \ref{fig:augmented_zero_shot} (left) contains an excerpt from Wordcraft's few-shot prompt for custom prompting.
 
-\subsection{User Study}
+
+\subsection{User Study with Novice Writers}
+To evaluate Wordcraft's effectiveness, we conducted a user study in which 25 hobbyist writers (whom we refer to as U1-U25) were asked to write stories with and without Wordcraft.
+\TODO{Talk about goals with this study}
+\begin{itemize}
+  \item directly compare Wordcraft against simpler systems
+  \item learn what features worked well and what features were missing
+  \item fix any major bugs
+\end{itemize}
+
+\subsubsection{Methodology} 
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figures/recruitment_survey.png}
+  \caption{Writing habits survey results.}
+  \label{fig:writing_habits}
+\end{figure}
+
+\noindent We recruited participants via advertisements on Google-internal mailing lists. We then screened for individuals who practice creative writing on a regular basis, but who had not yet published their writing. 
+Participants volunteered for the study and were not compensated. 
+Most of the participants (23 out of 25) did not consider themselves to be machine learning practitioners and had not interacted with an LLM previously.
+We asked participants to complete a pre-study questionnaire about their writing habits (Figure \ref{fig:writing_habits}).
+Then we carried out a within-subjects study, giving each user three writing prompts and asking them to write 100-300 word stories under the following three experimental conditions (illustrated in Figure \ref{fig:conditions}):
+
+\begin{enumerate}
+    \item \textbf{full} Wordcraft, as described in Section \ref{sec:wordcraft}.
+    \item \textbf{cont} (baseline) a text editor with a single control: LaMDA will propose continuations to the text written so far. The \textit{cont} condition enables us to evaluate Wordcraft against existing AI-assisted writing applications which most often feature continuation as a single control.
+    \item \textbf{chat} (baseline) a plain text editor shown alongside a chat dialog window.
+    Users can converse with the LaMDA-powered chatbot, but the chatbot only ``knows'' what the user types to it.
+    The \textit{chat} condition enables us to evaluate the utility of the prompt and UX scaffolding we designed for Wordcraft against giving users straightforward access to the underlying model, without any scaffolding. An omniscient user could theoretically reproduce the functionality of the \textit{full} condition by replicating Wordcraft's prompts.
+\end{enumerate}
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=1\linewidth]{figures/conditions.png}
+  \caption{Experimental conditions for the user study. The stories written by participants as part of the study can be viewed here: \href{https://storage.googleapis.com/wordcraft-stories/index.html}{https://storage.googleapis.com/wordcraft-stories/index.html}. The website also includes purely machine-generated baselines.}
+  \label{fig:conditions}
+\end{figure*}
+
+\noindent Participants were asked to write stories based on the following three prompts \footnote{Prompts were selected from the \href{https://www.reddit.com/r/WritingPrompts/}{Writing Prompts subreddit}.}:
+\begin{enumerate}
+    \item You arrive at Grandma's funeral to find thousands of people from around the world also in mourning. You are entirely unaware that Grandma had 16.4m followers on Twitter.
+    \item All of the `No. 1 Dad' mugs in the world change to show the actual ranking of Dads suddenly.
+    \item You lost your sight - along with everyone else on Earth - in The Great Blinding. Two years later, without warning, your sight returns. As you look around, you realize that every available wall, floor and surface has been painted with the same message - Don't Tell Them You Can See.
+\end{enumerate}
+
+\noindent Participants were given ten minutes to write each story.
+We felt that ten minutes was enough time for users to acquaint themselves with the interface and write 100-300 words, while managing users' expectations for how much time they would need to spend on the study in total.
+To control for writing ability and prompt difficulty, for each user, the three conditions were randomly paired with the three prompts, and the user was asked to write a story for each setting.
+We also randomized the order in which the conditions were presented.
+Users were not given any training for the various conditions``they were simply given a website link and asked to write a story with the interface.
+Users were told that they were participating in a study of AI assisted writing, but they were not explicitly asked to solicit help from the AI agent, as we were interested in learning how often users would want to make use of AI-assisted controls.
+
+\subsubsection{Results}
+\label{sec:results}
+This section describes the overall successes and failures of the NLG-powered assistive writing features incorporated into Wordcraft, before comparing Wordcraft to the baseline conditions in depth. 
+
+\begin{table*}[t]
+  \centering
+  \caption{Usage statistics.}
+  \small
+  \label{tab:freq}
+  \begin{tabular}{lllll}
+    \toprule
+    Property&\textit{chat} Chat&\textit{cont} Continuation&\textit{full} Wordcraft&Overall\\
+    \midrule
+    Requests made avg&6.3 \textpm 1.3&4.3 \textpm 0.52&7.3 \textpm 0.74&6.0 \textpm 0.53\\
+    Accepted suggestions avg&N/A&0.17 \textpm 0.08&1.3 \textpm 0.25&0.51 \textpm 0.12\\
+    Story word count avg&233 \textpm 18&237 \textpm 16 &267 \textpm 21.6&247 \textpm 11.1\\
+    Model word count avg (\% of story)&N/A&2.9 \textpm 2 (1.3\%)&42.3 \textpm 14.2 (13.2\%)&16.2 \textpm 5.7 (5.2\%)\\
+    Time considering suggestions avg&N/A&67.1s \textpm 8.7s&41s \textpm 4.1s&44.5s \textpm 3.2s\\
+    Time to complete avg&11m \textpm 62.5s&11.52m \textpm 131.5s&9.97m \textpm 37.1s&10.8m \textpm 48.6s\\
+  \bottomrule
+\end{tabular}
+\end{table*}
+
+\begin{table}
+  \caption{Usage statistics broken down by request type (Wordcraft only).}
+  \small
+  \label{tab:freq_wc}
+  \begin{tabular}{lll}
+    \toprule
+    Request type&Requests made&Suggestions accepted\\
+    \midrule
+    Rewrite&27&5 (18.5\%)\\
+    Story seed&22&12 (54.5\%)\\
+    Suggest a prompt&40&2 (5\%)\\
+    Fill-in-the-blank&4&0 (0\%)\\
+    Continue&36&4 (11.1\%)\\
+    Next sentence&7&1 (14.3\%)\\
+    Elaborate&3&0 (0\%)\\
+    Custom&51&9 (17.6\%)\\
+  \bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}
+\caption{Rewrite requests (user completions of `Rewrite this...`)}
+\label{tab:rewrites}
+\small
+% \resizebox{\columnwidth}{!}{%
+% \def\arraystretch{1.5}% 
+\begin{tabular}{p{1.0\columnwidth}}
+%\midrule
+to be a little less angsty • to be about mining • to be better written • to be less diabolical • to be more absurd • to be more adventurous • to be more Dickensian • to be more emotional • to be more magical • to be more melodramatic • to be more philosophical • to be more revolutionary • to be more surprising • to be more suspenseful • to be more technical • to be more whimsical • to be warmer • to fit better grammatically with the rest of the story • to make more sense \\
+%\midrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\caption{Custom prompts written by users.}
+\label{tab:custom_prompts}
+\small
+\def\arraystretch{1.5}% 
+\begin{tabular}{p{1.0\columnwidth}}
+\midrule
+Tell me more about her twitter account.
+• More about the dad please. • Tell me about Elaine's amazing twitter account. • Tell me about the father. • Tell me about the funeral home, grandma, the punk kid, and the crowd. • Tell me how the man reacted as he found out he could see again. • Tell me more about Daniel. • Tell me more about what it's like to have to pretend to be blind when you can see. • Tell me what happens next. • Tell me what the letter says. • What are the words on the floor? What language are they in? • What would happen if we could quantify love? • Why were they watching me? • More about the dad please. • So this guy was tight with your grandma? • Tell me about Elaine's amazing twitter account. • Tell me about the father. • Tell me about the funeral! • Tell me about the funeral home, grandma, the punk kid, and the crowd. • Tell me how the man reacted as he found out he could see again. • Tell me more about Daniel. • Tell me more about what it's like to have to pretend to be blind when you can see. • Tell me what happens next. • Tell me what the letter says. • What are the words on the floor? What language are they in? • What would happen if we could quantify love? • Who is telling me not to tell them? • Why were they watching me?
+\midrule
+\end{tabular}
+\end{table}
+
+\subsection{The role of AI in co-writing}
+
+We observed that users solicited help from the AI agent at every stage of the writing process--from high-level story concepting down to rewriting and editing.
+Thus, we found that the AI agent played many different roles in collaborative writing.
+
+\subsubsection{AI as idea generator}
+\label{sec:results-idea-generator}
+Users asked the AI agent for help in story ideation and brainstorming.
+For example, nine users at one point presented the AI agent with their story and asked simply: \textit{`What happens next?'}.
+Another user solicited help developing the premise for their story: \textit{`What would happen if we could quantify love?'}. 
+
+Another typical use case for soliciting help from the AI was when just starting a story.
+The story seed control, in which the AI agent provides opening sentences for a story given a writing prompt, had the highest success rate of any control: 55\% (Table \ref{tab:freq_wc}) of suggestions were accepted by users.
+In these cases, the AI served to kick-start the writing process for users who might have been blocked.
+Users also found the AI agent helpful for generating smaller scale details for their story, such as names for characters and locations.
+
+Many users remarked on the usefulness of the AI agent's suggestions, even if they didn't end up using them verbatim: \textit{`Multiple suggestions around the highlight or next phrasing were very helpful, even if I didn't use the whole phrase ... it was like having someone suggest things that I might have thought of myself'} (U9).
+Another user commented: \textit{`It was good at generating a bunch of relevant ideas that inspire my next lines and get me unstuck. I was never tempted to use any of the lines verbatim, but it was fun inspiration'} (U4).
+Some also noted the AI agent's tendency to provide offbeat suggestions as a strength: \textit{`the off the wall suggestions were fun to play around with and helped shape how the story took form'} (U5).
+
+\subsubsection{AI as scene interpolator}
+We also observed users having ideas for events before knowing how they fit into an existing story - and in such cases asking the AI agent to fill in gaps.
+For example, users would build a scene and then ask the AI agent to provide plot points that would contextualize the scene. 
+One user in their story described a character being watched, and then asked the AI agent \textit{`Why were they watching me?'}. 
+Many of the custom prompts (Table \ref{tab:custom_prompts}) we collected fall under this use case. 
+These included prompts such as \textit{`Tell me what the letter says.'} and \textit{`Tell me about the funeral home, grandma, the punk kid, and the crowd.'}.
+
+\subsubsection{AI as copy editor}
+We also observed users asking the AI agent for help in smaller scale edits, for example: \textit{`Rewrite this sentence to fit better grammatically with the rest of the story'}, or \textit{`Rewrite this sentence to make more sense.'} 
+Many of the requests in Table \ref{tab:rewrites} fall under this category. 
+
+% \subsubsection{AI as search engine}
+% We also found that in the \textit{chat} condition, users asked the AI for help in looking up information, such as \textit{'How many dads are there in the world?'}, or \textit{How do you cook pork chops?}. 
+
+\subsection{Shortcomings of AI in co-writing}
+
+\subsubsection{Lack of content awareness}
+Users' observations of the AI agent's shortcomings mostly center on its lack of contextual awareness. 
+For example, though the assistant might provide several fluent, well-written alternatives to a sentence as part of the rewrite control, its suggestions do not necessarily make sense given the rest of the story. One user whose story mentioned numbers moving on a coffee mug received suggestions from the AI agent which implied that \textit{`live animals (snakes specifically) were moving'}.
+
+% Quotes:
+% \begin{itemize}
+%     \item Understanding context - I was talking about the numbers on the mug constantly moving. But, the prompt/suggestions seemed to suggest that it was live animals (snakes specifically) that was moving.
+%     \item More contextual awareness
+%     \item AI does not seem to understand the direction of the story at more than a sentence level.
+% \end{itemize}
+
+\subsubsection{Lack of grammatical awareness}
+Users noted that the AI agent's suggestions were often not in the same tense as the rest of the story. Some also noted that the AI did not seem aware of their story's established point of view (first person versus third person). 
+
+% Quotes:
+% \begin{itemize}
+%     \item It used third person when I was writing in 1st person.
+%     \item some of the suggested texts were in a different tense / viewpoint than my story
+% \end{itemize}
+
+\subsection{Wordcraft versus baseline 1: continuation-only}
+In this section we compare Wordcraft to the continuation-only baseline (\textit{cont}). 
+This baseline allows us to measure the utility of Wordcraft's prompting methods (Section \ref{sec:novel_prompt}) and UX patterns (Section \ref{sec:ux_patterns}) for the story writing task against the typical experience of \textit{continue-my-text} seen in existing LLM-powered writing tools.
+We analyzed the activity logs from each user's writing session, and extract quantitative findings based on the following metrics (results in Table \ref{tab:freq}):
+
+\begin{itemize}
+    \item \textit{Requests made avg}: On average, how many times the user requested assistance from the AI while writing a story.
+    \item \textit{Accepted suggestions avg}: On average, how many of the AI's suggestions the user accepted.
+    \item \textit{Time considering suggestions avg}: The average time users spent between soliciting help from the AI, and accepting a suggestion or dismissing the suggestions.
+    \item \textit{Model word count avg}: The average number of words in the final story that came directly from the AI agent.
+    \item \textit{Time to complete avg}: The average time spent to produce the final story.
+\end{itemize}
+
+\subsubsection{Users solicited and accepted more assistance from the AI using Wordcraft.}
+
+Participants made significantly more requests of the AI agent using Wordcraft (7.31 \textpm 0.74) than the continuation-only baseline (4.35 \textpm 0.52) according to a paired-sample T-test (\textit{p} = 0.003). Participants also \textit{accepted} significantly (\textit{p} = 0.0003) more of the AI's suggestions using Wordcraft (1.27 \textpm 0.25 vs 0.17 \textpm 0.079). Accordingly, the stories written with Wordcraft contained significantly (\textit{p} = 0.0068) more text from the AI agent (13.2\% \textpm 3.8\%) than stories written with continuation-only (1.3\% \textpm 0.92\%).
+
+% \subsubsection{Users spent less time to write longer stories using Wordcraft.}
+
+% Users spent less time overall using Wordcraft (9.97m \textpm 37s) than continuation-only (11.52m \textpm 131.5s), even though the stories they wrote with Wordcraft are longer (267.7w \textpm 21.6w versus 237.3w \textpm 16w). However, these differences are not statistically significant.
+
+\subsubsection{Users found Wordcraft more helpful.}
+The results from the Likert-scale questions in the exit interviews are in Figure \ref{fig:exit_interview_results}. According to a Mann-Whitney U test, users found Wordcraft significantly more helpful than the continuation-only baseline (\textit{p} = 0.0266).
+
+\subsubsection{Users enjoyed using controls aside from continuation.}
+\label{sec:extra_continuation}
+We also note in Figure \ref{fig:favorite_ops} that more than half of the responses to the question `Which controls did you enjoy using' indicate controls \textit{other} than `generate text' (aka continuation). `Use your own prompt' was the most used control and the second most highly voted control, suggesting users enjoyed having the ability to design their own prompts. Table \ref{tab:freq_wc} lists the number of times each control was used and accepted in Wordcraft, further demonstrating that participants found utility in a variety of controls other than continuation. 
+
+\subsection{Wordcraft versus baseline 2: chat}
+In this section we compare Wordcraft to the \textit{chat} baseline. 
+This again allows us to measure the importance of Wordcraft's prompting methods and UX patterns, but also to observe how writers might make use of a powerful open-domain LLM-powered chatbot in their creative process.
+As the two conditions present significantly different user experiences, many of the metrics from the previous section are not applicable. Thus we also analyze the chat transcripts and free-response exit interview questions to extract qualitative themes.
+
+% \subsubsection{Users spent less time to write longer stories using Wordcraft.}
+
+% Users spent less time overall using Wordcraft (9.97m \textpm 37s) than chat (11m \textpm 62s), even though the stories they wrote with Wordcraft are longer (267.7w \textpm 21.6w versus 232w \textpm 18w). However, these differences are not statistically significant.
+
+\subsubsection{Users found Wordcraft more helpful.}
+
+According to a Mann-Whitney U test, users found Wordcraft significantly more helpful than the chat baseline (\textit{p} = 0.0134), and also found it to be significantly more collaborative (\textit{p} = 0.00668).  
+
+\subsubsection{The chatbot is effective at suggesting ideas.}
+\label{sec:chatbot_useful}
+
+Nevertheless, we observed high user engagement with the chatbot assistant - on average users sent 6.3 \textpm 1.3 messages to the chatbot (Table \ref{tab:freq}). One user remarked: \textit{The AI agent asked good probing questions that gave me inspiration} (U22). Many talked to the chatbot the way a writer might discuss a project with a friend, asking for suggestions about overall direction as well as story details. For example (U1):
+
+\begin{quote}
+    {\color{blue}\textit{user}:} How should I start a story about being blind?\\
+    {\color{blue}\textit{AI agent}:} It's a unique perspective, so focus on description. What can you hear, smell, taste, and touch? These should all be used in your story.
+\end{quote}
+
+\noindent Another user (U4) asked about specific plot elements and character details:
+
+\begin{quote}
+    {\color{blue}\textit{user}:} what is grandma famous for on twitter?\\
+    {\color{blue}\textit{AI agent}:} She is known on Twitter for her love for cooking with the great recipe ideas she shares and her love for gardening and giving advice for what you can grow in yours.\\
+    {\color{blue}\textit{user}:} what cake recipe is grandma famous for\\
+    {\color{blue}\textit{AI agent}:} She is known for her classic Victoria sponge cake recipe. Her recipe has over 5,000 likes which makes it one of her most popular.\\
+    {\color{blue}\textit{user}:} what is grandma's twitter handle\\
+    {\color{blue}\textit{AI agent}:} Her twitter handle is @mylovelygrandma where she regularly tweets her cooking tips and photos of her bountiful garden.
+\end{quote}
+
+\subsubsection{The chatbot is effective at retrieving information.} Users also sometimes treated the chatbot as a search box, asking questions such as: \textit{how many people are fathers around the world}. In the exit interview, one user commented about the chatbot: ''\textit{I loved that it felt like a more targeted version of Google, and I could do background research while writing}'' (U21).
+
 
 
 \subsection{Summary of Contributions}
