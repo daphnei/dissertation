@@ -2,16 +2,7 @@
 \label{chap:background}
 Automatic text generation has been a goal of computer science researchers since the early days of computing.
 In recent years, template-based, grammar-based, and statistical approaches have given way to neural language models--neural networks trained to build representations of human language from millions or even billions of documents.
-This chapter gives a brief overview of how the task of text generation was approached before the ascendancy of deep learning and then delves into the details of modern text generation using neural language models.
-
-\section{Brief History of Text Generation}
-% Possibly rename "Early History of Text Generation"
-The task of generating meaningful human-sounding text is almost as old as computers.
-Early systems involved humans writing templates and algorithms which chose which template to use and how to fill in the slots.
-An early example is ELIZA \cite{eliza}, a chatbot developed in 1966 to mimic a psychotherapist.
-It used pattern matching to select and reformat utterances passed in by its human conversational partner and insert them into a templated response.
-For example, if a user types ``I need some help, that much seems certain,'' ELIZA matches this to one of its expected patterns and flips the first-person to second-person in order to output "WHAT WOULD IT MEAN TO YOU IF YOU GOT SOME HELP?".
-\TODO{I am thinking of just deleting this section becsause it is going to take me more time than I have to spend right now to do it justice.}
+This chapter gives a brief overview of how modern text generation systems based on neural language models generate text.
 
 \section{What is a Language Model?}
 A language model is any model that assigns probabilities to sequences of words.
@@ -31,7 +22,7 @@ For example, using a 3-gram model, we would approximate each factor in Equation 
    P(w_i | w_1, \ldots, w_{i-1}) \approx P(w_i | w_{i-2}, w_{i-1})
 \end{align}
 An $n$-gram models can be constructed from a corpus of text by simply counting how many times each word in the text is preceded by each possible $n$-gram.
-This is an advantage over grammar-based approaches which require explicitly labeled training data, such as the Penn Tree Bank, in order to estimate probabilities.
+This is an advantage over grammar-based approaches to language modeling--such as statistical parsers--which require explicitly labeled training data, such as the Penn Tree Bank, in order to estimate probabilities.
 
 There are several disadvantages to this $n$-gram based approach to language modelling.
 First, $n$-gram models tend to be sparse.
@@ -39,7 +30,7 @@ If a particular <$n$-gram, word> pair never occurs in the corpus, then the model
 As a result, smoothing techniques are often employed to prevent plausible but novel word sequences from being assigned a probability of zero.
 Second, the complexity of storing an $n$-gram language model grows exponentially with the choice of $n$.
 In practice, most $n$-gram models used $n$ between 1 and 5, which is insufficient for modelling long-term dependencies and coherence.
-Third, $n$-gram models do not adequately represent words which are not in their vocabulary.
+Third, $n$-gram models do not adequately represent words which are not present in their training data.
 Such words are typically replaced with a special out-of-vocabulary identifier.
 Neural language models, described in the following sections, overcome many of these limitations.
 
@@ -48,12 +39,13 @@ Neural language models, described in the following sections, overcome many of th
 \label{section:what_is_a_nlm}
 
 Neural network-based language models replace the statistical models described in the previous section with a learned function (the neural network) whose output can be used to predict the likelihood of a word sequence.
-In contrast to $n$-gram models, neural language models are capable of assigning non-zero probability to sequences never seen in their training corpora, and thus they can be used to model sequences of hundreds or even thousands of words.
+In contrast to $n$-gram models, neural language models are capable of assigning non-zero probability to sequences never seen in their training corpora, and thus they can be used to model longer sequences.
+State-of-the-art neural language models can model sequences in the thousands of words.
 
 One of the key advancements in neural language modeling was the transition from operating on sequences of discrete words to operating on sequences continuous vector representations.
 The sequence of words $w_1, \ldots, w_n$ is mapped to sequence of embedding vectors $\by_1, \ldots, \by_n$.
 In early work on neural language modeling, these vector representations were computed separately.
-Algorithms such as word2vec \citep{mikolov2013word2vec} and GloVe \citep{pennington2014glove} were employed to consturct embedding matrices where each row corresponded to a word in the chosen vocabulary.
+Algorithms such as word2vec \citep{mikolov2013word2vec} and GloVe \citep{pennington2014glove} were employed to consturct embedding matrices where each row corresponded to a word in the vocabulary.
 In today's neural language models, the embedding matrix is typically treated as part of the neural language model, initialized randomly than optimized along with the reset of the network.
 Let $\mathbf{E}_\theta$ be a learned embedding matrix where each row correspond to the vector represention of one word in the vocabulary.
 
@@ -63,7 +55,7 @@ Typical neural language models emit $\hat{\by}_t$, a predicted embedding for the
     \label{eq:lm_feq}
 \end{align}
 
-where $f_\theta$ is the neural network and $\by_1, \ldots, \by_{t-1}$ are the embeddings of the previous tokens in the sequence.
+\noindent where $f_\theta$ is the neural network and $\by_1, \ldots, \by_{t-1}$ are the embeddings of the previous tokens in the sequence.
 
 To produce a probability distribution for what the next word should be given the previous words, the predicted embedding $\hat{\by}_t$ is multiplied by the embedding matrix $\bE_\theta$ to produce a score for each word in the vocabulary.
 Then a softmax transformation is used to normalize these scores into a probability distribution.
@@ -89,8 +81,8 @@ In these equations, $i^*$ is the index of the groundtruth word at position $t$ i
 By taking the dot product between the neural network's predicted embedding and the embedding of the true word at each position $t$ (Eq. \ref{eq:loss_3}), we get a score for how correct the neural network's prediction for this position is.
 Training with an objective of maximizing the sum of these scores over every word position is equivalent to minimizing the negative log likelihood (or maximizing the likelihood) of the sequence.
 
-In some language modelling application, it is common to have an additional sequence which the model is conditioned on in addition to the tokens of the target sequence.
-This paradigm is known as an encoder-decoder or sequence-to-sequence, and the formulation above is modified to
+In some language modelling applications, it is common to have an additional sequence which the model is conditioned on in addition to the tokens of the target sequence.
+This paradigm is known as an encoder-decoder or sequence-to-sequence model, and the formulation above is modified to
 \begin{align}
     \hat{\by}_t = f_\theta(\by_1, \ldots, \by_{t-1}; \bx_1, \ldots, \bx_n)
     \label{eq:cond_lm_feq}
@@ -99,7 +91,7 @@ where $\bx_1, \ldots, \bx_n$ is the additional input sequence.
 The most popular application of encoder-decoder models is machine translation, where to convert some text from French to English, the language model predicts the next word of the English sequence given the entirety of the French sequence and the preceedings words of the English sequence.
 
 Most state-of-the-art neural language models uses a variant of the Transformer architecture \cite{vaswani2017attention} as the neural network $f_\theta$.
-Prior to the development of Transformers, recurrent neural architectures, typically based on Long Short Term Memory units \citep{hochreiter1997long} were most commonly employed.
+Prior to the development of Transformers, recurrent neural architectures, typically based on Long Short Term Memory units \citep{hochreiter1997long}, were most commonly employed.
 Transformers have several advantages over their recurrent predecessors, most notably that operations are parallelized across all tokens in the sequence.
 This immensely speeds up computation time during training, and computation time is no longer dependent on the length of the sequence.
 Transformers also are much better than recurrent models at making connections between information that may be very far apart in the sequence.
@@ -114,18 +106,17 @@ For simplicity, the previous sections refer to the input to a language model as 
 % Typical BPE vocabularies range from 32k to 50k words.
 % Only my work in Section \TODO{decide on section} uses an older word-level vocabulary.
 There is no single solution for forming the base units of language (referred to for the remainder of this chapter as ``tokens''), and techniques vary significantly across languages.
-In English, the simplest vocabularies are character-level--each letter of the alphabet and punctuation becomes a token.
+In English, the simplest vocabularies are character-level--each letter of the alphabet and punctuation mark becomes a token.
 Historically, word-level vocabularies, where each token corresponds to a word in the dictionary, were most common.
 Word-level vocabularies can be created by splitting a string on whitespace and punctuation.
-Since the space of possible words is near-boundless, in practice only the most common tens or hundreds of thousands of words are included in the vocabulary, and all other words are replaced with an out-of-vocabulary token.
+Since in most languages, the number of fully inflected words is enormous, in practice only the most common tens or hundreds of thousands of words are included in the vocabulary, and all other words are replaced with an out-of-vocabulary (OOV) token.
 
-In recent years, subword vocabularies have become standard in neural language modeling.
+In recent years, subword vocabularies, which eliminate the OOV problem, have become standard in neural language modeling.
 Subword vocabularies are formed by choosing a budget (the desired size of the vocabulary), then running an algorithm that joins letters together into larger units, such that the most common character sequences end up as tokens in the vocabulary.
 While common words such as ``cat'' or ``dog'' end up as single tokens in the vocabulary, uncommon words such as hippopotamus end up bring broken into multiple tokens.
 Several greedy algorithms have been proposed to approximate optimally breaking up a text corpus into subwords, but byte-pair encoding (BPE) is currently the most popular \citep{sennrich2016neural}.
 Typical subword vocabulary sizes are between 32,000 and 50,000 tokens.
-
-Table \ref{tab:tokenization} shows the same string under a few different tokenization schemes.
+Table \ref{tab:tokenization} shows a sentence under a few different tokenization schemes.
 
 \begin{table}[h]
     \centering
@@ -160,7 +151,7 @@ This approach eliminates the need for an out-of-vocabulary token and results in 
 
 Neural language models in themselves are capable of generating text.
 As described in the previous sections, most language models provide a probability distribution for what the next token in the sequence \textit{could} be, given the previous tokens.
-To perform generation, an algorithm is needed that chooses words to output given the model's predicted probability distributions.
+To perform generation, an algorithm is needed that chooses which words to output given the model's predicted probability distributions.
 We refer to this family of algorithms as \textbf{decoding methods} because they ``decode'' a sequence of discrete words from the model's predictions.
 At each step of decoding, the decoding algorithm performs a forward pass on the neural network using the existing prompt text as input, selects a next token based on the neural network's predictions, adds this token to the prompt, and repeats until the desired number of tokens have been generated.
 
@@ -168,17 +159,18 @@ At each step of decoding, the decoding algorithm performs a forward pass on the 
 The simplest strategies for generating text from a language model involve greedily choosing a token at each step.
 The easiest way to do this is to take the $\arg \max$ of the distribution, repeatedly picking the token with the highest probability according to the model.
 This approach is simple but only allows a single generation to be produced for any given prompt.
-Alternatively, one can randomly sample from the vocabulary, where each vocab item is assigned a sampling probability proportional to its probability predicted by the language model.
+Alternatively, one can randomly sample from the vocabulary, where each vocabulary item has a chance of being picked that is proportional to the probability predicted for it by the language model.
 This method allows for many different sequences to be generated from the same prompt.
-However, in practice, this tactic results in noisy, low-quality text, as the probability distributions returned by neural language models tend to be very long tailed, and the chance of sampling a rare/unusual word from this long tail is quite high. For example, if we sample from the full distribution words that could follow \texttt{The dog ate my}, with low probability we might sample \texttt{brains}, even though \texttt{homework} is much more probable.
+However, in practice, this strategy results in text that is perceived as nonsensical and otherwise low-quality.
+This is because the probability distributions returned by neural language models tend to be very long tailed, and the chance of sampling a rare/unusual word from this long tail is quite high. For example, if we sample from the full distribution words that could follow \texttt{The dog ate my}, with low probability we might sample \texttt{brains}, even though \texttt{homework} is much more probable.
 
 Several strategies have been proposed to improve random sampling techniques by reducing the entropy of the distribution before sampling.
-Introducing a temperature parameter $\tau$ into the softmax computation allows us to smoothly shift probability mass from low-scoring item in the vocabulary to high-scoring ones.
+Introducing a temperature parameter $\tau$ into the softmax computation allows us to smoothly shift probability mass from low-scoring items in the vocabulary to high-scoring ones.
 \begin{align}
     \label{equation:softmax_with_temp}
     P(Y_t=i | \by_1, \ldots, \by_{t-1}) = \frac{\exp(\bE\hat{\by}_t[i]/\tau)}{\sum_j\exp(\bE\hat{\by}_t[j]/\tau)}
 \end{align}
-Alternatively, one can introduce sparsity intro the distribution by deliberately zeroing out like-likelihood vocabulary items.
+Alternatively, one can introduce sparsity intro the distribution by deliberately zeroing out low-likelihood vocabulary items.
 Top-$k$ random sampling accomplishes this by restricting sampling to only the $k$ most likely tokens at each step.
 Nucleus sampling, also referred to as top-$p$ random sampling, accomplishes this by restricting sampling at timestep $t$ to the $k_t$ most likely tokens, where $k_t$ is selected such that these tokens cover no more than $p$\% of the probability mass.
 For all three of these techniques there is a parameter ($\tau$, $k$, or $p$) which controls the amount of randomness we want to permit in the generation.
@@ -190,7 +182,9 @@ Figure \TODO{Add figure showing some probability distributions.} shows how these
 Before the transition to Transformer-based architectures (Section \ref{section:what_is_a_nlm}), the standard convention for generation was to try to generate the most likely overall sequence from the language model.
 This approach made a lot of sense for the predominant use case of machine translation, where generating one correct translation was considered more important than generating several diverse translations.
 Since computing the overall most likely output sequence is intractable, early work in neural machine translation found that beam search was an effective strategy to heuristically sample sufficiently likely sequences from these probabilistic models \cite{sutskever2014sequence}.
+
 Algorithm \ref{alg:beam-search-inference} gives an overview of the beam search algorithm. 
+``SOS'' is a start-of-sequence token and ``EOS'' is an end-of-sequence token.
 
 \begin{algorithm}
 \caption{Beam Search Inference}
@@ -344,38 +338,42 @@ It is common to use both decoder-only models trained only to predict the next to
 Table \ref{tab:common_pretrained_models} gives examples of several pre-training objectives that have been employed by popularly-used pre-trained models.
 Each of these models has been finetuned for a large diversity of downstream tasks.
 
-\begin{table*}[htbp]
+\begin{table*}
   \centering
   \small
-    \begin{tabular}{lllll}
+    \begin{tabular}{l|l|l|l|l}
     \toprule
-    Dataset & \multicolumn{1}{l}{Size} & \multicolumn{1}{l}{Public?} & Language & \multicolumn{1}{l}{Models trained on it} \\
-    % \midrule
+    \textbf{Dataset} & \multicolumn{1}{l}{\textbf{Size}} & \multicolumn{1}{l}{\textbf{Public?}} & \textbf{Language} & \multicolumn{1}{l}{\textbf{Models trained on it}} \\
+    \hline
     C4 \citep{raffel2019exploring}   &  365M examples,      & {Yes} & Most English & {T5} \\
     mC4 \citep{xue2020mt5}   &  8.5B examples  & {Yes} & 101 languages & {mT5} \\
-    The Pile \citep{gao2020pile} & 825 GiB & {Yes} & {GPT-Neo, Megatron-Turing} \\
+    The Pile \citep{gao2020pile} & 825 GiB & {Yes} & Mostly English & {GPT-Neo, Megatron-Turing} \\
     RealNews &       & {Yes} &       \\
-    PanGu-$\alpha$ train set & {1.1TB} & {No} & {PanGu-$\alpha$} \\
-    WebText &       & {No} & {GPT-2} \\
-    GPT-3 train set & {500B tokens} & {No} & {GPT-3} 
-    % \bottomrule
+    PanGu-$\alpha$ train set & {1.1TB} & {No} & Chinese & {PanGu-$\alpha$} \\
+    WebText &  40 GiB & {No} & Mostly English &  {GPT-2} \\
+    GPT-3 train set & {500B tokens} & {No} & Mostly English & {GPT-3} \\
+    \bottomrule
     \end{tabular}%
-  \caption{A survey of datasets which have been used to train large general-purpose neural language models. \TODO{fill in}}
+  \caption{A survey of datasets which have been used to train large general-purpose neural language models.}
   \label{tab:dataset_list}%
 \end{table*}%
 
 
 \begin{table}
     \centering
-    \begin{tabular}{l|l|p{2in}|p{2in}}
-        % \toprule 
-        Model & Input & Objective \\
+    \small
+	\begin{tabular}{l|p{2in}|p{2in}}
+        \toprule 
+        \textbf{Model} & \textbf{Input} & \textbf{Objective} \\
         \hline
         BERT \citep{devlin2018bert} & \texttt{[cls] The hippopotamus [mask] my homework. [SEP] It made me very [mask]. [sep]} &  Predict tokens for [mask] positions and predict whether the two sentences are in the correct order.\\
+	\midrule
         T5 \citep{raffel2019exploring} & \texttt{The hippopotamus [x] made me [y] mad.} & Predict missing sequences.  \\
-        BART & It \_ me very mad. The hippopotamus my \_. &  Predict the original uncorrupted sequence from a version that has been noised (token masking/deletion, text infilling, document rotation, sentence shuffling). \\
+	\midrule
+        BART & \texttt{It \_ me very mad. The hippopotamus my \_.} &  Predict the original uncorrupted sequence from a version that has been noised (token masking/deletion, text infilling, document rotation, sentence shuffling). \\
+	\midrule
         GPT \citep{radford2019language,brown2020language} & \texttt{The hippopotamus ate} & Predict the next token given the previous tokens.\\
-        % \bottomrule
+        \bottomrule
     \end{tabular}
     \caption{Examples of training objectives from popular general-purpose models which have been used for finetuning.}
     \label{tab:common_pretrained_models}

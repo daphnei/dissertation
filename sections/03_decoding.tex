@@ -161,7 +161,7 @@ On the task of sentence simplification, after decoding using a large-scale diver
 Document embeddings generated via Paragraph Vector \cite{Le2014distributed} were used as the sentence embeddings with which to perform $K$-means. 
 
 In this work, we extend this post-decoding clustering idea in three key ways.
-First, we make use of sentence-level embeddings which leverage the pre-trained language representations from the Bidirectional Encoder Representations from Transformers (BERT) \cite{devlin2018bert}.\footnote{BERT sentence-level embeddings were obtained using https://github.com/hanxiao/bert-as-service.}
+First, we make use of sentence-level embeddings which leverage the pre-trained language representations from the Bidirectional Encoder Representations from Transformers (BERT) \cite{devlin2018bert}.
 Second, after clustering, \citet{kriz2019complexity} took the sentence closest to the centroid of each cluster as the representative candidate; we instead choose the highest-ranked candidate (according to log-likelihood) from each cluster to ensure the best candidates are still selected.
 Finally, after performing standard $K$-means clustering, we found that it was often the case that some clusters contained large numbers of good candidates, while others contained very few candidates that are also either ungrammatical or otherwise inferior.
 Thus, in our implementation, we remove clusters containing two or fewer sentences, and then sample a second candidate from each of the remaining clusters, prioritizing selecting candidates from larger clusters first.
@@ -665,7 +665,7 @@ We thus consider three different decoding strategy settings:
   \item Nucleus sampling (aka top-$p$), choosing $p$=0.96 \citep{zellers2019defending}.
 \end{itemize}
 
-In addition, we form ``negative" examples of human-written text by taking excerpts of web text that come from the same distribution as GPT-2's training data.\footnote{\url{https://github.com/openai/gpt-2-output-dataset}}
+In addition, we form ``negative" examples of human-written text by taking excerpts of web text that come from the same distribution as GPT-2's training data.
 By picking text that resembles GPT-2's train set, we ensure that our classifiers can't simply take advantage of stylistic differences between the human-written text corpus and the kind of text GPT-2 was trained to generate.
 
 For each decoding method, we construct a training dataset by pairing 250,000 generated samples with 250,000 excerpts of web text.
@@ -999,9 +999,9 @@ As expected, a discriminator trained on an equal portion of data from each decod
 \begin{table}[t]
   \small
   \centering
-  \begin{tabular}{|c c|c|c|c|}
-    \hline
-    & & \multicolumn{3}{c|}{Eval} \\
+  \begin{tabular}{c c|c|c|c}
+    \toprule
+    & & \multicolumn{3}{c}{Eval} \\
     \cline{3-5}
     &            & top-$k$         & nucleus & random \\
     \hline
@@ -1011,7 +1011,7 @@ As expected, a discriminator trained on an equal portion of data from each decod
     & \multicolumn{1}{|c|}{random}  & 47.8          & 63.7          & \textbf{81.7} \\
     \hline
     & \multicolumn{1}{|c|}{mixed}  & 88.7          & 74.2          & 72.2 \\
-    \hline
+    \bottomrule
   \end{tabular}
   \caption{Accuracy of BERT fine-tuned discriminator when trained on samples from one strategy (rows) and evaluated on another (columns). Trained on samples with 192 tokens. The `mixed' dataset is one containing an equal portion of samples from each strategy.}
   \label{tab:transfer_accuracy}
@@ -1026,9 +1026,9 @@ As expected, a discriminator trained on an equal portion of data from each decod
   % k0-1wordcond        0.382658      0.073189        0.226300
   % k40-1wordcond       0.145253      0.608884        0.278946
   % p0.96-1wordcond     0.488926      0.491959        0.517189
-  \begin{tabular}{|c c|c|c|c|}
-    \hline
-    & & \multicolumn{3}{c|}{Eval} \\
+  \begin{tabular}{c c|c|c|c}
+    \toprule
+    & & \multicolumn{3}{c}{Eval} \\
     \cline{3-5}
     &            & top-$k$         & nucleus & random \\
     \hline
@@ -1036,7 +1036,7 @@ As expected, a discriminator trained on an equal portion of data from each decod
     & \multicolumn{1}{|c|}{top-k}   & 60.9 & 27.9 & 14.5 \\
     & \multicolumn{1}{|c|}{nucleus} & 49.2 & 51.7 & 48.9 \\
     & \multicolumn{1}{|c|}{random}  &  7.3 & 22.6 & 38.3 \\
-    \hline
+    \bottomrule
   \end{tabular}
   \caption{Average probability of `machine-generated' according to each length-192 discriminator. The expected in-domain probability is 0.5. One token of conditioning.}
   \label{tab:transfer-prediction}
@@ -1251,7 +1251,7 @@ Documents were drawn from the presidential speech corpus \citep{brown2016cops}, 
 Our hypothesis was that the sort of first-person rhetoric found in these speeches would be easy for models to impersonate since political speech and first-person speech are plentiful in web-based training data.
 
 \paragraph{Stories.}
-Fictional stories were selected from the Reddit Writing Prompts dataset \citep{fan2018hierarchical}, a corpus of amateur short stories scraped from the r/WritingPrompts sub-Reddit\footnote{\tiny https://www.reddit.com/r/WritingPrompts/}. 
+Fictional stories were selected from the Reddit Writing Prompts dataset \citep{fan2018hierarchical}, a corpus of amateur short stories scraped from the r/WritingPrompts sub-Reddit.
 We hypothesized that this domain would be challenging for players since the writing quality of the stories is not especially high (which lowers the bar for the model generation quality), and factuality is not as important in a fictional domain.
 
 \paragraph{Recipes.}
@@ -1280,10 +1280,7 @@ We only analyze fully anonymized data from students who consented to having thei
 The first section (Group A) was asked to play 30 minutes of the \ROFT{} annotation game for a fixed amount of points of class credit.
 Students in this section were not given any instructions beyond how to create an account.
 The second section (Group B) was explicitly told they would be awarded $\min(p/250, 2)$ points of extra credit toward their final grade, where $p$ was the number of points the student earned on the \ROFT{} leaderboard.
-Students in Group B were given detailed instructions\footnote{
-% [Link redacted for review process.]
-{\tiny{https://storage.cloud.google.com/roft\_datasets/boundary\_detection\_guide.pdf}}
-} and examples of signs to look out for that text was machine-generated.
+Students in Group B were given detailed instructions and examples of signs to look out for that text was machine-generated.
 % TODO: Change google doc to be PDF and host on roft cloud bucket
 Table \ref{tab:particpants} gives statistics on the annotations collected from each class.
 
@@ -1303,10 +1300,10 @@ Table \ref{tab:dataset_stats} gives a detailed breakdown of the dataset across g
 \begin{table}[tb]
 \center
 \small
-\begin{tabular}{l|r|rr|r|c|c}
+	\begin{tabular}{l|r|rr|r|p{2in}|p{1.5in}}
 \toprule
  & \# & \multicolumn{2}{|c|}{\# Annotations} & {Avg} & & \\
-Genre & Gens & Raw & Final & Ann/Gen & Systems & Decoding Strategies \\
+Genre & Rounds & Raw & Final & Ann/Gen & Systems & Decoding Strategies \\
 \midrule
 News & 1,838 & 7,806 & 4,488 & 2.97 &
 \begin{minipage}{.275\textwidth}
@@ -1346,7 +1343,7 @@ Speeches & 297 & 8,374 & 4,835 & 16.28 &
 \\
 \bottomrule
 \end{tabular}
-\caption{Statistics on the annotation tasks (game rounds) available in our system. The discrepancies in number of annotations per dataset is partially due to the fact that players were able to choose which domain they performed annotations in.}
+\caption{Statistics on the annotation tasks (game rounds) available in our system. The second column shows the number of game rounds available for each system. The discrepancies in number of annotations per dataset is partially due to the fact that players were able to choose which domain they performed annotations in.}
 \label{tab:dataset_stats}
 \end{table}
 
@@ -1450,22 +1447,23 @@ However, among our top 25\% of players (measured by mean score), there was high 
 
 \begin{figure}[tb]
     \centering
-    \includegraphics[width=1\linewidth]{figures/domain_topp.pdf}
+    \includegraphics[width=0.5\linewidth]{figures/domain_topp.pdf}
     \caption{\textbf{(left)} Comparison of mean player score across different genres with GPT-2 XL $p$=0.4 (and CTRL $p$=0.4 for speeches). \textbf{(right)} Comparison of mean player score across different values of $p$ for nucleus sampling (GPT-2 XL), as well as a ``sanity-check'' baseline.}
     \label{fig:genre_top_p}
 \end{figure}
 
 \begin{figure}[tb]
     \centering
-    \includegraphics[width=0.7\linewidth]{figures/model_size_and_finetuning.pdf}
+    \includegraphics[width=0.4\linewidth]{figures/model_size_and_finetuning.pdf}
     \caption{\textbf{(left)} For Stories, as model size increases (using $p$=0.4), detection becomes harder. \textbf{(middle)} For Recipes, extra finetuning does not significantly impact detectability. \textbf{(right)} For Speeches, using a ``[Politics]'' control has no impact on detectability.}
     \label{fig:model_size_finetuning}
 \end{figure}
 
 \begin{figure}[tb]
     \centering
-    \includegraphics[width=\linewidth]{figures/time_tracking.pdf}
-    \caption{\textbf{(left)} Histogram showing the relationship between points earned and the number of seconds an annotation took. \textbf{(right)} Among players who completed at least 100 annotations, average annotation speed decreased with increased experience at the task.
+    \includegraphics[width=0.7\linewidth]{figures/time_tracking.pdf}
+    \caption{\textbf{(left)} Histogram showing the relationship between points earned and the number of seconds an annotation took. Annotators tended to earn more points on annotations they spent longer on.
+	\textbf{(right)} Among players who completed at least 100 annotations, average annotation speed decreased with increased experience at the task.
     % We see that high scoring annotations take longer and that players get faster over time.
     % \TODO{nth annotation -> nth game round}
     }
@@ -1489,7 +1487,7 @@ solve the quality issues.
 \begin{table}
 \small
 \begin{center}
-\begin{tabular}{SSSS} \toprule
+\begin{tabular}{S|SSS} \toprule
     {Dataset} & {$p$} & {$n$} & {Mean Score}\\ \midrule
     {News} & {0.4} & {1,197} & {1.793$\pm$0.109} \\
     {Stories} & {0.4} & {468} & {1.645$\pm$0.168} \\
@@ -1565,14 +1563,14 @@ Perhaps finetuning would have had more impact in a specialized or jargon-laden d
 
 \begin{figure}[tb]
     \centering
-    \includegraphics[width=\linewidth]{figures/survey_results_no_fam.pdf}
+    \includegraphics[width=0.5\linewidth]{figures/survey_results_no_fam.pdf}
     \caption{Violin plots showing results of our mandatory exit survey. A violin plot is a box plot that also provides a density estimation. Results shown are filtered to only include players who did at least 20 rounds. We see that reading the help guide, being a native English speaker, and providing a custom response for your familiarity with NLG all contribute to a higher mean score while high domain expertise does not seem have an affect (except in the case of short stories, where variance is lower for domain experts).}
     \label{fig:survey_results}
 \end{figure}
 
 \begin{figure}[tb]
     \centering
-    \includegraphics[width=0.8\linewidth]{figures/ner_stats.pdf}
+    \includegraphics[width=\linewidth]{figures/ner_stats.pdf}
     \caption{We see that human sentences tended to have a different number of named entities than generated sentences.
     Players picked up on the correct trend in Stories, but not in News or Speeches.}
     \label{fig:sentence_stats}
@@ -1612,7 +1610,7 @@ Finally, we did not observe any correlation between self-reported familiarity wi
 \begin{table}
     \centering
     \small
-    \begin{tabular}{l|l}
+    \begin{tabular}{p{3in}|l}
     \toprule
     Question & Response Type \\
     \midrule
@@ -1623,13 +1621,13 @@ Finally, we did not observe any correlation between self-reported familiarity wi
     & Once to a few times per month (3) \\
     & Once to a few times per year (2) \\
     & Never (1) \\\midrule
-    How often do you read news from credible news publishers & Daily (5) \\
-    (Wall Street Journal, New York Times, etc.)? & Once to a few times per week (4) \\
+    How often do you read news from credible news publishers (Wall Street Journal, New York Times, etc.)? & Daily (5) \\
+    & Once to a few times per week (4) \\
     & Once to a few times per month (3) \\
     & Once to a few times per year (2) \\
     & Never (1) \\\midrule
-    How often do you read fiction on the internet & Daily (5) \\
-    (fan fiction, creative writing sub-reddits, ebooks, etc.)? & Once to a few times per week (4) \\
+    How often do you read fiction on the internet (fan fiction, creative writing sub-reddits, ebooks, etc.)? & Daily (5) \\
+    & Once to a few times per week (4) \\
     & Once to a few times per month (3) \\
     & Once to a few times per year (2) \\
     & Never (1) \\\midrule
@@ -1638,11 +1636,7 @@ Finally, we did not observe any correlation between self-reported familiarity wi
     & I've read about them in the news or a blog post. (2) \\
     & I've never heard of them. (1) \\\midrule
     Did you read the RoFT Guide before you tried the game? & Yes/No \\\midrule
-    Do you agree for the data being collected on this form & Yes/No \\
-    along with any annotations you make to be used & \\
-    in an anonymized, aggregated way for research on students' ability & \\
-    to detect machine-generated text? Your answer on this question & \\ 
-    will not affect your grade. & \\
+    Do you agree for the data being collected on this form along with any annotations you make to be used in an anonymized, aggregated way for research on students' ability to detect machine-generated text? Your answer on this question will not affect your grade. & Yes/No \\
     \bottomrule
     \end{tabular}
     \caption{The text of the exit survey questions given to players after completing their annotations}
