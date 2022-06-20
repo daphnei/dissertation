@@ -6,17 +6,18 @@
 
 
 State-of-the-art generative language models are now capable of producing multi-paragraph excerpts that at a surface level are virtually indistinguishable from human-written content \citep{zellers2019defending,radford2019language,adelani2020generating}.
-Often, only subtle logical fallacies or idiosyncrasies of language give away the text as machine-generated, errors that require a close reading and/or domain knowledge for humans to detect.
+Often, only subtle logical fallacies or idiosyncrasies of language give away the text as machine-generated.
+These errors can be difficult for humans to detect because they require a close reading and/or domain knowledge.
 
 Deceptive text, whether human- or machine-generated, has entered the sphere of public concern \citep{cooke2018fake}.
 It propogates quickly \citep{vosoughi2018spread}, sets political agendas \citep{vargo2018agenda}, influences elections \citep{allcott2017social}, and undermines user trust \cite{wang2012serf, song2015crowdtarget}.
 Recently, \citet{adelani2020generating} have shown that automatically generated reviews are perceived to be as fluent as human-written ones.
 As generative technology matures, authors, well-meaning or otherwise, will increasingly employ it to augment and accelerate their own writing.
 % It is more imperative now than ever for both humans and automated systems to be able to detect and identify machine-generated texts in the wild.
-However, there has thus been little inquiry into the textual properties that cause humans to give generated text high human-like ratings compared to those that cause automatic systems to rate it highly.
+In the initial year following the release of GPT-2, a model whose authors claimed was so impressive that ``malicious applications of the technology'' were a significant concern \citep{radford2019language}, there was relatively little inquiry into the textual properties that cause humans to give generated text high human-like ratings compared to those that cause automatic systems to rate it highly.
 
 This task of trying to guess whether text is coming from a robot or a fellow human was made famous by the Turing Test \citep{turing1950computing}.
-It has been a standard metric for chatbot evaluation \citep{lowe2017towards}, but has not been adopted more generally for evaluating natural language generation systems.
+It has been a standard challenge for evaluating chatbot systems \citep{lowe2017towards} but has not been adopted more generally for evaluating natural language generation systems.
 The related (but not identical) task of asking human raters to judge the quality of machine-generated excerpts remains the gold-standard for evaluating open-domain generation systems \citep{van2019best}.
 However, using detection as a method for evaluating NLG systems has several advantages over asking for quality ratings.
 First, text quality--i.e., the properties that make one passage of text ``better'' than another can be inherently subjective to define.
@@ -26,15 +27,16 @@ Valuable insights can be garnered by looking at text sequences that automatic de
 Third, studying detection allows us to evaluate the real risk of NLG systems to the public.
 Thus, in the research presented in this chapter, I show how the detection task is an effective means of evaluating progress in NLG and determining the relative strengths of different NLG systems.
 
-In Section \ref{section:detection}, we explore the relationship between choice of decoding strategy and the detectability of generated text.
-When using a decoding strategy that samples from a language model's full predicted distribution, we end up frequently choosing words from the long tail of the distribution.
+In Section \ref{section:detection}, I explore the relationship between choice of decoding strategy and the detectability of generated text.
+When using a decoding strategy that samples from a language model's full predicted distribution, systems end up frequently choosing words from the long tail of the distribution.
 Choosing one of these words can lead to odd or contradictory phrases and semantic errors.
 Humans readers are quick to notice these types of errors.
 If we instead use a decoding startegy that reduces the entropy of the distribution before sampling, the result is improved generation quality at the cost of diversity.
 We show that humans have a hard type identifying that text is machine-generated when sampling is heavily restricted to only high-likelihood words, but automatic dection systems easily pick up on the resulting lexical anamolies.
+In other words, humans are foolled where text classifiers are not, and vice versa.
 
-In Section \ref{section:roft}, we conduct a large-scale study of the detectability of generated text by human annoators, expanding upon the small-scale human evaluation experiments described in Section \ref{section:detection}.
-We show how factors such as model size and text genrew impact detecability, and we propose ways to gamify the detection task.
+In Section \ref{section:roft}, I conduct a large-scale study of the detectability of generated text by human annoators, expanding upon the pilot human evaluation experiments described in Section \ref{section:detection}.
+I show how factors such as model size and text genre impact detecability, and I introduce ways to gamify the detection task.
 
 \iffalse
 \section{Diversity-Promoting Search-Based Decoding Methods}
@@ -612,29 +614,23 @@ Reno and I contributed equally to the development of the ideas in the paper and 
 \label{section:detection}
 
 Even when the language model used for generation is fixed, choice of decoding strategy has a huge impact on the detectability of generated text.
-Using top-$k$ random sampling, a decoding method where only the selection of high-likelihood words is permetted, means we are less likely to make a poor choice and create the type of mistakes that are easy for humans to detect.
+Using top-$k$ random sampling, a decoding method where only the selection of high-likelihood words is permetted, means the system is less likely to make a poor choice and create the type of mistakes that are easy for humans to detect.
 Since humans are not proficient at identifying when a model subtly favors some utterances more often than a human author would, they don't notice the over-representation of high-likelihood words in the generated text.
-In contrast, automatic systems excel at identifying statistical anomalies and struggle to build deeper semantic understanding.
+In contrast, automatic detection systems excel at identifying statistical anomalies and struggle to build deeper semantic understanding.
 Top-$k$ in particular creates text that is easy for machines to detect but very hard for humans.
 Thus, we observe the general trend: as the number of unlikely words available to be chosen is increased, humans get {\em better} at detecting fakes while automatic systems get {\em worse}.
 
-In this work, we study three popular random decoding strategies---top-$k$, nucleus, and temperature sampling---applied to GPT-2 \cite{radford2019language}.
-We draw a large number of excerpts generated by each strategy and train a family of BERT-based \cite{devlin2018bert} binary classifiers to label text excerpts as human-written or machine-generated.
-We find large differences in human rater and classifier accuracy depending on the decoding strategy employed and length of the generated sequences.
+In this section, I present a study of three popular random decoding strategies---top-$k$, nucleus, and temperature sampling---applied to GPT-2 \cite{radford2019language}.
+I draw a large number of excerpts generated by each strategy and train a family of BERT-based \cite{devlin2018bert} binary classifiers to label text excerpts as human-written or machine-generated.
+I find large differences in human rater and classifier accuracy depending on the decoding strategy employed and length of the generated sequences.
 Regardless of strategy, we find human raters achieve significantly lower accuracy than the automatic discriminators.
-We also show that when a decoding strategy severely modifies the unigram token distribution, as top-$k$ does, humans have trouble detecting the resultant generated text, but automatic classifiers find it the easiest to discriminate.
+I also show that when a decoding strategy severely modifies the unigram token distribution, as top-$k$ does, humans have trouble detecting the resultant generated text, but automatic classifiers find it the easiest to discriminate.
 Worryingly, we further find that classifiers are brittle; they generalize poorly when trained to discriminate samples from one strategy and then evaluated on samples from another.
 
 \subsection{Detection as a Task}
-The rise of machine-generated content has led to the development of automated systems to identify it.
-\textsc{Grover} was designed to not only generate convincing news excerpts but to also identify them using a fine-tuned version of the generative model itself \citep{zellers2019defending}.
-GLTR, expecting attackers to use sampling methods that favor high-likelihood tokens, aims to make machine-generated text detectable by computing histograms over per-token log likelihoods \citep{gehrmann2019gltr}.
-\citet{bakhtin2019real} frame human-text detection as a ranking task and evaluate their models' cross-domain and cross-model generalization, finding significant loss in quality when training on one domain and evaluating on another.
-\citet{schuster2019we} argue that the language distributional features implicitly or explicitly employed by these detectors are insufficient; instead, one should look to explicit fact-verification models.
-Finally, discriminators for whether text is machine-generated are a promising research  direction in adversarial training \citep{lin2017adversarial,li2017adversarial} and in automatic evaluation of generative model quality \citep{novikova2017we,kannan2017adversarial,lowe2017towards}. 
-
-We frame the detection problem as a binary classification task: given an excerpt of text, label it as either human-written or machine-generated.
-In particular, we are interested in how variables such as excerpt length and decoding strategy impact performance on this classification task. 
+The rise of machine-generated content has led to the development of automated systems that attempt to identify it.
+In this work, we frame the detection problem as a binary classification task: given an excerpt of text, label it as either human-written or machine-generated.
+In particular, we are interested in how excerpt length and decoding strategy impact performance on this classification task. 
 We thus create several datasets.
 Each is approximately balanced between positive examples of machine-generated text and negative examples of human-written text.
 While they all share the same human-written examples, each dataset contains a different set of machine-generated examples sampled using one particular decoding strategy.
@@ -643,10 +639,20 @@ We also build additional datasets by truncating all of the examples to a particu
 By training a separate classifier on each dataset, we are able to answer questions about which decoding strategy results in text that is the easiest to automatically disambiguate from human-written text.
 We are also able to answer questions about how the length of the examples in the training set impacts our ability to automatically classify excerpts of that same length as either human-written or machine-generated.
 
-\subsection{Method}
+Others have studied different variations of the detection task.
+\textsc{Grover} was designed to not only generate convincing news excerpts but to also identify them using a fine-tuned version of the generative model itself \citep{zellers2019defending}.
+GLTR, expecting attackers to use sampling methods that favor high-likelihood tokens, aims to make machine-generated text detectable by computing histograms over per-token log likelihoods \citep{gehrmann2019gltr}.
+\citet{bakhtin2019real} frame human-text detection as a ranking task and evaluate their models' cross-domain and cross-model generalization, finding significant loss in quality when training on one domain and evaluating on another.
+\citet{schuster2019we} argue that the language distributional features implicitly or explicitly employed by these detectors are insufficient; instead, one should look to explicit fact-verification models.
+Finally, discriminators for whether text is machine-generated are a promising research  direction in adversarial training \citep{lin2017adversarial,li2017adversarial} and in automatic evaluation of generative model quality \citep{novikova2017we,kannan2017adversarial,lowe2017towards}. 
+\TODO{Add GLTR style figure showing the binary detection task}
+
+
+\subsection{Pilot Study of Detection}
 \subsubsection{Dataset Construction}
 All of our generated text samples are drawn from GPT-2, a state-of-the-art Transformer-based generative language model that was trained on text from popular web pages \citep{radford2019language}.
 While we use the GPT-2 \textsc{Large} model with 774M parameters, we found that similar trends to those reported here hold in experiments with smaller language models.
+GPT-2 was state-of-the art at the time these experiments were conducted; it has subsequently been surpassed by other larger LMs.
 
 Given an autoregressive language model that defines a probability distribution over the next token given the previous tokens in a sequence, a decoding strategy generates text by deciding how to output a token at each step based on the predicted distributions.
 Perhaps the most straightforward decoding strategy is to randomly choose a token with probability proportional to its likelihood.
@@ -666,7 +672,7 @@ We thus consider three different decoding strategy settings:
 \end{itemize}
 
 In addition, we form ``negative" examples of human-written text by taking excerpts of web text that come from the same distribution as GPT-2's training data.
-By picking text that resembles GPT-2's train set, we ensure that our classifiers can't simply take advantage of stylistic differences between the human-written text corpus and the kind of text GPT-2 was trained to generate.
+By picking text that resembles GPT-2's training data, we ensure that our classifiers can't simply take advantage of stylistic differences between the human-written text corpus and the kind of text GPT-2 was trained to generate.
 
 For each decoding method, we construct a training dataset by pairing 250,000 generated samples with 250,000 excerpts of web text.
 5,000 additional paired samples are kept aside for validation and test datasets.
@@ -675,37 +681,38 @@ The final dataset sizes are shown in Table \ref{tab:dataset_sizes}.
 
 \begin{table}[t]
     \small
+    \caption{The number of excerpts used for training, validation, and testing. Three deecoding strategies--top-$k$ with $k$=40, nucleus sampling with $p$=0.96, and full random sampling ($p$=1.0)--were employed. The language model was either prompted with a single word (1wordcond) or used without any prompt sequence (nocond).}
     \centering
-    \begin{tabular}{l|l|l|l}
+    \begin{tabular}{l|l|l|l|l|l}
     \hline
-    \textbf{Method} & \textbf{\# train} & \textbf{\# valid} & \textbf{\# test} \\ \hline \hline
-    large-744M-k40-1wordcond & 211148 & 4226 & 4191 \\
-    large-744M-k40-nocond & 218825 & 4362 & 4360 \\
-    large-744M-p0.96-1wordcond & 210587 & 4248 & 4208 \\ 
-    large-744M-p0.96-nocond & 209390 & 4174 & 4185 \\ 
-    large-744M-p1.0-1wordcond & 209334 & 4169 & 4173 \\ 
-    large-744M-p1.0-nocond & 208219 & 4187 & 4168 \\ \Xhline{\arrayrulewidth}
-    human-written & 201344 & 4031 & 4030 \\ \hline
+    \textbf{Model} & \textbf{Decoding Method} & \textbf{Prompt} & \textbf{\# train} & \textbf{\# valid} & \textbf{\# test} \\ \hline \hline
+    large-744M & k40 & 1wordcond & 211148 & 4226 & 4191 \\
+    large-744M & k40 & nocond & 218825 & 4362 & 4360 \\
+    large-744M & p0.96 & 1wordcond & 210587 & 4248 & 4208 \\ 
+    large-744M & p0.96 & nocond & 209390 & 4174 & 4185 \\ 
+    large-744M & p1.0 & 1wordcond & 209334 & 4169 & 4173 \\ 
+    large-744M & p1.0 & nocond & 208219 & 4187 & 4168 \\ \Xhline{\arrayrulewidth}
+    human-written & n/a & n/a & 201344 & 4031 & 4030 \\ \hline
     \end{tabular}
-    \caption{The number of excerpts used for training, validation, and testing.}
     \label{tab:dataset_sizes}
 \end{table}
 
 A crucial question when generating text with a language model is whether or not to provide a priming sequence which the language model should continue.
-Unconditioned samples, where no priming text is provided, in conjunction with top-$k$ sampling, lead to pathological behavior for discriminators as the first token of the generated text will always be one of $k$ possible options.
-On the other hand, if long sequences of human text are used as priming, the space of possible generated sequences is larger, but the detection problem shifts from one of ``how human-like is the generated text?" to ``how well does the generated text follow the priming sequence?".
+Unconditioned samples, where no prompt text is provided, in conjunction with top-$k$ sampling, lead to pathological behavior for discriminators as the first token of the generated text will always be one of $k$ possible options.
+On the other hand, if long sequences of human text are used as a prompt, the space of possible generated sequences is larger, but the detection problem shifts from one of ``how human-like is the generated text?" to ``how well does the generated text follow the prompt sequence?".
 
-Since in this study we are interested in the former simpler question, we create two datasets, one with no priming, and one with the minimum amount of priming possible: a single token of web text.
+Since in this study we are interested in the former simpler question, we create two datasets, one with no priming, and one with the minimum amount of prompting possible: a single token of web text.
 This means that for every excerpt of web text in the training set, there is an excerpt of machine-generated text that starts with the same token.
-We find that even with limited priming, the ability of automatic detectors can be strongly impacted.
+We find that the ability of automatic detectors can be strongly impacted by even this short prompt.
 
-To study the effect of excerpt length, we construct variations of the above datasets by truncating all excerpts to ten possible lengths ranging from 2 to 192 WordPiece tokens \cite{wu2016google}. In total, we obtain sixty dataset variations: one per sampling method, truncation length, and choice of priming or no priming.
+To study the effect of generation length, we construct variations of the above datasets by truncating all excerpts to ten possible lengths ranging from 2 to 192 WordPiece tokens \cite{wu2016google}. In total, we obtain sixty dataset variations: one per sampling method, truncation length, and choice of priming or no priming.
 
 % Table generated by Excel2LaTeX from sheet 'simple_baselines'
 
 \begin{table}[t]
   \centering
   \small
+  \caption{Performance (accuracy and AUC) of the fine-tuned BERT classifier and several simple baselines on detecting length-192 sequences generated with one word of priming (1worccond). Note that p1.0 refers to untruncated random sampling, where we sample from 100\% of the probability mass. The last column shows human performance on the same task where accuracy with a 50\% baseline is computed by randomly pairing samples from each decoding strategy with a human-written sample.}
     \begin{tabular}{|l||cc||cc|cc|cc|c||c|}
     \hline
           & \multicolumn{2}{c||}{BERT} & \multicolumn{2}{c|}{BagOfWords} & \multicolumn{2}{c|}{HistGLTR} & \multicolumn{2}{c|}{Hist50Buckets} & \multicolumn{1}{l||}{TotalProb} & \multicolumn{1}{l|}{Human} \\
@@ -720,7 +727,6 @@ To study the effect of excerpt length, we construct variations of the above data
     % p1.0-1wordcond & 0.793 & 0.924 & 0.591 & 0.621 & 0.529 & 0.548 & 0.535 & 0.545 & 0.655  \\
     \hline
     \end{tabular}%
-  \caption{Performance (accuracy and AUC) of the fine-tuned BERT classifier and several simple baselines on detecting length-192 sequences generated with one word of priming (1worccond). Note that p1.0 refers to untruncated random sampling, where we sample from 100\% of the probability mass. The last column shows human performance on the same task where accuracy with a 50\% baseline is computed by randomly pairing samples from each decoding strategy with a human-written sample.}
   \label{tab:baselines}%
 \end{table}%
 
@@ -763,13 +769,13 @@ After they make a guess, the length of the excerpt is doubled, and they are aske
 This continues until the entire passage of length 192 tokens is shown.
 Passages are equally likely to be human-written or machine-generated, with the machine-generated excerpts being evenly split between the three sampling strategies considered in this paper.
 
-Initially, Amazon Mechanical Turk (AMT) raters were employed for this task, but rater accuracy was poor with over 70\% of the ``definitely" votes cast for ``human" despite the classes being balanced.
-Accuracy, even for the longest sequences, hovered around 50\%.
+Initially, Amazon Mechanical Turk (AMT) raters were employed for this task, but rater accuracy was poor with over 70\% of the ``definitely'' votes cast for ``human'' despite the classes being balanced.
+Accuracy, even for the longest sequences, hovered around 50\%, indicating random guessing.
 The same study was then performed with university students who were first walked through ten examples (Table \ref{tab:expert_rater_training}) as a group.
 Afterward, they were asked to complete the same tasks that had been sent to the AMT workers.
 No additional guidance or direction was given to them after the initial walk-through.
-We will refer to this group as the ``expert raters."
-Among them, 52.1\% of ``definitely" votes were cast for human, and accuracy on the longest excerpt length was over 70\%.
+We will refer to this group as the ``expert raters.''
+Among them, 52.1\% of ``definitely'' votes were cast for human, and accuracy on the longest excerpt length was over 70\%.
 
 The human evaluation dataset consisted of 150 excerpts of web text and 50 excerpts each from the three decoding strategies.
 Each question was shown to at most three raters, leading to 900 total annotations from the untrained workers and 475 from the expert raters.
@@ -791,26 +797,10 @@ A more detailed breakdown can be found in Table \ref{tab:amt_counts}.
     \label{fig:amt_honeypot} 
 \end{figure}
 
-\begin{figure}
-\begin{subfigure}{.495\textwidth}
-    \center
-    \includegraphics[width=\textwidth]{figures/bert_accuracy}
-    \caption{}
-    \label{fig:bert_accuracy} 
-\end{subfigure}
-\begin{subfigure}{.495\textwidth}
-    \center
-    \includegraphics[width=\textwidth]{figures/fraction_incorrect_fp}
-    \caption{}
-    \label{fig:errors} 
-\end{subfigure}
-\caption{In \textbf{(a)}, accuracy increases as the length of the sequences used to train the discriminator is increased.
-In \textbf{(b)}, we see that the BERT fine-tuned discriminator predicts about the same number of false-positives as false-negatives when trained with samples generated using top-$p$ sampling. However, for top-$k$, it more often mistakes machine-generated text to be human-written, while for untruncated random sampling the opposite is the case.}
-\end{figure}
-
 \begin{table}
 \small
-  \centering
+\centering
+\caption{The number of human annotations collected. In total, there were 50 examples from each sampling strategy and 150 examples of web text. Each example was shown to at most three raters.}
     \begin{tabular}{lrr}
     \hline
     \textbf{\# Annotations} & \textbf{Expert Raters} & \textbf{AMT Workers} \\
@@ -824,7 +814,6 @@ In \textbf{(b)}, we see that the BERT fine-tuned discriminator predicts about th
     \hline
     \end{tabular}%
   \label{tab:amt_counts}%
-  \caption{The number of human annotations collected. In total, there were 50 examples from each sampling strategy and 150 examples of web text. Each example was shown to at most three raters.}
 \end{table}
 
 \begin{table}[]
@@ -928,6 +917,7 @@ Note: Serves one.
 
 
 \subsection{Results}
+
 \label{section:auto_detection}
 \paragraph{Simple Baselines}
 Table \ref{tab:baselines} shows the performance of the baseline discriminators on length-192 sequences, as compared with fine-tuned BERT.
@@ -956,12 +946,13 @@ The selection of training data for learned detection systems is crucial. In real
     In \textbf{(b)}, we consider the first token generated in each sequence by top-$k$, and plot what fraction of these are captured by the $k$ most common unique tokens from the vocabulary. Overall, at its first step, top-$k$ concentrates 80\% of its probability mass in the 500 most common tokens from the vocabulary.}
 \end{figure}
 
-\paragraph{Fine-tuned BERT} In Figure~\ref{fig:bert_accuracy}, we begin by observing discriminator accuracy as a function of excerpt length and sampling method.
+\paragraph{Fine-tuned BERT} In Figure~\ref{fig:bert_accuracy}, we see that discriminator accuracy as a function of excerpt length and sampling method.
 As can be intuitively expected, as sequence length increases, so too does accuracy.
 For unconditioned text decoded with nucleus (p0.96) and untruncated (p1.0) random sampling, we find discriminator accuracy increases from 55\%, near random, to about 81\% for the longest sequences tested.
-In contrast, discriminators trained and evaluated on top-$k$ achieve over 80\% accuracy even on 16-token excerpts.
+In contrast, discriminators trained and evaluated on top-$k$ achieve over 80\% accuracy even on short 16-token excerpts.
 
 Why are top-$k$'s samples so easy to detect?
+It is because there are only a small number of word sequences that can start a generation when we limit to only ever choosing the 40 most likely tokens at each generation step.
 In Figure~\ref{fig:token_count_histogram}, we see the percentage of probability mass concentrated in the $k$ most common token types for each sampling method.
 While random sampling and nucleus sampling are very similar to human-written texts, we see top-k concentrating up to 80\% of its mass in the first 500 most common tokens.
 The other sampling methods as well as human-written texts require at least 1,100 token types for the same.
@@ -969,11 +960,11 @@ It is clear that top-$k$'s distribution over unigrams strongly diverges from hum
 In fact, \citet{see2019massively} note that it takes setting $k$ to 1000 to achieve about the same amount of rare word usage and fraction of non-stopword text as as human writing.\footnote{when decoding from the GPT-2 small model with 117M parameters.}
 This makes it very easy for the model to pick out machine-generated text based on these distributional differences.
 
-One way to help resolve this problem is to add priming text.
+Instead of unconditioned generation, which in actuality means conditioning always on the same thing (an empty sequence), we can instead prompt with human-written text that the NLG system then extends.
 Doing so causes more rare words to be incorporated into the top-$k$ of the unigram distribution.
 Adding even a single human word of priming significantly reduces the performance of detectors trained with top-$k$ random sampling.
 Without priming, a discriminator trained on sequences of length 2 can classify with $\mathtt{\sim}$90\% accuracy the provenance of the text (Figure \ref{fig:bert_accuracy}).
-By adding one priming token, accuracy drops to $\mathtt{\sim}$65\%.
+By adding even just a single token prompt, accuracy drops to $\mathtt{\sim}$65\%.
 Even on the longest 192-length sequences, top-$k$ discriminator accuracy is 6\% lower on the primed dataset than the unprimed one.
 
 \begin{figure}[t]
@@ -981,6 +972,23 @@ Even on the longest 192-length sequences, top-$k$ discriminator accuracy is 6\% 
     \includegraphics[width=\textwidth]{figures/human_merged}
     \caption{\textbf{(a)} and \textbf{(b)} show human rater accuracy of correctly identifying an excerpt as human-written or machine-written, shown with 80\% confidence internals, in \textbf{(a)}, broken up by decoding strategy and in \textbf{(b)}, overall. Accuracy increases as raters observe more tokens. \textbf{(c)} shows that for short excerpts, most rater mistakes are them incorrectly thinking machine-generated text is human written. The two errors types become more balanced at longer lengths.}
     \label{fig:human_eval} 
+\end{figure}
+
+\begin{figure}[ht]
+\begin{subfigure}{.495\textwidth}
+    \center
+    \includegraphics[width=\textwidth]{figures/bert_accuracy}
+    \caption{}
+    \label{fig:bert_accuracy} 
+\end{subfigure}
+\begin{subfigure}{.495\textwidth}
+    \center
+    \includegraphics[width=\textwidth]{figures/fraction_incorrect_fp}
+    \caption{}
+    \label{fig:errors} 
+\end{subfigure}
+\caption{In \textbf{(a)}, accuracy increases as the length of the sequences used to train the discriminator is increased.
+In \textbf{(b)}, we see that the BERT fine-tuned discriminator predicts about the same number of false-positives as false-negatives when trained with samples generated using top-$p$ sampling. However, for top-$k$, it more often mistakes machine-generated text to be human-written, while for untruncated random sampling the opposite is the case.}
 \end{figure}
 
 When generating with nucleus or untruncated random sampling, adding a priming token is not as impactful, as these methods are already sampling from a large fraction (or all) of the probability distribution.
@@ -1111,7 +1119,7 @@ Ever since the opening of the North American College of Art Education in 1990, t
     \label{tab:qual_examples}
 \end{table}
 
-\paragraph{Human Evaluation}
+\paragraph{Human Accuracy}
 Overall human performance across all sampling methods is shown in Figure \ref{fig:human_eval}b.
 Even with the multi-paragraph 192-length excerpts, human performance is only at 71.4\%, indicating that even trained humans struggle to correctly identify machine-generated text over a quarter a time.
 However, it is worth noting that our best raters achieved accuracy of 85\% or higher, suggesting that it is possible for humans to do very well at this task.

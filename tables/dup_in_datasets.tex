@@ -21,8 +21,8 @@
 % \label{tab:num_duplicates}
 % \end{table*}
     
-\begin{table}[tbp]
-  \caption{The fraction of tokens  (note Table~\ref{tab:num_duplicates} reports the fraction of \emph{examples}) identified by \Exact{} as part of an exact duplicate 50-token substring.}
+\begin{table}[]
+  \caption{The fraction of examples identified by \Approx{} as near-duplicates.}
   \label{tab:num_duplicates2}%
   \centering
   \small
@@ -37,14 +37,15 @@
     Wiki40B & 0.39\% & 0.26\% & 0.72\% \\
     \bottomrule
     \end{tabular}%
-  \caption{The fraction of examples identified by \Approx{} as near-duplicates.}
   \label{tab:num_duplicates}%
 \end{table}%
 
-\begin{table}[tbp]
+\begin{table}[]
   \centering
   \small
-    \begin{tabular}{l|S[table-format=3.2]S[table-format=3.3]|S[table-format=3.3]}
+  \caption{The fraction of tokens  (note Table~\ref{tab:num_duplicates} reports the fraction of \emph{examples}) identified by \Exact{} as part of an exact duplicate 50-token substring.}
+    % \begin{tabular}{l|S[table-format=3.2]S[table-format=3.3]|S[table-format=3.3]}
+    \begin{tabular}{l|rr|r}
     \toprule
           & \multicolumn{2}{c}{\% train tokens with} & \multicolumn{1}{c}{\% valid with} \\
           & \multicolumn{1}{c}{dup in train} & \multicolumn{1}{c}{dup in valid} & \multicolumn{1}{c}{dup in train} \\

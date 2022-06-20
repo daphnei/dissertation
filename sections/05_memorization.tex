@@ -30,7 +30,6 @@ Finally, we describe one actionable step--thorough dataset deduplication--which 
 \section{Quantifying the Factors that Influence Memorization}
 \label{section:quantifying_memorization}
 
-\subsection{Introduction}
 
 It is important to  quantify factors that lead to increased memorization of a model's training set.
 % understand to what extent these future models may \emph{memorize} their training data.
@@ -1288,12 +1287,12 @@ The model embedding size was 768, the feed forward layers had a hidden size of 2
 
 \paragraph{Model Perplexity}\label{sec:perplexity-results}
 
-\begin{figure}[t]
+\begin{figure}[h]
     \centering
-    \begin{overpic}[width=\linewidth]{figures/eval-base-ppl_withLM1B.pdf}
+    \begin{overpic}[width=0.5\linewidth]{figures/eval-base-ppl_withLM1B.pdf}
     \put(1,1){\small\textbf{(a)} Base model}
     \end{overpic}\vskip5pt
-    \begin{overpic}[width=\linewidth]{figures/eval-xl-ppl_withLM1B.pdf}
+    \begin{overpic}[width=0.5\linewidth]{figures/eval-xl-ppl_withLM1B.pdf}
     \put(1,1){\small\textbf{(b)} XL model}
     \end{overpic}
     % \includegraphics[width=0.6\linewidth]{figures/eval-xl-ppl_withLM1B.pdf}
@@ -1335,14 +1334,14 @@ Some example subsequences that were copied verbatim from the train set can be fo
 
 \input{tables/exact_substr_examples.tex}
 
-\begin{figure}
+\begin{figure}[h]
     \centering
-    \includegraphics[width=\linewidth]{figures/memorized_continuations_distribution.pdf}
+    \includegraphics[width=0.5\linewidth]{figures/memorized_continuations_distribution.pdf}
     \caption{Memorized continuations distribution}
     \label{fig:mem-cont-dist}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[h]
     \centering
     \small
     \includegraphics[width=0.6\linewidth]{figures/memorized_continuations_fraction}

@@ -418,7 +418,7 @@ This is true even for approaches which claim to be label-free \citep{DBLP:journa
 Hence, there is a clear need for new methods that both reduce the training data requirements and expand the scope of styles supported \citep{DBLP:journals/corr/abs-2011-00416,DBLP:journals/corr/abs-2010-12742}.
 
 \begin{figure}[t]
-     \includegraphics[width=0.99\linewidth]{figures/style-transfer-prompt.pdf}
+     \includegraphics[width=0.5\linewidth]{figures/style-transfer-prompt.pdf}
      \vspace{-1.5mm}
   \caption{Zero-shot, few-shot, and augmented zero-shot prompts for style transfer. The boldface text is the zero-shot prompt, and the plain text is the additional priming sequence. The full prompts used in this paper are shown in Table \ref{tab:fullprompt}. We encourage readers to examine the outputs of our model at \url{https://bit.ly/3fLDuci}.}
   \label{prompts}
@@ -505,7 +505,7 @@ We use \textit{dialog-LLM}, and compare it with three other methods: \textbf{(1)
 
 \begin{figure}[!htb]
   \centering
-  \fbox{\includegraphics[width=1\linewidth]{figures/rater_ui.png}}
+  \fbox{\includegraphics[width=0.8\linewidth]{figures/rater_ui.png}}
   \caption{The rating UI used for human evaluation. The user may be shown a number of blue squares at once with the same original text and different outputs.}
   \label{fig:rater_ui}
 \end{figure} 
@@ -515,8 +515,8 @@ We found that the outputs of our method were rated almost as highly as the human
 The strong performance of the paraphrase baseline at fluency and semantic similarity shows that large LMs are capable of generating high quality text that remains true to the input sentence's meaning.
 Overall, the average length of the input sentences was 66 characters, whereas the average length of augmented zero-shot outputs was 107 characters. For context, human paraphrase outputs were 82 characters.
 \begin{figure}
-    \includegraphics[width=\linewidth]{figures/style_standard_False.pdf}
-    \includegraphics[width=\linewidth]{figures/meaning_standard_False.pdf}
+    \includegraphics[width=0.5\linewidth]{figures/style_standard_False.pdf}
+    \includegraphics[width=0.5\linewidth]{figures/meaning_standard_False.pdf}
   \vspace{-0.7cm}
   \caption{Human evaluation of style transfer for six atypical styles. Our method is rated comparably to the human-written ground truth. Error bars are mean standard error.}
   \label{human_eval_other_styles}
@@ -536,8 +536,8 @@ Furthermore, following \citet{li-etal-2018-delete} and \citet{sudhakar-etal-2019
 We automatically evaluate \textbf{(1) transfer strength} using a sentiment classifier from HuggingFace Transformers \citep{wolf-etal-2020-transformers}, \textbf{(2) semantic similarity} to human examples provided by \citet{DBLP:conf/ijcai/LuoLZYCSS19} via BLEU score, and \textbf{(3) fluency} via perplexity, as measured by GPT-2 (117M).
 
 \begin{figure}[t]
-    \includegraphics[width=\linewidth]{figures/style_standard_True.pdf}
-    \includegraphics[width=\linewidth]{figures/meaning_standard_True.pdf}
+    \includegraphics[width=0.5\linewidth]{figures/style_standard_True.pdf}
+    \includegraphics[width=0.5\linewidth]{figures/meaning_standard_True.pdf}
   \caption{Human evaluation of sentiment and formality transfer. Our method is rated comparably to human-written ground truth as well as prior methods. Error bars show Standard Error of the Mean. Unsup.~MT is \citet{prabhumoye-etal-2018-style}; Dual RL is \citet{DBLP:conf/ijcai/LuoLZYCSS19}. }
   \label{human_eval_standard_style}
 \end{figure}
@@ -707,14 +707,14 @@ Thus, augmented zero-shot learning offers less fine-grained controllability in t
 
 \begin{figure}[!htb]
   \centering
-  \fbox{\includegraphics[width=1\linewidth]{figures/wc.png}}
+  \fbox{\includegraphics[width=0.8\linewidth]{figures/wc.png}}
   \caption{Screenshot AI-assisted editor with `Rewrite as' feature.\label{fig:wc}}
   \vspace{-0.1cm}
 \end{figure} 
 
 \subsection{Summary of Contributions}
-The work described in this section was published in the 2022 Proceedings of the Association of Computational Linguistics \TODO{citation}.
-The work was performed with my collaborators \TODO{author names}.
+The work described in this section was published in the 2022 Proceedings of the Association of Computational Linguistics \citep{reif2021recipe}.
+The work was performed with my collaborators Emily Reif, Ann Yuan, Andy Coenen, Chris Callison-Burch, and Jason Wei.
 I worked with Emily Reif to come up with the premise for the project: of formulating style transfer as an arbitrary rewriting operation.
 I helped to design the experiments and contributed significantly to analysis of the results.
 
@@ -906,12 +906,12 @@ Then we carried out a within-subjects study, giving each user three writing prom
     The \textit{chat} condition enables us to evaluate the utility of the prompt and UX scaffolding we designed for Wordcraft against giving users straightforward access to the underlying model, without any scaffolding. An omniscient user could theoretically reproduce the functionality of the \textit{full} condition by replicating Wordcraft's prompts.
 \end{enumerate}
 
-\begin{figure*}[t]
+\begin{figure}[t]
   \centering
   \includegraphics[width=1\linewidth]{figures/conditions.png}
   \caption{Experimental conditions for the user study. The stories written by participants as part of the study can be viewed here: \href{https://storage.googleapis.com/wordcraft-stories/index.html}{https://storage.googleapis.com/wordcraft-stories/index.html}. The website also includes purely machine-generated baselines.}
   \label{fig:conditions}
-\end{figure*}
+\end{figure}
 
 \noindent Participants were asked to write stories based on the following three prompts \footnote{Prompts were selected from the \href{https://www.reddit.com/r/WritingPrompts/}{Writing Prompts subreddit}.}:
 \begin{enumerate}
@@ -931,7 +931,7 @@ Users were told that they were participating in a study of AI assisted writing, 
 \label{sec:results}
 This section describes the overall successes and failures of the NLG-powered assistive writing features incorporated into Wordcraft, before comparing Wordcraft to the baseline conditions in depth. 
 
-\begin{table*}[t]
+\begin{table}[t]
   \centering
   \caption{Usage statistics.}
   \small
@@ -948,7 +948,7 @@ This section describes the overall successes and failures of the NLG-powered ass
     Time to complete avg&11m \textpm 62.5s&11.52m \textpm 131.5s&9.97m \textpm 37.1s&10.8m \textpm 48.6s\\
   \bottomrule
 \end{tabular}
-\end{table*}
+\end{table}
 
 \begin{table}
   \caption{Usage statistics broken down by request type (Wordcraft only).}
@@ -983,14 +983,14 @@ to be a little less angsty • to be about mining • to be better written • t
 \end{tabular}
 \end{table}
 
-\begin{table}[t]
+\begin{table}
 \caption{Custom prompts written by users.}
 \label{tab:custom_prompts}
 \small
-\def\arraystretch{1.5}% 
 \begin{tabular}{p{1.0\columnwidth}}
-Tell me more about her twitter account.
-• More about the dad please. • Tell me about Elaine's amazing twitter account. • Tell me about the father. • Tell me about the funeral home, grandma, the punk kid, and the crowd. • Tell me how the man reacted as he found out he could see again. • Tell me more about Daniel. • Tell me more about what it's like to have to pretend to be blind when you can see. • Tell me what happens next. • Tell me what the letter says. • What are the words on the floor? What language are they in? • What would happen if we could quantify love? • Why were they watching me? • More about the dad please. • So this guy was tight with your grandma? • Tell me about Elaine's amazing twitter account. • Tell me about the father. • Tell me about the funeral! • Tell me about the funeral home, grandma, the punk kid, and the crowd. • Tell me how the man reacted as he found out he could see again. • Tell me more about Daniel. • Tell me more about what it's like to have to pretend to be blind when you can see. • Tell me what happens next. • Tell me what the letter says. • What are the words on the floor? What language are they in? • What would happen if we could quantify love? • Who is telling me not to tell them? • Why were they watching me?
+\toprule
+Tell me more about her twitter account. • More about the dad please. • Tell me about Elaine's amazing twitter account. • Tell me about the father. • Tell me about the funeral home, grandma, the punk kid, and the crowd. • Tell me how the man reacted as he found out he could see again. • Tell me more about Daniel. • Tell me more about what it's like to have to pretend to be blind when you can see. • Tell me what happens next. • Tell me what the letter says. • What are the words on the floor? What language are they in? • What would happen if we could quantify love? • Why were they watching me? • More about the dad please. • So this guy was tight with your grandma? • Tell me about Elaine's amazing twitter account. • Tell me about the father. • Tell me about the funeral! • Tell me about the funeral home, grandma, the punk kid, and the crowd. • Tell me how the man reacted as he found out he could see again. • Tell me more about Daniel. • Tell me more about what it's like to have to pretend to be blind when you can see. • Tell me what happens next. • Tell me what the letter says. • What are the words on the floor? What language are they in? • What would happen if we could quantify love? • Who is telling me not to tell them? • Why were they watching me? \\
+\bottomrule
 \end{tabular}
 \end{table}
 
