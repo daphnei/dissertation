@@ -176,7 +176,7 @@ Nucleus sampling, also referred to as top-$p$ random sampling, accomplishes this
 For all three of these techniques there is a parameter ($\tau$, $k$, or $p$) which controls the amount of randomness we want to permit in the generation.
 Choosing a low value for these parameters results in an increasingly peaky distribution, which, at its extreme, is the same as taking the $\arg \max$. 
 Choosing a high value for these parameters results in the distribution that looks closer and closer to the original scores produced by the model.
-Figure \TODO{Add figure showing some probability distributions.} shows how these different strategies affect the shape of the distribution.
+% Figure \TODO{Add figure showing some probability distributions.} shows how these different strategies affect the shape of the distribution.
 
 \subsection{Search-Based Approaches}
 Before the transition to Transformer-based architectures (Section \ref{section:what_is_a_nlm}), the standard convention for generation was to try to generate the most likely overall sequence from the language model.
@@ -357,12 +357,12 @@ We evaluate rewriting using automatic metrics, such as measuring how often an au
 We can also use metrics like BLEU score to compare against both the input sentence and a human-written groundtruth, though word-overlap metrics break down the more open-ended and transformational the rewriting task is.
 Finally, human raters can be used to assess quality of the rewrite.
 
-\paragraph{Instruction Following}
-Textual instruction following is the name I am giving to the suite of tasks which involve specifying a natural language instruction for how to transform an input text.
-An example is the task of style transfer, where the style is specified in terms such as "more positive" or "more Shakespearean."
-Chapter \ref{section:wordcraft}, which introduces the Wordcraft application, uses textual instruction following to support a wide variety of re-writing tasks.
-Evaluation can either be done using similar methods to the above, or it can be done holistically--studying whether textual instruction following systems are useful to human writers in their writing goals.
-\TODO{rewrite this section}
+\paragraph{Story Ideation and Brainstorming}
+For many writers, the process of writing is collaborative.
+They may use an ideation tool such as a deck of trigger cards to come up with initial ideas, or they may share their in-progress draft with readers to get feedback.
+One of the goals of my research is to be able to use neural language models to provide an alternative collaboration source for creative writers.
+This includes a suite of user-defined tasks centered around allowing writers to make requests such as ``what should happen next in my story'' or ``help me write a description of the old man introduced in the first sentence.''
+Because the goals here are so broad, evaluation is best done holistically--by conducting user studies to evaluate whether NLG outputs are useful to human writers in their writing goals.
 
 \section{Controllability and Task-Specific Generation}
 
@@ -405,7 +405,7 @@ Each of these models has been finetuned for a large diversity of downstream task
     \centering
     \small
     \caption{Examples of pre-training objectives used in popular general-purpose models.
-    In these examples, the original training sequence is ``\texttt{The hippopotamus ate my homework. It made me very made.}''}
+    In these examples, the original training sequence is ``\texttt{The hippopotamus ate my homework. It made me very mad.}''}
     \label{tab:common_pretrained_models}
 	\begin{tabular}{l|p{2in}|p{2in}}
         \toprule 

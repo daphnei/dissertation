@@ -195,8 +195,8 @@
 %********************************************************************
 % Bibliographies
 %*******************************************************
-% \addbibresource{dissertation.bib}
-\bibliography{dissertation.bib}
+% \addbibresource{bibliography.bib}
+\bibliography{bibliography.bib}
 %********************************************************************
 % Hyphenation
 %*******************************************************
@@ -205,6 +205,8 @@
 \input{common.tex}
 % \makeglossaries
 % \makenoidxglossaries
+
+\preto\fullcite{\AtNextCite{\defcounter{maxnames}{99}}}
 
 % ********************************************************************
 % GO!GO!GO! MOVE IT!

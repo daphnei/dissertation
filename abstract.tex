@@ -14,7 +14,9 @@ State-of-the-art neural language models are capable of generating incredibly flu
 This success provides opportunities for novel forms of interaction, where human writers work collaboratively with a natural-language generation system toward a set of goals.
 However, it also poses several challenges.
 Evaluating and comparing the skill of different open-ended text generation systems is challenging, and generated text can have negative societal impact if it proliferates and people are not able to detect it.
-In this dissertation, I introduce a detection-based evaluation task that can be used to investigate the tradeoff between generating high-quality and generating lexically diverse text.
+In this dissertation, I introduce a detection-based evaluation task that can be used to investigate the tradeoff between generating high-quality and generating diverse text.
 I also show how large neural language models' capability of memorizing large swaths of their training data complicates our ability to evaluate their skill at generating high-quality \textit{novel} text.
-
-Despite these challenges, I show how neural language models can be successfully employed to build tools for creative wetiers. \TODO{finish}
+I also show how, despite these challenges, neural language models can be successfully employed to support creative writing tasks.
+In particular, I describe methods for performing style transfer into any user-provided style and for efficiently supporting fill-in-the-blank operations in addition to the more standard continuation operation.
+Finally, I present an interactive writing tool we built which allows creative writers to collaborate with a natural language generation system to craft stories.
+Users studies with both novice and professional writers provide insights into the strengths and limitations of applying natural language generation systems in real-world settings.
