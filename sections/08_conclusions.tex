@@ -1,11 +1,9 @@
-\chapter{Conclusions}
+\chapter{Conclusion}
 
-\TODO{This section is still in progress.}
-
-This thesis focuses on (1) analyzing neural language models to better understand the text they are able to generate, and (2) applications.
+This thesis focuses on (1) analyzing neural language models to better understand the text they are able to generate, and (2) studying the feasibility of applying large language models to tasks that could benefit from human-AI writing collaboration.
 The main takeaways from my research are the following:
 
-\textbf{Detection of generated text is getting harder but no less important.}
+\subsubsection{Detection of generated text is getting harder but no less important.}
 	Chapter \ref{chap:decoding}, I present the challenge of detecting machine-generated text.
 	As neural language models get better, it is becoming only more challenging for humans to notice they are interacting with a bot.
 	Indeed, in a recent controversary, a YouTuber inundated 4chan with GPT-Neo generated text \footnote{\url{https://youtu.be/efPrtcLdcdM}}.
@@ -17,22 +15,35 @@ The main takeaways from my research are the following:
 	My research on automatic detection was performed in 2018 on 768M paramter models.
 	It would be very valuable to reconsider the automatic detection problem on state-of-the-art generation systems and in more realistic contexts (such as on documents where only a portion of the text may be generated).
 
-\textbf{Text generation involves tradeoffs.}
+\subsubsection{Text generation involves tradeoffs.}
 	In Chapters \ref{chap:background} and \ref{chap:decoding}, I describe how there exists a tradeoff between generating diverse text that is easier for humans to detect because it contains obvious errors--and generating mundane text that is harder to detect, but lacks the lexical diversity of a real human writer.
 	This tradeoff continues to be important, both for academic research--because we need to ensure that  comparisons between different NLG systems are fair--and for practioners--because the setting chosen can have a singificant impact on user experience.
 	For example, Wordcraft users complained that the text was in too dull a style, a problem that might have been resolved very simply by increasing the sampling temperature.
-	Furhter research is needed into techniques for sampling from the long tail of low-likelihood words without causing semantic errors.
+	Further research is needed into techniques for sampling from the long tail of low-likelihood words without causing semantic errors.
 
-\textbf{Memorization is a serious concern.}
+\subsubsection{Memorization is a serious concern.}
 	In Chapter \ref{chap:memorization}, I focus on the memorization problem; language models are capable of regurgitating text from their train sets.
-	In many cases 
-	Sometimes memorization is good (e.g., we might want our language model to be able to accurately quote famous speeches), but in other cases it is a sign of poor generalization, and at its worst, it could divulge private information.
-	Important future work will be in developing techniques for allowing models to quote verbatim from data when there is a good reason to, but disallowing them otherwise.
+	Memorization is most often caused by examples being over-represented in the training data, but in recent work \citep{zhang2021counterfactual}, we show that language models also memorize rare sequences.
+	(We show this by measuring counterfactual memorization--how much more likely an example is according to models that saw it during training compared to models that never saw the example.)
+	More detailed studies of what kinds of content are more susceptible to memorization and the training dynamics behind memorization will be important subjects of future work.
 
-\textbf{Supporting many tasks from fewer models is valuable.}
-	\TODO{}
+	In the research discussed in this thesis, I have considered \textit{all} instances of memorization as problemtatic.
+	While memorization is often a sign of poor generalization, and at its worst, it can divulge private information, memorization can also be a good thing (e.g., we might want our language model to be able to accurately quote famous speeches).
+	It will be important to develop more advanced techniques for controlling memorization, allowing models to quote verbatim when there is a good reason to.
 
-\textbf{Evaluation of NLG systems should happen in real-world settings.}
-	\TODO{}
+\subsubsection{Supporting many tasks from fewer models is valuable.}
+	As neural language models increase in number of parameters, it is becoming increasingly infeasibile to create one custom-tailored model per task that needs to be supported.
+	In Chapter \ref{chap:creativity}, I show how a single pre-trained language model can be made to support a large variety of style transfer tasks that previous work would have typically trained several separate models for.
+	I also argue that we should be pre-training large language models for a fill-in-the-blank-style objective, rather than a continuation one, because filling in the blank is a strictly more versatile task.
+	There has been a significant focus in recent work on developing training objectives to support a variety of downstream tasks with minimal additional task-specific adaption \citep{wei2021finetuned,sanh2021multitask}.
+	However, these approaches require a substantial amount of annotated training data, and self-supervised pre-training objectives which yield multi-task-capable models is an important subject for future research.
 
-\TODO{More text about future directions.}
+\subsubsection{Evaluation of NLG systems should happen in real-world settings.}
+	In Chapter \ref{chap:creativity}, I present Wordcraft, a text editor with NLG-powered writing assistance intended for creative writers.
+	Through user studies with both novice and professional writers, we explore the strengths and weaknesses of state-of-the-art natural language generation.
+	Studies of NLG use by real users can lead to different and more nuanced conclusions than those from more contrived human evaluation schemes.
+	For example, when evaluating the use of augmented zero shot learning for style transfer with Amazon Mechanical Turk-based evaluation, we saw that annotators prefrred our approach's generations over other approaches.
+	However, use of this feature within Wordcraft revealed just how much of gap there still is between the types of transfers writers want to do and the capability of our approach.
+
+	Creative writing is only one domain where NLG-powered tools could be impactful, and it would be valuable to see the types of studies I ran with Wordcraft be conducted in other domains.
+	In particular, NLG tools could potentially have impact in \TODO{}

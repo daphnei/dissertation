@@ -756,19 +756,19 @@ When the user has no text inputted, the user can specify the topic they want the
 The intention of this control is to allow for ideation when the page is blank.
 It is supported with the following few-shot prompt:
 
-\begin{verbatim}
+\begin{lstlisting}
 > Here's a topic: {A space monkey needs to escape from his dying planet.} Tell me the start of a new story.
 > {It was a cold, dark night on an unknown planet. In a field, a male monkey was pacing back and forth. He had been trying to figure something out, but nothing seemed to be working. He didn't have much time left.}
 > Here's a topic: {A medieval romance where a group of colorful knights do battle.} Tell me the start of a new story.
 > {The green knight rode atop his majestic, beautiful horse, across fields of pure green. In his palm was a magical, sparkling golden sword.}
 > Here's a topic: {An old man with a magical box tries to solve a mystery as his memories gradually fade away.} Tell me the start of a new story.
-> {The old man decided that he should look inside the box, and in the box there was a key. The old man couldn’t quite remember why he had a key, but he knew the key was important.}
+> {The old man decided that he should look inside the box, and in the box there was a key. The old man couldn't quite remember why he had a key, but he knew the key was important.}
 > Here's a topic: {A coven of witches have taken up residence outside of a quiet mountain town, but they're not interested in witchcraft, they're interested in making hip-hop.} Tell me the start of a new story.
 > {An evil looking tree was growing off in the distance with no leaves and long, pointy branches. It was a sickly green and was swaying eerily without the wind.}
 > Here's a topic: {After an ancient sea-worn bottle washes up on the shores of Tripoli, a group of rag-tag pirates open it up to find a map leading to a magical treasure.} Tell me the start of a new story.
 > {A group of pirates set out to sea in search of a magical treasure - a long, sparkling blue necklace called the night's eye.}
 > Here's a topic: {<USER'S TOPIC>} Tell me the start of a new story.}
-\end{verbatim}
+\end{lstlisting}
 % This is based on the arbitrary style transfer technique described in Section \ref{section:style_transfer}.
 
 \subsubsection{Fill in the blank}
@@ -776,7 +776,7 @@ When the user has some text selected in the editor, they are able to see alterna
 This is exactly the fill-in-the-blank task described in Section \ref{section:fitb}.
 Though in Section \ref{section:fitb} we showed that finetuned models perform much better at this than few-shot prompting techniques, due to the computational complexities of hosting multiple models, we ended up also supporting this operation with a few-shot learning prompt:
 
-\begin{verbatim}
+\begin{lstlisting}
 > {\"We have to leave now!\" Sarah shouted.  ____ The only way out was up. We climbed flight after flight. The sound of the monsters banging on the door below became more distant but no less threatening.} Finish the following sentence by filling in the blank with a phrase. {\"We have to leave now!\" Sarah shouted.  }
 > {\"Let's get out of here!\"}
 > Here's a new story: {The sun was shining, and little gusts of wind brought through the window  ____ shocking contrast from the stale city smells she had grown used to.} Finish the following sentence by filling in the blank with a phrase. {The sun was shining, and little gusts of wind brought through the window  ____ shocking contrast from the stale city smells she had grown used to.}
@@ -788,29 +788,29 @@ Though in Section \ref{section:fitb} we showed that finetuned models perform muc
 > Here's a new story: {The magician pulled out of his pocket  ____  and then a second one and a third. He didn't stop until soon the ground was covered with them.} Finish the following sentence by filling in the blank with a phrase. {The magician pulled out of his pocket  ____  and then a second one and a third. }
 > {a scarlet handkerchief }
 > Here's a new story: {<USER'S STORY>} Finish the following sentence by filling in the blank with a phrase. {<USER'S SELECTED SENTENCE WITH BLANK AT POSITON OF CURSOR>}
-\end{verbatim}
+\end{lstlisting}
 
 \subsubsection{Elaboration}
 When the user has some text selected, they can use the elaboration button to get the model to expand upon it.
 This operation is supported with the following few-shot prompt:
 
-\begin{verbatim}
-Here's a new story: {The long shadow of the tree crept up the sidewalk} Describe the tree.
+\begin{lstlisting}
+> Here's a new story: {The long shadow of the tree crept up the sidewalk} Describe the tree.
 {It was an old oak tree on the main street of a small town, the branches spread as large as the sky.}
-Here's a new story: {The car came bouncing down the hill and came to an abrupt stop in my driveway} Describe the car.
-{It was an old, old Model-T Ford, with brass fittings, and no doors}
-Here's a new story: {My pencil sits on top of the desk, left there since ‌the events‌ of last Saturday} Describe last Saturday.
-{It was one of those Saturdays that starts off like any other but you have the feeling that something is about to stir. You wake up with the same amount of enthusiasm but you get up from bed a little slower than usual. You know this is going to be a busy day}
-Here's a new story: {She wasn't really upset about what had happened at the lab the other day; she was never one to dwell on mistakes.} Describe what had happened.
-{She had accidentally left the microorganisms alone for far too long. The lab, or what was left of it, was now filled with a strong aroma of their slime-- they had devoured all the metal, wood, and plastic they could find}
-Here's a new story: {<USER'S STORY>} Describe \textbf{<USER'S SELECTED TEXT>}.
-\end{verbatim}
+> Here's a new story: {The car came bouncing down the hill and came to an abrupt stop in my driveway} Describe the car.
+> {It was an old, old Model-T Ford, with brass fittings, and no doors}
+Here's a new story: {My pencil sits on top of the desk, left there since the events of last Saturday} Describe last Saturday.
+> {It was one of those Saturdays that starts off like any other but you have the feeling that something is about to stir. You wake up with the same amount of enthusiasm but you get up from bed a little slower than usual. You know this is going to be a busy day}
+> Here's a new story: {She wasn't really upset about what had happened at the lab the other day; she was never one to dwell on mistakes.} Describe what had happened.
+> {She had accidentally left the microorganisms alone for far too long. The lab, or what was left of it, was now filled with a strong aroma of their slime-- they had devoured all the metal, wood, and plastic they could find}
+> Here's a new story: {<USER'S STORY>} Describe \textbf{<USER'S SELECTED TEXT>}.
+\end{lstlisting}
 
 \subsubsection{Style Transfer}
 Using the augmented zero-shot learning approach described in Section \ref{section:style_transfer}, we include a control that allows users to perform rewriting operations on selected text. The operations are specified in natural language.
 The following prompt is used.
 
-\begin{verbatim}
+\begin{lstlisting}
 > Here's a new story: {An elderly man was sitting alone on a dark path. The darkness turned to light as a figure ran up to him. ____ The older man recognized the young man as a dear friend, who he hadn't seen in some time. The young man said he had had the strangest dream.} What sentence goes in the blank?
 > {The figure was holding a sword.}
 > Rewrite the sentence to use more descriptive language.
@@ -830,29 +830,29 @@ The following prompt is used.
 > Here's a new story: {Once upon a time, there was a rabbit princess. The bunny lives in the little cottage just outside of town. The story ends with her getting eaten by a fox. ____ The door hung at an angle off of its hinges.} What sentence goes in the blank?
 > {<SELECTED TEXT>}
 > Rewrite the sentence <REWRITING INSTRUCTION>.
-\end{verbatim}
+\end{lstlisting}
 
 \subsubsection{Custom Prompting}
 In the custom prompting control, users have the ability to write any request to the system they want. For example, they could ask "Give me an origin story for the ogre" or "Tell me what happens next." We use a similar approach to style transfer, with a prompt demonstrating a variety of requests:
 
-\begin{verbatim}
+\begin{lstlisting}
 > Here is some text: {next to the path} Rewrite it to be about France.
 > {next to la Siene}
 > Here's a new story: {A young boy was sitting on the sidewalk.} What comes next?
-> {He was holding a lantern and looking ahead up the road.‌}
+> {He was holding a lantern and looking ahead up the road.}
 > Here is some text: {The man stood outside the grocery store, ringing the bell.} Rewrite it to be about clowns.
 > {The man stood outside the circus, holding a bunch of balloons.}
-> Here's a new story: {My pencil sits on top of the desk, left there since ‌the events‌ of last Saturday.} Describe last Saturday.
+> Here's a new story: {My pencil sits on top of the desk, left there since the events of last Saturday.} Describe last Saturday.
 > {It was one of those Saturdays that starts off like any other but you have the feeling that something is about to stir. You wake up with the same amount of enthusiasm but you get up from bed a little slower than usual. You know this is going to be a busy day}
 > Here's a new story: {<USER'S STORY>} <CUSTOM PROMPT>
-\end{verbatim}
+\end{lstlisting}
 
 \subsection {Suggested Prompts}
 Finally, we implemented a control that allows users to request suggestions for what to write about next.
 We expected this feature to be useful for novice writers to overcome writer's block.
 It uses the following prompt:
 
-\begin{verbatim}
+\begin{lstlisting}
 > Here's a new story: {A long time ago, in the beginning of time, beautiful crystalline frog people inhabited the earth. Their king, the crystal king, had mysteriously disappeared on a trip to the sea.} What would you tell me about next?
 > {Tell me more about the frog people.}
 > Here's a new story: {The green knight rode atop his majestic, beautiful horse, across fields of pure green. In his palm was a magical, sparkling golden sword.} What would you tell me about next?
@@ -868,7 +868,7 @@ It uses the following prompt:
 > Here's a new story: {A giant monster was chasing after a woman and yelling at her to get away. The woman ran, knowing that she was in horrible danger.} What would you tell me about next?
 > {Tell me why the monster was chasing her.}
 > Here's a new story: {<USER'S STORY>} What would you tell me about next?"
-\end{verbatim}
+\end{lstlisting}
 
 \subsection{User Study with Novice Writers}
 To evaluate Wordcraft's effectiveness, we conducted a user study in which 25 hobbyist writers (whom we refer to as U1-U25) were asked to write stories with and without Wordcraft.
