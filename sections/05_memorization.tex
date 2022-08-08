@@ -27,6 +27,52 @@ We also show how passing in a long prompt to the model increases the chance we w
 Finally, we describe one actionable step--thorough dataset deduplication--which can be employed before training to diminish the risk of memorization.
 
 
+\subsection{Definitions of Memorization}
+\label{sec:mem-def}
+
+Memorization is an intuitive concept.
+When presented with two passages of text, humans are able to make judgement calls over whether they are similar to each other.
+In order to systematically study memorization, it is necessary to develop definitions which attempt, imperfectly, to capture this intution.
+In this chapter, we employ several different imperfect measurements of memorization, each capturing a slightly different notion of what it means for a language model to memorize.
+
+There is extensive prior work that qualitatively studies memorization in neural language models.
+Much of this work has defined memorized as \emph{extraction}, the ability to extract training data examples from a trained model.
+These works have demonstrated that it possible to recover various forms of memorized data including URLs, phone numbers, or other forms of personal information~\citep{carlini2020extracting, ziegler2021copilot}, or in other work, synthetically injected ``canaries''~\citep{carlini2019secret, henderson2017ethical, thakkar2020understanding, thomas2020investigating}.
+%
+However, extraction attacks typically aim to demonstrate the existence of extractable data, rather than precisely quantifying how much models memorize.
+For example, the unprompted memorization evaluation of \citet{carlini2020extracting} found just 600 examples of memorization in GPT-2.
+
+In contrast, in Section \ref{section:quantifying_memorization}, our goal is to establish tight approximations to the fraction of a dataset that can be adversarially extracted from a language model.
+We use the following definition for memorization:
+
+%
+\begin{definition}
+A string $s$ is \emph{extractable with $k$ tokens of context} from a model $f$ if there exists a (length-$k$) string $p$, such that the concatenation $[p \mid \mid s]$ is contained in the training data for $f$, and $f$ produces $s$ when prompted with $p$ using greedy decoding.
+\label{def:extractable}
+\end{definition}
+
+For example, if a model's training dataset contains the sequence \textit{``My phone number is 555-6789''},
+and given the length $k=4$ prefix \textit{``My phone number is''}, the most likely output is \textit{``555-6789''}, then we call this sequence extractable (with 4 words of context).
+We choose greedy decoding because it is a cheap to run (compared to beam search), and we found that memorization is correlated with generated sequences being assigned very high likelihood.
+
+In Section \ref{section:dedup}, we use a slightly different definition of ``extractable''.
+Instead of generating with greedy decoding, we use top-$k$=50 random sampling, and instead of checking if the generation verbatim matches the true continuation, we check if the edit similarity between the generation and the true continuation is above a chosen threshold.
+Section \ref{section:dedup} also measures memorization in unconditioned generation.
+We generate 100,000 sequences each of 512 tokens, and then counted the fraction of generated tokens which are part of 50-token long substrings that occur in the train set. 
+
+All of these definitions are inspired by the broad literature on privacy attacks in machine learning.
+For example, membership inference attacks~\citep{shokri2017membership, yeom2018privacy} allow an adversary to detect the presence of a given example in a model's training dataset, and other forms of data leakage permit an adversary to learn dataset properties \citep{ganju2018property,fredrikson2015model}.
+We focus on extraction attacks due to their relevance for language modeling---extraction demonstrates significant leakage from a model, and grows with data duplication \citep{lee2021deduplicating}, a common feature of large-scale text datasets.
+
+%TODO
+%\cite{} show that the performance of code understanding models suffers when training sets have duplicates.
+
+Various formulations of memorization in deep neural networks have been studied in previous papers~\citep{carlini2019secret,carlini2020extracting,feldman2020neural,zhang2021counterfactual,colinpaper}. 
+One leading general memorization definition is differential privacy~\citep{dwork2006calibrating}, which is formulated around the idea that removing any user's data from the training set should not change the trained model significantly.
+However, while differential privacy protects a single user's private information, it is ineffective for memorization of duplicated data and does not capture the complexity of linguistic data~\citep{brown2022does}.
+Also, differentially private deep learning algorithms~\citep{abadi2016deep} generally suffer from expensive computation, slow convergence, and poor model utility, despite recent advances~\citep{anil2021large}.
+
+
 \section{Quantifying the Factors that Influence Memorization}
 \label{section:quantifying_memorization}
 
@@ -78,49 +124,6 @@ This allows us to measure memorization across models, datasets, and prompts of v
 
 Our analysis suggests that future research on neural language modeling will need to take steps
 to prevent future (larger) models from memorizing their training datasets.
-
-
-\subsection{Related Work}
-
-There is extensive prior work that qualitatively studies memorization in neural language models. Even constrained to just \emph{extraction}, prior work has demonstrated that it possible to recover various forms of memorized data including URLs, phone numbers, or other forms of personal information~\citep{carlini2020extracting, ziegler2021copilot}, or in other work, synthetically injected ``canaries''~\citep{carlini2019secret, henderson2017ethical, thakkar2020understanding, thomas2020investigating}.
-%
-However most of these works are qualitative and aim to demonstrate the existence of extractable data, rather than precisely quantifying how much models memorize.
-For example, the unprompted memorization evaluation of \citet{carlini2020extracting} found just 600 examples of memorization in GPT-2.
-%
-Our paper aims to establish much tighter approximations to the fraction of a dataset that can be adversarially extracted.
-
-Our analysis is relevant to the broad literature on privacy attacks on machine learning.
-For example, membership inference attacks~\citep{shokri2017membership, yeom2018privacy} allow an adversary to detect the presence of a given example in a model's training dataset, and other forms of data leakage permit an adversary to learn dataset properties \citep{ganju2018property,fredrikson2015model}.
-We focus on extraction attacks due to their relevance for language modeling---extraction demonstrates significant leakage from a model, and grows with data duplication \citep{lee2021deduplicating}, a common feature of large-scale text datasets.
-
-%TODO
-%\cite{} show that the performance of code understanding models suffers when training sets have duplicates.
-
-Various formulations of memorization in deep neural networks have been studied in previous papers~\citep{carlini2019secret,carlini2020extracting,feldman2020neural,zhang2021counterfactual,colinpaper}. A detailed comparison with those existing formulations is presented in Section~\ref{sec:mem-def}.
-% Along this line, \citet{zhang2021counterfactual} formulated a notion of counterfactual memorization to characterize memorized training examples that are not duplicated. Our observation of the impact of duplication on memorization is consistent with theirs, and we provided a quantitative study to precisely characterize it.
-One leading general memorization definition is differential privacy~\citep{dwork2006calibrating}, which is formulated around the idea that removing any user's data from the training set should not change the trained model significantly.
-However, while differential privacy protects a single user's private information, it is ineffective for memorization of duplicated data and does not capture the complexity of linguistic data~\citep{brown2022does}.
-Also, differentially private deep learning algorithms~\citep{abadi2016deep} generally suffer from expensive computation, slow convergence, and poor model utility, despite recent advances~\citep{anil2021large}.
-
-
-\subsection{Definition of Memorization}
-\label{sec:mem-def}
-% In order to evaluate how much a model memorizes, we must first settle on a definition of memorization.
-In order to answer the question
-``how does $X$ impact memorization?'',
-we first select a precise definition for memorization:
-
-%
-\begin{definition}
-A string $s$ is \emph{extractable with $k$ tokens of context} from a model $f$ if there exists a (length-$k$) string $p$, such that the concatenation $[p \mid \mid s]$ is contained in the training data for $f$, and $f$ produces $s$ when prompted with $p$ using greedy decoding.
-\label{def:extractable}
-\end{definition}
-
-For example, if a model's training dataset contains the sequence \textit{``My phone number is 555-6789''},
-and given the length $k=4$ prefix \textit{``My phone number is''}, the most likely output is \textit{``555-6789''}, then we call this sequence extractable (with 4 words of context).
-%
-We focus on greedy sampling in this paper, and verify in Section~\ref{sec:modelsize} that our choice of decoding strategy does not significantly impact our results.
-
 
 \subsection{Selection of Evaluation Data}
 
@@ -1196,7 +1199,7 @@ Such duplication is problematic since it could cause evaluation metrics to be un
 We evaluate the effect of this leakage on publicly released models in Section \ref{sec:eval-existing-models}.
 
 \subsection{Impact on Trained Models}
-\label{sec:impact-trained-models}.
+\label{sec:impact-trained-models}
 We trained 1.5B parameter ``XL", decoder-only, Transformer-based language models similar to GPT-2, on C4-\Original, C4-\Approx, and C4-\Exact, respectively.
 We use the T5 codebase and model architecture from \citet{raffel2019exploring}, and each model was trained for about two epochs on its respective dataset.
 To better understand the amount of variance in the perplexities of trained models, we also trained three different random seeds of the 110M parameter ``base" model for each of the above three datasets---for a total of nine base-sized models.

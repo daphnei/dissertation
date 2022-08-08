@@ -82,10 +82,10 @@ Regardless of strategy, we find human raters achieve significantly lower accurac
 I also show that when a decoding strategy severely modifies the unigram token distribution, as top-$k$ does, humans have trouble detecting the resultant generated text, but automatic classifiers find it the easiest to discriminate.
 Worryingly, I further find that classifiers are brittle; they generalize poorly when trained to discriminate samples from one strategy and then evaluated on samples from another.
 
-\subsection{Pilot Study of Detection}
-\subsubsection{Dataset Construction}
 
-In in my pilot study of detectability, I formed datasets to probe how excerpt length and decoding strategy impact detection performance. 
+\subsection{Dataset Construction}
+
+To study detectability, I formed datasets that probe how excerpt length and decoding strategy impact detection performance. 
 Each daatset is approximately balanced between positive examples of machine-generated text and negative examples of human-written text.
 While they all share the same human-written examples, each dataset contains a different set of machine-generated examples sampled using one particular decoding strategy.
 I also built additional datasets by truncating all of the examples to a particular sequence length, testing out sequence lengths between 2 and 192 tokens long.
@@ -163,7 +163,7 @@ To study the effect of generation length, I construct variations of the above da
   \label{tab:baselines}%
 \end{table}%
 
-\subsubsection{Methods for Automatic Detection}
+\subsection{Methods for Automatic Detection}
 The primary discriminator we employ is a fine-tuned BERT classifier \citep{devlin2018bert}.
 We fine-tune one instance of BERT per dataset variation described above.
 For the longest sequence length, $n$=192, we compare BERT's performance with several simple baselines that have been proposed in other work.
@@ -192,7 +192,7 @@ We then train logistic regression binary classifiers to predict human- or machin
 \citet{solaiman2019release} propose a very simple baseline consisting of a threshold on the total probability of the text sequence.
 An excerpt is predicted as machine-generated if its likelihood according to GPT-2 is closer to the mean likelihood over all machine-generated sequences than to the mean of human-written ones.
 
-\subsubsection{Method for Human Detection}
+\subsection{Method for Human Detection}
 The human evaluation task is framed similarly to the automatic one.
 We ask the raters to decide whether a passage of text was written by a human or by a computer algorithm.
 Figure \ref{fig:amt_screenshot} shows screenshots of the instructions and user interface for the annotation task.
@@ -440,6 +440,8 @@ As expected, a discriminator trained on an equal portion of data from each decod
 \begin{table}[t]
   \small
   \centering
+  \caption{Accuracy of BERT fine-tuned discriminator when trained on samples from one strategy (rows) and evaluated on another (columns). Trained on samples with 192 tokens. The `mixed' dataset is one containing an equal portion of samples from each strategy.}
+  \label{tab:transfer_accuracy}
   \begin{tabular}{c c|c|c|c}
     \toprule
     & & \multicolumn{3}{c}{Eval} \\
@@ -454,13 +456,13 @@ As expected, a discriminator trained on an equal portion of data from each decod
     & \multicolumn{1}{|c|}{mixed}  & 88.7          & 74.2          & 72.2 \\
     \bottomrule
   \end{tabular}
-  \caption{Accuracy of BERT fine-tuned discriminator when trained on samples from one strategy (rows) and evaluated on another (columns). Trained on samples with 192 tokens. The `mixed' dataset is one containing an equal portion of samples from each strategy.}
-  \label{tab:transfer_accuracy}
 \end{table}
 
 \begin{table}[t]
   \small
   \centering
+  \caption{Average probability of `machine-generated' according to each length-192 discriminator. The expected in-domain probability is 0.5. One token of conditioning.}
+  \label{tab:transfer-prediction}
   %                     p(machine)                              
   % dataset         k0-1wordcond k40-1wordcond p0.96-1wordcond
   % model                                                     
@@ -479,8 +481,6 @@ As expected, a discriminator trained on an equal portion of data from each decod
     & \multicolumn{1}{|c|}{random}  &  7.3 & 22.6 & 38.3 \\
     \bottomrule
   \end{tabular}
-  \caption{Average probability of `machine-generated' according to each length-192 discriminator. The expected in-domain probability is 0.5. One token of conditioning.}
-  \label{tab:transfer-prediction}
 \end{table}
 
 Perhaps this lack of transferability is related to each discriminator's calibration.
@@ -725,6 +725,8 @@ Table \ref{tab:dataset_stats} gives a detailed breakdown of the dataset across g
 \begin{table}[tb]
 \center
 \small
+\caption{Statistics on the annotation tasks (game rounds) available in our system. The second column shows the number of game rounds available for each system. The discrepancies in number of annotations per dataset is partially due to the fact that players were able to choose which domain they performed annotations in.}
+\label{tab:dataset_stats}
 	\begin{tabular}{l|r|rr|r|p{2in}|p{1.5in}}
 \toprule
  & \# & \multicolumn{2}{|c|}{\# Annotations} & {Avg} & & \\
@@ -768,13 +770,14 @@ Speeches & 297 & 8,374 & 4,835 & 16.28 &
 \\
 \bottomrule
 \end{tabular}
-\caption{Statistics on the annotation tasks (game rounds) available in our system. The second column shows the number of game rounds available for each system. The discrepancies in number of annotations per dataset is partially due to the fact that players were able to choose which domain they performed annotations in.}
-\label{tab:dataset_stats}
 \end{table}
 
 \begin{table}[tb]
 \center
 \small
+\caption{Statistics on the students who were invited to complete annotations on \ROFT. ``Avg Ann / Part'' is the average number of annotations per participating student,  while ``Avg Score / Part'' is the average score. ``Avg Time'' is the average time it took a participant to read one sentence. Standard error is shown.
+}
+\label{tab:particpants}
 \begin{tabular}{l|rrrrr}
 \toprule
       & \#              &                & Avg Annotations & Avg Score     & Avg Time /\\
@@ -786,9 +789,6 @@ Group B & 102 & 15,119 & 148 & 2.134 & {6.443} \\
 Overall & 241 & 21,646 & 90 & 2.083 & {6.338} \\
 \bottomrule
 \end{tabular}
-\caption{Statistics on the students who were invited to complete annotations on \ROFT. ``Avg Ann / Part'' is the average number of annotations per participating student,  while ``Avg Score / Part'' is the average score. ``Avg Time'' is the average time it took a participant to read one sentence. Standard error is shown.
-}
-\label{tab:particpants}
 \end{table}
 
 \subsubsection{Continuation Sources}
@@ -892,6 +892,8 @@ However, among our top 25\% of players (measured by mean score), there was high 
     \caption{\textbf{(left)} For Stories, as model size increases (using $p$=0.4), detection becomes harder. \textbf{(middle)} For Recipes, extra finetuning does not significantly impact detectability. \textbf{(right)} For Speeches, using a ``[Politics]'' control code (with the CTRL model) has no impact on detectability compared to using a random control code.}
     \label{fig:model_size_finetuning}
 \end{figure}
+
+\subsection{Analysis}
 
 \subsubsection{Are some genres easier to detect?}
 We found that generated text was easier to identify in the recipes and speeches genres than in the stories and news genres.
@@ -1151,7 +1153,9 @@ We see that when players select reasons like ``grammar'' or ``generic,'' they ar
 \subsection{Discussion}
 \label{section:roft_discussion}
 In the \ROFT{} user study, we demonstrated the viability of the boundary detection task as a framework for soliciting human evaluation of natural-language generation systems.
-We conducted the largest study of generated text detectability to date and, in the process, replicated many previous major results in the field, such as the improved performance of bigger models \citep{kaplan2020scaling}, the importance of decoding strategy selection \citep{ippolito-etal-2020-automatic}, and the difficulty in incentivizing annotators to improve over time \citep{clark2021all}.
+We conducted the largest study of generated text detectability to date and, in the process, replicated many previous major results in the field, such as the improved performance of bigger models \citep{kaplan2020scaling} and the difficulty in incentivizing annotators to improve over time \citep{clark2021all}.
+We confirmed the result from Section \ref{section:detection} showing that less random decoding strategy settings result in generated text that is harder for humans to detect.
+While this trend was true in both domains we tested it in, the impact of deoding strategy was more stark in the Stories domain than the News domain.
 In addition, we have provided new insights into the ways in which humans interact with partially-generated text.
 
 Future work could build off out study by testing a larger set of models, genres, and other experimental conditions ((finetuning, topic control, decoding strategy, etc.).
