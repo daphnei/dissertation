@@ -21,7 +21,7 @@ The main takeaways from my research are the following:
 	For example, Wordcraft users complained that the text was in too dull a style, a problem that might have been resolved very simply by increasing the sampling temperature.
 	Further research is needed into techniques for sampling from the long tail of low-likelihood words without causing semantic errors.
 
-\subsubsection{Memorization is a serious concern.}
+\subsubsection{Memorization is a serious concern but can be hard to define.}
 	In Chapter \ref{chap:memorization}, I focus on the memorization problem; language models are capable of regurgitating text from their train sets.
 	Memorization is most often caused by examples being over-represented in the training data, but in recent work \citep{zhang2021counterfactual}, we show that language models also memorize rare sequences.
 	(We show this by measuring counterfactual memorization--how much more likely an example is according to models that saw it during training compared to models that never saw the example.)
@@ -31,6 +31,9 @@ The main takeaways from my research are the following:
 	While memorization is often a sign of poor generalization, and at its worst, it can divulge private information, memorization can also be a good thing (e.g., we might want our language model to be able to accurately quote famous speeches).
 	It will be important to develop more advanced techniques for controlling memorization, allowing models to quote verbatim when there is a good reason to.
 
+\subsubsection{More attention needs to be paid to dataset quality.}
+	\TODO{Write this.}
+	
 \subsubsection{Supporting many tasks from fewer models is valuable.}
 	As neural language models increase in number of parameters, it is becoming increasingly infeasibile to create one custom-tailored model per task that needs to be supported.
 	In Chapter \ref{chap:creativity}, I show how a single pre-trained language model can be made to support a large variety of style transfer tasks that previous work would have typically trained several separate models for.

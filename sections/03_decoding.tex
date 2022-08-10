@@ -924,14 +924,14 @@ solve the quality issues.
 \end{center}
 \end{table}
 
-\subsection{Does model size make a difference?}
+\subsubsection{Does model size make a difference?}
 Previous work has shown that language model performance scales with number of parameters \citep{kaplan2020scaling}, so we expected players to be worse at detecting generations from larger models.
 Indeed, we found that players scored significantly higher when generations came from GPT-2 small (117M parameters) than when they came from GPT-2 XL (1.5B parameters) (Figure \ref{fig:model_size_finetuning}.).
 
 % We additionally experimented with the GPT-3 Davinci model (150B parameters) but were unable to collect enough annotations to draw any statistically significant conclusions.
 
 
-\subsection{Are diverse generations easier to detect?}
+\subsubsection{Are diverse generations easier to detect?}
 Choice of decoding strategy is known to have significant impact on text quality \citep{zhang2021trading} and detectability \citep{ippolito2020automatic}.
 Choosing a lower value of $p$ when generating with a nucleus sampling \citep{holtzman2019curious} decoding strategy produces less diverse but also less noisy text than choosing a higher value of $p$.
 In our experiments, we did not find statistically significant differences in player skill between $p$=0.0 (greedy) and $p$=0.4 sampling (Figure \ref{fig:genre_top_p}).
@@ -943,7 +943,7 @@ This highlights the importance of decoding, as improper selection of decoding st
 % maybe mention the differences in reasons given for different p values. mention how the GROVER paper says that human text's perplexity is more similar to p=0.92 (lol)
 
 
-\subsection{Do control codes affect detectability?}
+\subsubsection{Do control codes affect detectability?}
 CTRL is a 1.6B parameter LM trained with controllability in mind.
 At inference time, one can pass in a control code, such as ``[Politics]'' or ``[Horror]'' to include the style of the generated text.
 We investigated the efficacy of these control codes on the genre of presidential speeches by using ``[Politics]'' for half the generations and randomly selecting control codes for the remaining half.
@@ -951,7 +951,7 @@ We found that use of the politics control code did not significantly affect  pla
 This is not to say that control codes do not affect generation; however, it does suggest that the cues used by players to detect generations may not be related to genre-specific details, as least not within the genre of political speeches.
 Further work is needed to investigate whether control codes could have influenced detectability in other genres.
 
-\subsection{Does finetuning affect detectability?}
+\subsubsection{Does finetuning affect detectability?}
 We had expected that finetuning on in-domain text would result in a model that was better able to fool humans.
 Counter to expectations, there was a small increase in player detection ability when generations came from GPT-2 finetuned on recipes compared with generations from pre-trained GPT-2. This is despite the fact that the finetuned model had close to half the perplexity of the pre-trained model on a held out test set of 50,000 recipes (4.781 vs. 8.979).
 While we can only speculate as to the amount of recipe knowledge present in the pre-trained model (GPT-2's training data is not publicly available), it is possible the pre-trained model already contained enough understanding of recipe-like text that it was not critical to do the extra-finetuning.
@@ -1012,14 +1012,14 @@ Perhaps finetuning would have had more impact in a specialized or jargon-laden d
 \end{figure}
 
 
-\subsection{How much time did game rounds take?}
+\subsubsection{How much time did game rounds take?}
 To understand how much time game rounds took, we logged how many seconds players spent on each sentence decision.
 We controlled for instances of players leaving a game open mid-annotation by applying $\min(120, t)$ to all recorded times $t$.
 We computed total time per annotation by summing the times for each sentence-level decision.
 We found players took longer on annotations where they ended up receiving more points, and players gradually got faster over time (Figure \ref{fig:time_tracking}).
 While one might expect longer sentences to take more time to read and make decisions on, we found no correlation between time taken and length of sentence ($\rho$=-0.10), indicating that players take time to think about the task beyond just reading the sentence.
 
-\subsection{What sentence-level features could be used to detect generated text?}
+\subsubsection{What sentence-level features could be used to detect generated text?}
 It has been well-studied how generated text differs in basic, measurable ways from human-written text, often due to the choice of decoding strategy.
 In particular, we measured how sentence length, part-of-speech distribution, and presence of named entities and novel words differed between the generated and human-written sentences in our dataset, and whether players were able to pick up on these differences.
 Figure \ref{fig:sentence_stats} shows the results for named entities, where novel named entities are ones which occured in the current sentence but not in any previous sentences.
@@ -1032,7 +1032,7 @@ However, for Stories, the generated sentences were on average longer than the hu
 Additionally in Stories, generated sentences has on average a greater proportion of adjectives and adverbs, but annotators did not pick up on this trend.
 
 
-\subsection{Does familiarity affect detectability?}
+\subsubsection{Does familiarity affect detectability?}
 All participating players filled out an exit survey after completing their annotations. The questions on this survey are in Table \ref{tab:survey_questions}.
 Figure \ref{fig:survey_results} shows some of the results.
 First, there was not much difference in performance between participants who reported they had never heard of GPT-2/3 and those who reported having considerable familiarity with them.
@@ -1080,7 +1080,7 @@ Finally, we did not observe any correlation between self-reported familiarity wi
     \label{tab:survey_questions}
 \end{table}
 
-\subsection{What are the most reliable errors to look for when detecting generated text?}
+\subsubsection{What are the most reliable errors to look for when detecting generated text?}
 \label{sec:reasons}
 Each time a player specified a sentence was machine-generated, they had the option to specify why they made this decision, selecting from a set of pre-defined options (Table \ref{tab:reasons_text}) or else writing down a custom reason.
 Table \ref{tab:reasons} shows for each reason, the average number of points earned when that reason was specified.
@@ -1168,8 +1168,8 @@ We also believe that more investigation is needed into exactly what annotators a
 Finally, we expect our released dataset of generations and annotations to be of broad use to those studying detection.
 It would be worthwhile to study how well automatic systems perform at the detection task, and whether we can predict when generated text will be especially difficult for human annotators to recognize.
 
-\section{Limitations}
-In terms of ethics, work on the detectability of machine-generated text sits at an interesting balancing point.
+\subsection{Study Limitations}
+Work on the detectability of machine-generated text sits at an interesting balancing point.
 On one hand, gamifying and publicizing the detection task may help to raise the public's awareness of their susceptibility to machine-generated text, and work such as ours paves the way for future research on techniques for helping the public to improve at detection.
 On the other hand, we show that the detection task is a viable method for evaluating generation systems.
 For researchers aiming to build better generative language models, decreasing human detection ability might a very reasonable goal to optimize for.
@@ -1186,6 +1186,25 @@ They found that rapidly guessing Sentence 9 as the boundary on every game round 
 One alternative system which could reduce this bias would be to show all ten sentences in the passage at once rather than show them one at a time.
 The player would get a certain number of tries to guess the index of the boundary sentence and would be scored based on the number of tries this takes.
 This would resolve the bug in our current system that some sentence positions have a high point value in expectation.
+
+\section{Conclusion}
+In this chapter, I introduce the task of detecting when text is machine-generated.
+This task can either be a human evaluation task (asking annotators to identify when text is generated) or an automatic one (building discriminators which can identify it).
+In Section \ref{section:detection} I conduct a preliminary study of how humans and finetuned BERT classifiers perform on this task.
+I show that decoding strategies which result in generated text that tends to fool humans lead to text that is likely to fool automatic detection systems.
+However, the results in this section are limited in that they don't break down detection by text genre, don't investigate passages which are partially human-written and partially generated, and assume the automatic classifiers have access to training data from the same generative model we are aiming to detect samples from.
+
+Section \ref{section:roft} aims to fill in several of these gaps by conducting a lage-scale user study of human detection ability.
+In the \ROFT{} user study, I demonstrate the viability of a boundary detection task as a framework for soliciting human evaluation of natural-language generation systems.
+I conduct the largest study of generated text detectability to date and, in the process, replicate many previous major results in the field, such as the improved performance of bigger models \citep{kaplan2020scaling} and the difficulty in incentivizing annotators to improve over time \citep{clark2021all}.
+We confirmed the result from Section \ref{section:detection} showing that less random decoding strategy settings result in generated text that is harder for humans to detect.
+While this trend was true in both domains we tested it in, the impact of decoding strategy was more stark in the Stories domain than the News domain.
+In addition, we have provided new insights into the ways in which humans interact with partially-generated text.
+
+Future work could build off our study by testing a larger set of models, genres, and other experimental conditions ((finetuning, topic control, decoding strategy, etc.).
+In addition, our study was limited in that we assumed continuations always happened on the sentence boundary, but that is not always necessarily the case.
+Future work could look at continuations that do not happen exactly on the boundary between sentences.
+We also believe that more investigation is needed into exactly what annotators are thinking when they make their decisions and how we can give annotators the right tools to explain their thought processes.
 
 
 \section{Summary of Contributions}

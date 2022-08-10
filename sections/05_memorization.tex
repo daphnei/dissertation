@@ -141,7 +141,7 @@ This subset should be small enough that it is feasible to test for extraction,
 but also large enough that
 it gives statistical confidence.
 %
-In this paper we choose subsets of roughly $50{,}000$ sequences.
+In our experiments, we choose subsets of roughly $50{,}000$ sequences.
 %\footnote{Even at this low number of sequences, the generations analyzed in this paper still require 
 %over $1{,}000$ GPU-hours of compute.}
 The primary criteria when choosing a subset of the training data is to obtain a representative sample that allows
@@ -364,7 +364,7 @@ Improving upon this limitation is an interesting problem for future work.
 \end{figure}
 
 
-The majority of this paper uses subsets of the training data that were explicitly sampled according to training data duplication frequency.
+The experiments presented thus far use subsets of the training data that were explicitly sampled according to how many duplicates of the example exist in the datas.
 %
 We now explore what would happen if we instead choose a
 truly random subset of the training data, where each sequence is sampled uniformly.
@@ -487,7 +487,7 @@ because this definition requires substantially larger computation resources; it 
 querying whether hundreds of thousands of sequences are contained in an 800GB
 training dataset.
 %
-Therefore, to promote reproducability, the remainder of this paper continues with testing the generated suffix against the single expected training suffix.
+Therefore, to promote reproducability, the remainder of this section continues with testing the generated suffix against the single expected training suffix.
 % And while we have developed special suffix-array tooling to perform this computation efficiently,
 % in order to allow our work to be more easily reproduced, we TODO our main methodology
 % that only requires a simple equality test between two length-50 sequences.
@@ -731,34 +731,6 @@ imperfect in order to efficiently scale to hundreds of gigabytes of training dat
 % will result in memorization.
 Thus, while it may be possible to remove \emph{most} instances of duplicate data, different and valid definitions of duplicates can mean deduplication is not exhaustive.
 
-\subsection{Conclusion}
-
-%Understanding the degree to which language models memorize their training datasets
-%is interesting both to those who care about generalization 
-%(because well generalizing models should not focus on the peculiarities of their training dataset), and
-%to those who care about privacy (because memorized content can violate the privacy of users in the training dataset).
-%
-This section presents the first comprehensive quantitative analysis of memorization in
-large language models by directly re-processing the training data to identify memorized content.
-%
-Our work has two broad conclusions.
-
-First, we show that while current LMs do accurately model the distribution of their training data, this does not necessarily imply they will model the desired \emph{underlying} data distribution.
-In particular, when the training data distribution is skewed (e.g., by containing many duplicates of some sequences) larger models with more capacity are likely to learn these unintended dataset peculiarities.
-%
-It therefore becomes even more important to carefully analyze the datasets used to train ever larger models, as future (larger) models are likely to remember even more details than current (smaller) models.
-
-
-Second, our results indicate that current large language models likely memorize a significant fraction of their training datasets.
-%
-Memorization scales log-linear with model size---by doubling the number of parameters in a model we can extract a significantly larger fraction of the dataset.
-%
-Given that current state-of-the-art models contain more than 200$\times$ as many parameters as the largest 6B parameter model we analyze, it is likely that these even larger models memorize many sequences that are repeated just a handful of times.
-%
-At the same time, we have shown that this memorization is often hard to discover, and for an attack to actually extract this data it will be necessary to develop qualitatively new attack strategies.
-%
-Fortunately, it appears that (for the comparatively small models we study) training data inserted just once is rarely memorized, and so deduplicating training datasets~\citep{lee2021deduplicating} is likely a practical technique to mitigate the harms of memorization.
-
 
 \section{Deduplicating Training Data Reduces Memorization}
 \label{section:dedup}
@@ -857,7 +829,7 @@ In our research, we do not focus on the impact of duplicate text in pretrained m
 
 \subsection{Datasets Considered in this Study}
 We analyze the presence of duplicate text in four datasets of varying sizes that have been used for training natural language generation systems, producing general-purpose pre-trained models, and for language model benchmarking.
-While this paper restricts itself to English datasets, we expect that non-English datasets suffer from similar issues and could likewise benefit from de-duplication.
+While the analysis we perform is restricted to English datasets, we expect that non-English datasets suffer from similar issues and could likewise benefit from de-duplication.
 
 \begin{itemize}
 \item \textbf{Wikipedia (Wiki-40B)}
@@ -1156,7 +1128,7 @@ When text was duplicated across multiple data splits, we prioritized keeping a c
 
 
 
-\paragraph{Amount of Text Removed}
+\subsubsection{Amount of Text Removed}
 % We find that existing text datasets scraped from the internet contain duplicated content.
 % While both C4 and RealNews explicitly attempt to perform deduplication [cites], they only deduplicate \emph{exact matches} of entire training sequences. 
 % This underestimates the amount of duplications in the dataset. 
@@ -1177,7 +1149,7 @@ We find that both \Approx{} and \Exact{} remove similar content---$77\%$ of the 
 \input{tables/dup_in_datasets}
 \input{tables/top_urls_deduplicated}
 
-\paragraph{Properties of Duplicated Text}
+\subsubsection{Properties of Duplicated Text}
 While the authors of both RealNews and C4 explicitly attempted deduplication during dataset construction, the methods were insufficient to capture the more subtle types of duplicate text commonly found on the internet.
 In C4 and Wiki-40B, we qualitatively observe that much of the text identified as near-duplicated is computer-generated.
 The text is identical except for the names of places, businesses, products, dates, and so on. 
@@ -1191,14 +1163,14 @@ For RealNews and LM1B, derived from news sites, we observe that many near-duplic
 For example, in LM1B, there is one example that starts ``\textit{MINEOLA , N.Y. - New York officials say} [...]'' and another that starts ``\textit{( AP ) - New York officials say} [...]''.
 The two examples are otherwise identical.
 
-\paragraph{Train / Test Set Leakage}
+\subsubsection{Train / Test Set Leakage}
 \label{sec:leakage}
 Both deduplication methods identify overlap between the train set and the validation set (Table \ref{tab:num_duplicates}).
 For example, 4.6\% of the C4 validation set and 14.4\% of the RealNews validation set examples had an approximate duplicate in their respective training sets.
 Such duplication is problematic since it could cause evaluation metrics to be unfairly inflated for models that are better at memorizing their train sets.
 We evaluate the effect of this leakage on publicly released models in Section \ref{sec:eval-existing-models}.
 
-\subsection{Impact on Trained Models}
+\subsubsection{Impact of Training on Deduplicated Data}
 \label{sec:impact-trained-models}
 We trained 1.5B parameter ``XL", decoder-only, Transformer-based language models similar to GPT-2, on C4-\Original, C4-\Approx, and C4-\Exact, respectively.
 We use the T5 codebase and model architecture from \citet{raffel2019exploring}, and each model was trained for about two epochs on its respective dataset.
@@ -1216,7 +1188,7 @@ The 1.5B parameter XL models had 24 layers, each with 32 attention heads. The mo
 The 110M parameter base models had 12 layers, each with 12 attention heads.
 The model embedding size was 768, the feed forward layers had a hidden size of 2,048, and the key/value dimension size for the attention heads 64.
 
-\paragraph{Model Perplexity}\label{sec:perplexity-results}
+\paragraph{Validation Set Perplexity}\label{sec:perplexity-results}
 
 \begin{figure}[h]
     \centering
@@ -1249,7 +1221,7 @@ This is despite seeing fewer tokens of training data overall.
 Lastly, we note all our XL models achieved  <35 perplexity on LM1B, which is less than the 42.16 perplexity reported for the 1.5B GPT-2 using a vocabulary the same size as ours.
 
 
-\subsection{Impact on Generated Text}
+\paragraph{Memorization Exhibited in Generated Text}
 \label{sec:memorization-results}
 Data duplication has the effect of biasing the trained LM towards particular types of examples. 
 This can contribute to a lower diversity of generations, and increased likelihood that the generated content is copied from the training data \citep{carlini2020extracting}.
@@ -1289,7 +1261,7 @@ XL-\Exact{} and XL-\Approx{} still copy the groundtruth more often when the prom
 
 \input{tables/ppl_on_sota_models}
 
-\subsection{Impact on Existing Models} \label{sec:eval-existing-models}
+\subsubsection{Impact on Deduplicating Validation Sets} \label{sec:eval-existing-models}
 Train-test leakage does not just impact models trained on C4.
 Table \ref{tab:ppl_sota_models} shows that
 % the presence of a near-duplicate
@@ -1306,10 +1278,10 @@ are part of verbatim matches in RealNews of at least length $50$.
 Likewise, more than 5\% of the tokens in \textasciitilde 200k sequences outputted by GPT-Neo 1.3B \citep{gpt-neo} are part of a $50$ token matches of its training data, the Pile \citep{pile}.
 
 \subsection{Discussion}
-The focus of this paper is on the datasets used to train language models.
-While recent work focused on documenting the potential harms that could arise from problematic datasets  \cite{bender2018data, gebru2020datasheets}, less work has been done to 
-quantitatively analyze properties of real language modelling datasets, like \citet{dodge2021documenting} has done for C4.
-Our paper provides analysis on one particular axis, that of data duplication.
+The results in this section demonstrate the crucial nature of the text used to train and evaluate language models.
+While recent work has focused the potential harms that could arise from problematic datasets  \cite{bender2018data, gebru2020datasheets}, less work has been done to 
+quantitatively analyze properties of real language model train datasets, like \citet{dodge2021documenting} has done for C4.
+The analysis in this section addresses just one particular axis, that of data duplication.
 
 Our experiments measured what could be quantified: the amount of duplicate content in common datasets, the effect of deduplication on trained model perplexity, and the reduction of memorized content in trained models through deduplication.
 We do not focus on the nature of the data being removed by deduplication or memorized by LMs.
@@ -1330,22 +1302,48 @@ Also, text that gives attribution is often duplicated across documents, so
 removing duplicate substrings could correspond to removing \emph{just} the attribution, which could result in models that learn the content without its attached attribution.
 Deduplication is also not sufficient to remove privacy-sensitive data like bank passwords and medical records which should never be used in training data.
 
-Ultimately, whether memorization is a desired property of a language model, or else risky and unwanted, depends
-% both % TODO add back in
-on the nature of the text that has been memorized and on the downstream applications of the trained model.
-However, since the trend has been towards creating datasets and models that are application-agnostic, we encourage researchers to think carefully about the limitations of the data
-% they have % TODO add back in
-collected and the how the model's intended usage constrains what should be part of the training set. 
-% For example, if the goal of training a language model is to be able to exactly reproduce text found on the internet, then perhaps deduplication does not make sense.
-% However, for the vast majority of related work, the goal is to model human communication through language, which means training on low-quality highly duplicated text undesirable.
-Developing techniques to memorize or forget specific sequences depending on the end application is a promising research direction. 
-
-We encourage future language model research to perform dataset deduplication, either by training on the deduplicated datasets we release, using the deduplication tools we release, or following our approach to deduplicate datasets with new tools.
-
-The exact technique used to perform deduplication is less important than performing stringent deduplication in the first place.
+Lastly, the exact technique used to perform deduplication seems less important than performing stringent deduplication in the first place.
 On the whole, deduplication does not harm, and sometimes improves, model perplexity, despite the fact that the deduplicated datasets are smaller and faster to train on.
 It is especially important that there are no duplicates between the training and testing sets, because overlap here explicitly encourages selecting models that memorize the training data.
 Lastly, deduplication helps to reduce some of the privacy concerns around LMs memorizing their training data.
+
+
+\section{Conclusion}
+
+%Understanding the degree to which language models memorize their training datasets
+%is interesting both to those who care about generalization 
+%(because well generalizing models should not focus on the peculiarities of their training dataset), and
+%to those who care about privacy (because memorized content can violate the privacy of users in the training dataset).
+%
+In this chapter, I present several factors which impact one's ability to extract memorized content from language models.
+First, I demonstrate the relationship between the length of prompt passed to the language model and the chance it will verbatim generate the true continuation to the prompt.
+Second, I show how modeling and training dataset choices have significant impact on memorization capacity.
+Larger language models memorize more than smaller ones, and the presence of duplicate examples in train sets significantly increases the chance those examples will get memorized.
+
+In Section \ref{section:dedup}, I present a comprehensive quantitative analysis of the effect of mitigating the duplication problem.
+I discuss how thorough deduplication is difficult due to the presence of many near-duplicate examples, and I present two algorithms for handling this.
+By training language models on data before and after deduplication, I make the case that while current LMs do accurately model the distribution of their training data, this does not necessarily imply they will model the desired \emph{underlying} data distribution.
+In particular, when the training data distribution is skewed (e.g., by containing many duplicates of some sequences) larger models with more capacity are likely to learn these unintended dataset peculiarities.
+%
+It therefore becomes even more important to carefully analyze the datasets used to train ever larger models, as future (larger) models are likely to remember even more details than current (smaller) models.
+
+
+The findings in this chapter indicate that current large language models likely memorize a significant fraction of their training datasets.
+%
+Memorization scales log-linear with model size---by doubling the number of parameters in a model we can extract a significantly larger fraction of the dataset.
+%
+Given that current state-of-the-art models contain more than 200$\times$ as many parameters as the largest 6B parameter model we analyze, it is likely that these even larger models memorize many sequences that are repeated just a handful of times.
+%
+At the same time, I have shown that this memorization is often hard to discover, and for an attack to actually extract this data it will be necessary to develop qualitatively new attack strategies.
+%
+Fortunately, it appears that (for the comparatively small models we study) training data inserted just once is rarely memorized, and so thoroughly deduplicating training datasets is a practical technique to mitigate many the harms of memorization.
+
+Ultimately, whether memorization is a desired property of a language model, or else risky and unwanted, depends
+both on the nature of the text that has been memorized and on the downstream applications of the trained model.
+However, since the trend has been towards creating datasets and models that are application-agnostic, researchers should think carefully about the limitations of the data they have collected and the how the model's intended usage constrains what should be part of the training set. 
+% For example, if the goal of training a language model is to be able to exactly reproduce text found on the internet, then perhaps deduplication does not make sense.
+% However, for the vast majority of related work, the goal is to model human communication through language, which means training on low-quality highly duplicated text undesirable.
+Developing techniques to memorize or forget specific sequences depending on the end application is a promising research direction. 
 
 
 \section{Summary of Contributions}
