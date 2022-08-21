@@ -375,7 +375,7 @@ In 2018, Howard and Ruder \citep{howard2018universal} and Radford et al. \citep{
 To accomplish any specific language task of interest, that model could subsequently be trained for extra steps on the training data of the desired task, a process known as finetuning.
 The idea of finetuning a more general model for a specific task had already taken off in computer vision, where researchers had shown a convolutional neural network pre-trained on the ImageNet task of classifying the contents of images could be finetuned for tasks ranging from image segmentation to cancer detection.
 
-General-purpose language models intended for generation tasks tend to be pre-trained on massive datasets scraped from the internet (Table \label{tab:dataset_list}).
+General-purpose language models intended for generation tasks tend to be pre-trained on massive datasets scraped from the internet (Table \ref{tab:dataset_list}).
 It is common to use both decoder-only models trained only to predict the next token given the previous ones \citep{radford2019language}, as well as encoder-decoder architectures trained with a de-noising loss, where the input is a corrupted version of the text, and the task is to recover the uncorrupted text \citep{raffel2019exploring,lewis2020bart}.
 Table \ref{tab:common_pretrained_models} gives examples of several pre-training objectives that have been employed by popularly-used pre-trained models.
 Each of these models has been finetuned for a large diversity of downstream tasks.

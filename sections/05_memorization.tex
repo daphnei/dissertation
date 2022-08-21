@@ -412,7 +412,7 @@ by the 6B GPT-J model, but not by GPT-2 XL.
 We previously defined memorization as the ability of a model to generate the exact true continuation when the \emph{most likely} token is chosen at every step of decoding.
 However, using greedy decoding strategy does not produce the overall most likely sequence.
 Many language model applications use other decoding strategies, such as beam search (an algorithm for efficiently searching over the exponential space of sequences that could possibly be generated) to find the one with highest possible likelihood.
-To understand how our choice of decoding strategy affects the amount of memorization we measure, we compare greedy decoding with beam search in Figure \ref{fig:other_approaches}(c).
+To understand how our choice of decoding strategy affects the amount of memorization we measure, we compare greedy decoding with beam search in Figure \ref{fig:other_approaches_search}(c).
 
 We find that using beam search (with $b = 100$) results in only slightly more extracted memorization.
 The average difference in fraction of extractable memorization is just under 2 percentage points on average, with a maximum of 5.6. %, for the bucket containing sequences with about 1300 repetitions, and the average difference is around $2\%$.

@@ -897,7 +897,7 @@ We asked participants to complete a pre-study questionnaire about their writing 
 Then we carried out a within-subjects study, giving each user three writing prompts and asking them to write 100-300 word stories under the following three experimental conditions (illustrated in Figure \ref{fig:conditions}):
 
 \begin{enumerate}
-    \item \textbf{full} Wordcraft, as described in Section \ref{sec:wordcraft}.
+    \item \textbf{full} the full Wordcraft tool.
     \item \textbf{cont} (baseline) a text editor with a single control: LaMDA will propose continuations to the text written so far. The \textit{cont} condition enables us to evaluate Wordcraft against existing AI-assisted writing applications which most often feature continuation as a single control.
     \item \textbf{chat} (baseline) a plain text editor shown alongside a chat dialog window.
     Users can converse with the LaMDA-powered chatbot, but the chatbot only ``knows'' what the user types to it.
@@ -1046,7 +1046,7 @@ Users also noted many grammatical issues, for example that the AI agent's sugges
 
 \subsubsection{Wordcraft versus baseline 1: continuation-only}
 In this section we compare Wordcraft to the continuation-only baseline (\textit{cont}). 
-This baseline allows us to measure the utility of Wordcraft's prompting methods (Section \ref{sec:novel_prompt}) and UX patterns (Section \ref{sec:ux_patterns}) for the story writing task against the typical experience of \textit{continue-my-text} seen in existing LLM-powered writing tools.
+This baseline allows us to measure the utility of Wordcraft's prompting methods and UX patterns for the story writing task against the typical experience of \textit{continue-my-text} seen in existing LLM-powered writing tools.
 We analyzed the activity logs from each user's writing session, and extract quantitative findings based on the following metrics (results in Table \ref{tab:freq}):
 
 \begin{itemize}
@@ -1065,7 +1065,22 @@ Participants made significantly more requests of the AI agent using Wordcraft (7
 
 % Users spent less time overall using Wordcraft (9.97m \textpm 37s) than continuation-only (11.52m \textpm 131.5s), even though the stories they wrote with Wordcraft are longer (267.7w \textpm 21.6w versus 237.3w \textpm 16w). However, these differences are not statistically significant.
 
-% \subsubsection{Users found Wordcraft more helpful.}
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{figures/exit_interview_results.png}
+  \caption{Exit interview results. 1: Strongly disagree, 2: Disagree, 3: Neutral, 4: Agree, 5: Strongly agree.}
+  \label{fig:exit_interview_results}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.8\linewidth]{figures/favorite_ops.png}
+  \caption{Results from exit interview question `Which controls did you enjoy using?'}
+  \label{fig:favorite_ops}
+\end{figure}
+
+% \subs
+ubsection{Users found Wordcraft more helpful.}
 The results from the Likert-scale questions in the exit interviews are in Figure \ref{fig:exit_interview_results}. According to a Mann-Whitney U test, users found Wordcraft significantly more helpful than the continuation-only baseline (\textit{p} = 0.0266).
 
 % \subsubsection{Users enjoyed using controls aside from continuation.}

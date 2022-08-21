@@ -795,7 +795,7 @@ Overall & 241 & 21,646 & 90 & 2.083 & {6.338} \\
 
 In order to answer questions related to how model attributes affect generated text we employed different methods of text generation for each category.
 For Recipes, New York Times, and Stories, we generated continuations with GPT-2 XL using nucleus sampling \citep{holtzmanetal2020} with $p=0.4$ and a repetition penalty of $1.2$ \citep{keskar2019ctrl}.
-For Recipes, we additionally generated continuations with a GPT-2 XL model finetuned on recipes\footnote{See Appendix \ref{app:gen_filter} for finetuning details.}.
+For Recipes, we additionally generated continuations with a GPT-2 XL model finetuned on recipes.
 
 For New York Times and Stories, we experimented with varying the $p$ used for decoding, testing out $p=0.0$ (argmax) and $p=1.0$ (sampling directly from the model's predicted distribution).
 As an additional sanity check on annotator skill, we also included 100 game rounds in the News domain where instead of transitioning to an LM-generated continuation, the passage transitioned to a completely different news article selected at random.

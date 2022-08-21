@@ -6,18 +6,18 @@ The main takeaways from my research are the following:
 \subsubsection{Detection of generated text is getting harder but no less important.}
 	Chapter \ref{chap:decoding}, I present the challenge of detecting machine-generated text.
 	As neural language models get better, it is becoming only more challenging for humans to notice they are interacting with a bot.
-	Indeed, in a recent controversary, a YouTuber inundated 4chan with GPT-Neo generated text \footnote{\url{https://youtu.be/efPrtcLdcdM}}.
+	Indeed, in a recent controversy, a YouTuber inundated 4chan with GPT-Neo generated text \footnote{\url{https://youtu.be/efPrtcLdcdM}}.
 	While some users eventually caught on, many continued to be fooled even after the YouTuber revealed the scheme.
 	In computer vision \citep{saharia2022photorealistic,ramesh2022hierarchical}, it is standard to watermark generated images, but thus far, this has not been applied to large language model outputs.
 	The increasing pervasiveness of generated text on the internet is problematic not just because of its potential societal impacts but because it sullies our future training sets.
 	In machine translation, it is a well-known problem that automatically translated text could corrupt training sets, and some watermarking techniques have been proposed \citep{venugopal2011watermarking}.
 	This is a problem that those who build large neural language models (and their training sets) need to start concerning themselves with as as well.
-	My research on automatic detection was performed in 2018 on 768M paramter models.
+	My research on automatic detection was performed in 2018 on 768M parameter models.
 	It would be very valuable to reconsider the automatic detection problem on state-of-the-art generation systems and in more realistic contexts (such as on documents where only a portion of the text may be generated).
 
 \subsubsection{Text generation involves tradeoffs.}
 	In Chapters \ref{chap:background} and \ref{chap:decoding}, I describe how there exists a tradeoff between generating diverse text that is easier for humans to detect because it contains obvious errors--and generating mundane text that is harder to detect, but lacks the lexical diversity of a real human writer.
-	This tradeoff continues to be important, both for academic research--because we need to ensure that  comparisons between different NLG systems are fair--and for practioners--because the setting chosen can have a singificant impact on user experience.
+	This tradeoff continues to be important, both for academic research--because we need to ensure that  comparisons between different NLG systems are fair--and for practitioners--because the setting chosen can have a significant impact on user experience.
 	For example, Wordcraft users complained that the text was in too dull a style, a problem that might have been resolved very simply by increasing the sampling temperature.
 	Further research is needed into techniques for sampling from the long tail of low-likelihood words without causing semantic errors.
 
@@ -27,15 +27,18 @@ The main takeaways from my research are the following:
 	(We show this by measuring counterfactual memorization--how much more likely an example is according to models that saw it during training compared to models that never saw the example.)
 	More detailed studies of what kinds of content are more susceptible to memorization and the training dynamics behind memorization will be important subjects of future work.
 
-	In the research discussed in this thesis, I have considered \textit{all} instances of memorization as problemtatic.
+	In the research discussed in this thesis, I have considered \textit{all} instances of memorization as problematic.
 	While memorization is often a sign of poor generalization, and at its worst, it can divulge private information, memorization can also be a good thing (e.g., we might want our language model to be able to accurately quote famous speeches).
 	It will be important to develop more advanced techniques for controlling memorization, allowing models to quote verbatim when there is a good reason to.
 
 \subsubsection{More attention needs to be paid to dataset quality.}
-	\TODO{Write this.}
+	Chapter \ref{chap:memorization} shows that duplicate text in language model training data is a crucial source of memorization.
+	However, duplication is only one of many traits that can influence how well models pre-trained on a large dataset perform on a variety of tasks of interest.
+	Research answering questions on the effect of pre-training dataset composition--including how stringent toxicity filters should be, what languages to include, and the balancing of different sources (news, Wikipedia, books, etc.)--could have important ramifications for how new datasets are built and how trained models are used.
+	It will be impossible to recommend a single set of data composition rules that will be optimal for all downstream tasks (for example, filtering out all hate speech will result in a model that is less likely to generate hate speech but is also less useful as part of a hate speech detection system), but at least further research should allow us to answer questions about the tradeoffs involved in different dataset composition decisions. 
 	
 \subsubsection{Supporting many tasks from fewer models is valuable.}
-	As neural language models increase in number of parameters, it is becoming increasingly infeasibile to create one custom-tailored model per task that needs to be supported.
+	As neural language models increase in number of parameters, it is becoming increasingly infeasible to create one custom-tailored model per task that needs to be supported.
 	In Chapter \ref{chap:creativity}, I show how a single pre-trained language model can be made to support a large variety of style transfer tasks that previous work would have typically trained several separate models for.
 	I also argue that we should be pre-training large language models for a fill-in-the-blank-style objective, rather than a continuation one, because filling in the blank is a strictly more versatile task.
 	There has been a significant focus in recent work on developing training objectives to support a variety of downstream tasks with minimal additional task-specific adaption \citep{wei2021finetuned,sanh2021multitask}.
@@ -45,8 +48,12 @@ The main takeaways from my research are the following:
 	In Chapter \ref{chap:creativity}, I present Wordcraft, a text editor with NLG-powered writing assistance intended for creative writers.
 	Through user studies with both novice and professional writers, we explore the strengths and weaknesses of state-of-the-art natural language generation.
 	Studies of NLG use by real users can lead to different and more nuanced conclusions than those from more contrived human evaluation schemes.
-	For example, when evaluating the use of augmented zero shot learning for style transfer with Amazon Mechanical Turk-based evaluation, we saw that annotators prefrred our approach's generations over other approaches.
+	For example, when evaluating the use of augmented zero shot learning for style transfer with Amazon Mechanical Turk-based evaluation, we saw that annotators preferred our approach's generations over other approaches.
 	However, use of this feature within Wordcraft revealed just how much of gap there still is between the types of transfers writers want to do and the capability of our approach.
 
-	Creative writing is only one domain where NLG-powered tools could be impactful, and it would be valuable to see the types of studies I ran with Wordcraft be conducted in other domains.
-	In particular, NLG tools could potentially have impact in \TODO{}
+	Fiction writing is only one domain where NLG-powered tools could be impactful, and it would be valuable to see the types of studies I ran with Wordcraft be conducted in other domains.
+	In particular, NLG has many possible uses in tools that assist people in learning how to write (both children and new-language learners).
+	It could also have impact in domains that require writers to produce a lot of text quickly, such as script writing for immersive video games.
+
+\subsection{Final Thoughts}
+
