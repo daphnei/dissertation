@@ -5,13 +5,12 @@ AI-assisted creative writing is an attractive testbed for NLG systems because id
 In addition, science fiction writers have been grappling with the concept of human-like machines and artificial intelligence for at least as long as computer scientists have, so it stands to reason they might be early adopters of AI-powered creative writing tools.
 
 In this chapter, I describe work I have done toward bridging the gap between what most language models do by default (predict a continuation for a prompt) and the operations writers actually would want.
-First, I will describe efforts to capture longer-term coherence by building a language model that operates over sentences rather than other sub-words.
-Second, I will show how existing neural networks can be modified to support fill-in-the-blank style tasks in addition to the more common paradigm of continuation.
-Filling in the blank is a common control that is requested by writers.
-Third, I will present a recipe for performing sentence style transfer into an arbitrary range of styles--such as rewriting text to be more Shakespearean, metaphorical, or meladramatic--without any exemplars of the task or task-specific model training.
-
-To test out how these and other NLG-based tools can be used in practice, my collaborators at Google and I built Wordcraft, a word processor augmented with a variety of ``smart'' writing controls and suggestion tools.
-I will end by describing the features of Wordcraft and the results of a user study conducted with the tool.
+% First, I will describe efforts to capture longer-term coherence by building a language model that operates over sentences rather than other sub-words.
+First, I will show how existing neural networks can be modified to support fill-in-the-blank style tasks in addition to the more common paradigm of continuation.
+Filling in the blank is a common functionality requested by writers.
+Second, I will present a recipe for performing sentence style transfer into an arbitrary range of styles--such as rewriting text to be more Shakespearean, metaphorical, or meladramatic--without any exemplars of the task or task-specific model training.
+Third, to test out how these and other NLG-based tools can be used in practice, I present Wordcraft, a word processor augmented with a variety of ``smart'' writing controls and suggestion tools.
+I describe how a single large language model is used to support all of the ``smart'' functions in Wordcraft, and I examine Wordcraft's strengths and limitations through user studies conducted with both amateur and professional writers.
 
 % Artificial intelligence systems which can write stories have been a goal of researchers since the early days of computing.
 % However, much of the early work in this area was focused on building systems which could produce an entire story from scratch given an initial set of constraints.
@@ -30,7 +29,7 @@ Most recently, \textit{label-free} methods have taken advantage of the natural m
 This is true even for approaches which claim to be label-free \citep{DBLP:journals/corr/abs-1905-11975,DBLP:journals/corr/abs-2010-03802}.
 Hence, there is a clear need for new methods that both reduce the training data requirements and expand the scope of styles supported \citep{DBLP:journals/corr/abs-2011-00416,DBLP:journals/corr/abs-2010-12742}.
 
-\begin{figure}[t]
+\begin{figure}[tbp]
     \centering
      \includegraphics[width=0.5\linewidth]{figures/style-transfer-prompt.pdf}
   \caption{Zero-shot, few-shot, and augmented zero-shot prompts for style transfer. The boldface text is the zero-shot prompt, and the plain text is the additional priming sequence. The full prompts used in this paper are shown in Table \ref{tab:fullprompt}. We encourage readers to examine the outputs of our model at \url{https://bit.ly/3fLDuci}.}
@@ -111,7 +110,7 @@ For \textit{LLM-Dialog}, the prompt was instead formulated as a conversation bet
 \paragraph{Non-Standard Styles}
 For our six non-standard styles, we asked six professional raters to assess  <input sentence, target style, output sentence> tuples. These raters are fluent in English, live in India, and work full time labeling and evaluating data. To decrease inter-rater discrepancy and ensure that our instructions were clear, we had an initial calibration session where they test-rated a small portion of the data (around 10 datapoints which were then omitted from the results) and asked us any clarifying questions. For each style, we compare outputs from our method plus the three baselines for 50 sentences.
 
-\begin{figure}[htb]
+\begin{figure}[tbp]
   \centering
   \fbox{\includegraphics[width=0.8\linewidth]{figures/rater_ui.png}}
   \caption{The rating UI used for human evaluation. The user may be shown a number of blue squares at once with the same original text and different outputs.}
@@ -139,7 +138,7 @@ Figure \ref{human_eval_other_styles} shows these results. %, and all raw outputs
 We found that the outputs of our method were rated almost as highly as the human-written ground truth for all three evaluations. The zero-shot baseline performed the worst in all categories: 25.4\% of the time, it did not return a valid response at all (see $\S$\ref{section:limitations}), compared with 0.6\% for augmented zero shot.
 The strong performance of the paraphrase baseline at fluency and semantic similarity shows that large LMs are capable of generating high quality text that remains true to the input sentence's meaning.
 Overall, the average length of the input sentences was 66 characters, whereas the average length of augmented zero-shot outputs was 107 characters. For context, human paraphrase outputs were 82 characters.
-\begin{figure}
+\begin{figure}[tbp]
     \includegraphics[width=0.5\linewidth]{figures/style_standard_False.pdf}
     \includegraphics[width=0.5\linewidth]{figures/meaning_standard_False.pdf}
   \caption{Human evaluation of style transfer for six atypical styles. Our method is rated comparably to the human-written ground truth. Error bars are mean standard error.}
@@ -165,7 +164,7 @@ We automatically evaluate
     \item \textbf{fluency} measured via perplexity, as predicted by GPT-2 (117M).
 \end{enumerate}
 
-\begin{figure}[t]
+\begin{figure}[tbp]
     \includegraphics[width=0.5\linewidth]{figures/style_standard_True.pdf}
     \includegraphics[width=0.5\linewidth]{figures/meaning_standard_True.pdf}
   \caption{Human evaluation of sentiment and formality transfer. Our method is rated comparably to human-written ground truth as well as prior methods. Error bars show Standard Error of the Mean. Unsup.~MT is \citet{prabhumoye-etal-2018-style}; Dual RL is \citet{DBLP:conf/ijcai/LuoLZYCSS19}. }
@@ -225,61 +224,6 @@ In a real world setting, our augmented zero-shot approach allows users to effort
 \citet{reynolds2021prompt} further emphasize that prompt engineering is mostly about avoiding various failure cases.
  In this work, we use delimiters (``\{'' and ``\}'') to help avoid parsing errors, giving scores of zero when there was no valid responses with such delimiters. There are other delimiters that could be used (e.g., quotes, ``('' and ``)'', ``<'' and ``>'', newlines with a colon (as used by GPT-3), etc. We chose curly braces as they were 1) likely to occur in the training data as delimiters in other contexts and 2) not frequently part of the input sentence itself. We also use a second person prompt template for the dialog, which yielded better results as it was more similar to the training data. Exploring these options more quantitatively would be an interesting direction for future work.
 
-
-\subsection{Potential of Arbitrary Styles}\label{subsec:potential}
- 
-\begin{table}[t]
-\caption{\label{tab:unique_requests}Requests in the form of ``\textit{Rewrite this...}'' made by real users to a large LM-powered text editor.}
-\label{tab:realusers}
-\small
-% \resizebox{\columnwidth}{!}{%
-\def\arraystretch{1.5}% 
-\begin{tabular}{p{1.0\columnwidth}}
-% \textbf{Rewrite requests (user completions of `Rewrite this...')} \\
-\midrule
-into paragraphs • to be a bit clearer • to be a little less angsty • to be a word for a song • to be about mining • to be about vegetables • to be better written • to be less descriptive • to be less diabolical • to be more absurd • to be more adventurous • to be more angry • to be more cheerful • to be more descriptive • to be more Dickensian • to be more emotional • to be more fancy • to be more flowery • to be more interesting • to be more joyful • to be more magical • to be more melodramatic • to be more philosophical • to be more revolutionary • to be more scary • to be more subtle • to be more surprising • to be more suspenseful • to be more technical • to be more violent • to be more whimsical • to be warmer • to fit better grammatically with the rest of the story • to make more sense • to use a more interesting word • with a few words \\
-\midrule
-\end{tabular}
-% }
-\end{table}
-
-% The adaptability of our method to arbitrary styles is compelling because it facilitate an AI-powered writing assistant that transforms text to any desired re-write specified by a user. 
-One promising application of augmented zero-shot learning is an AI-powered writing assistant that can allow writers to transform their text in arbitrary ways that the writer defines and controls.
-As a qualitative case study to explore what arbitrary re-write styles may be requested, we built an AI-assisted story-writing editor with a ``rewrite as'' feature that uses our augmented few-shot method.
-Our editor has a freeform text box for users to specify how they would like a selection of their story to be rewritten (Figure \ref{fig:wc}).
-% We asked 30 fluent English speakers from a creative writing group to write a 100-300 word story based on a prompt.
-We asked 30 people from a creative writing group to use our UI to write a 100-300 word story,  collecting 333 rewrite requests in total. 
-Table \ref{tab:unique_requests} shows a list of unique rewrite requests collected from 30 early users recruited from a creative writing mailing list.
-These were as diverse as asking for the text ``\textit{to be about mining}'' or ``\textit{to be less diabolical}.''
-Overall, we collected 333 rewrite requests, of which users chose to insert the model's response into their story 18 (5.4\%) times.
-
-
-\subsection{Limitations and Failure Modes}
-\label{section:limitations}
-There are several limitations and failure modes with our method.
-
-\paragraph{Malformed Generations} A frequent problem that arises when using large LMs for other NLP tasks is their outputs cannot be automatically parsed into usable answers. For example, when given a prompt like \begin{small}
- \texttt{``Here is some text: {that is an ugly dress}. Here is a rewrite of the text, which is more positive''} \end{small}
- \textit{LLM-Dialog} might return something like \begin{small}
- \texttt{``Sounds like you are a great writer!''} \end{small} Similar error modes exist for \textit{LLM}, which might output something like \begin{small}
- \texttt{``Here are more writing tips and tricks.''} \end{small} Other times, the response contains correct information, but it cannot be automatically parsed (e.g., \begin{small}
- \texttt{``a good rewrite might be to say that the dress is pretty.''} \end{small}) In hindsight, these outputs make a lot of sense: most of the training data of large LMs is not well-formatted pairs of inputs and outputs  \citep{reynolds2021prompt}. See $\S$\ref{sec:prompt-selection} for how we dealt with these issues.
-
-\paragraph{Hallucinations} Large LMs are known to hallucinate text content; we saw this happen frequently for style transfer. While this is an advantage in some contexts like creative writing, it is undesirable for applications like summarization. 
-% Other prior methods, such as those based on word replacement, do much better at keeping the meaning and format of the sentence the same.
-% \citep{DBLP:journals/corr/abs-2010-03802} have even explored the ability to ``tune in'' the amount of style-- a future direction for our work would be to explore this as well.
-\subsubsection{Inherent style trends} We also noticed that even our \textit{``paraphrase''} baseline, where the model was simply asked to rewrite the input sentence, was rated highly for style strength for a few styles, including \textit{``more formal''} and \textit{``more melodramatic''}.
-This implies that our method's generations generally trend toward these styles.
-A direction for future work would be to see what styles and qualities of text our method (and large LMs in general) are inherently more likely to produce.
-
-\paragraph{Less Reliable than Trained Methods}
-For style transfer tasks that have available training data, prior methods that either train or finetune on that data are going to be inherently more reliable at producing text that looks like their training data.
-This can be observed in the lower BLEU scores our method achieves than trained methods, despite comparable transfer accuracy.
-Thus, augmented zero-shot learning offers less fine-grained controllability in the properties of the style-transferred text than methods which see task-specific training data.
-
-\paragraph{Large LM Safety Concerns} Large LMs themselves come with their own host of difficulties, barriers to entry, and potential safety concerns as discussed by \citet{bender2021stochastic}, which are also valid for this style transfer method. However, we also think that this method can be a useful tool in exploring and exposing the safety and boundaries of these models themselves: what happens if we try to force the large LM to make a text ``more racist'', ``more sexist'', or ``more incendiary''? It is important to keep pushing these models to their boundaries to see where they fail and where problems arise, and specific use cases that show a broader range of the model's capabilities also show a broader range of its failure modes.
-
-
 \begin{table}[ht]
     \caption{Examples of users' arbitrary style transfer requests for which the model suggestion was accepted.}
     \label{tab:selected_usage_examples}
@@ -297,7 +241,7 @@ Thus, augmented zero-shot learning offers less fine-grained controllability in t
     \end{tabular}
 \end{table}
 
-\begin{table}[ht]
+\begin{table}[t]
     \caption{In black, we show the exact augmented-zero shot prompts used in our experiments, for \textit{LLM} and GPT-3 (top), and for \textit{LLM-Dialog} (bottom). As shown, for \textit{LLM-Dialog}, we replaced ``\texttt{Here is a rewrite of the text, which is}'' with ``\texttt{Rewrite it to be}''. Each line starting with ``>"" above was passed in as an individual dialog turn. 
     The blue shows how an input text and goal style are concatenated to the few-shot prompt in order to produce final model output.
     Note that we can achieve high accuracy even though the prompt formulation resulted in some minor grammatical errors for some styles (e.g., ``\texttt{rewrite it to be include the word 'snow'}''). Text versions of these prompts can be downloaded at \url{https://bit.ly/3fLDuci}.}
@@ -335,16 +279,36 @@ Thus, augmented zero-shot learning offers less fine-grained controllability in t
 \end{tabular}
 \end{table}
 
-\begin{figure}[!htb]
-  \centering
-  \fbox{\includegraphics[width=0.8\linewidth]{figures/wc.png}}
-  \caption{Screenshot AI-assisted editor with `Rewrite as' feature.\label{fig:wc}}
-\end{figure} 
+\subsection{Limitations and Failure Modes}
+\label{section:limitations}
+There are several limitations and failure modes with our method.
+
+\paragraph{Malformed Generations} A frequent problem that arises when using large LMs for other NLP tasks is their outputs cannot be automatically parsed into usable answers. For example, when given a prompt like \begin{small}
+ \texttt{``Here is some text: {that is an ugly dress}. Here is a rewrite of the text, which is more positive''} \end{small}
+ \textit{LLM-Dialog} might return something like \begin{small}
+ \texttt{``Sounds like you are a great writer!''} \end{small} Similar error modes exist for \textit{LLM}, which might output something like \begin{small}
+ \texttt{``Here are more writing tips and tricks.''} \end{small} Other times, the response contains correct information, but it cannot be automatically parsed (e.g., \begin{small}
+ \texttt{``a good rewrite might be to say that the dress is pretty.''} \end{small}) In hindsight, these outputs make a lot of sense: most of the training data of large LMs is not well-formatted pairs of inputs and outputs  \citep{reynolds2021prompt}. See $\S$\ref{sec:prompt-selection} for how we dealt with these issues.
+
+\paragraph{Hallucinations} Large LMs are known to hallucinate text content; we saw this happen frequently for style transfer. While this is an advantage in some contexts like creative writing, it is undesirable for applications like summarization. 
+% Other prior methods, such as those based on word replacement, do much better at keeping the meaning and format of the sentence the same.
+% \citep{DBLP:journals/corr/abs-2010-03802} have even explored the ability to ``tune in'' the amount of style-- a future direction for our work would be to explore this as well.
+\subsubsection{Inherent style trends} We also noticed that even our \textit{``paraphrase''} baseline, where the model was simply asked to rewrite the input sentence, was rated highly for style strength for a few styles, including \textit{``more formal''} and \textit{``more melodramatic''}.
+This implies that our method's generations generally trend toward these styles.
+A direction for future work would be to see what styles and qualities of text our method (and large LMs in general) are inherently more likely to produce.
+
+\paragraph{Less Reliable than Trained Methods}
+For style transfer tasks that have available training data, prior methods that either train or finetune on that data are going to be inherently more reliable at producing text that looks like their training data.
+This can be observed in the lower BLEU scores our method achieves than trained methods, despite comparable transfer accuracy.
+Thus, augmented zero-shot learning offers less fine-grained controllability in the properties of the style-transferred text than methods which see task-specific training data.
+
+\paragraph{Large LM Safety Concerns} Large LMs themselves come with their own host of difficulties, barriers to entry, and potential safety concerns as discussed by \citet{bender2021stochastic}, which are also valid for this style transfer method. However, we also think that this method can be a useful tool in exploring and exposing the safety and boundaries of these models themselves: what happens if we try to force the large LM to make a text ``more racist'', ``more sexist'', or ``more incendiary''? It is important to keep pushing these models to their boundaries to see where they fail and where problems arise, and specific use cases that show a broader range of the model's capabilities also show a broader range of its failure modes.
+
+
 
 \section{Models for Infilling Text}
 \label{section:fitb}
 
-\subsection{Motivation}
 % Main contributions
 % First to propose using the same model for both fill-in-the-blank and continuation.
 % First to compare against strategies which do not require any fine-tuning.
@@ -352,7 +316,7 @@ Thus, augmented zero-shot learning offers less fine-grained controllability in t
 
 Natural language generation systems are increasingly being incorporated into applications where a human writer and an AI jointly collaborate to construct text.
 Wordcraft, The AI-assited text processor I describe in Section \ref{section:wordcraft} is one such application.
-Another is Storium, where players of a writing game, have the option to accept suggestions from a natural langueg generatin system \citep{akoury2020storium}.
+Another is Storium, where players of a writing game have the option to accept suggestions from a natural language generation system \citep{akoury2020storium}.
 There are also more practical domain such as email composition assistance and code synthesis \citep{buschek2021impact,wu2018smart,austin2021program}.
 Many of these applications are limited to generating text at the end of what has been written so far.
 This is because
@@ -361,7 +325,7 @@ are typically designed to produce text by repeatedly predicting the next word in
 However, there is a need for more powerful interactive tools which enable writers to solicit insertions at any chosen position within the existing text, a task variously referred to as fill in the blank (\FitB), infilling, or the Cloze task \citep{taylor1953cloze}.
 For example, a creative writer might want a tool which can insert a description of a place or character, and a programmer might want a system that can fill in a method in the middle of their code.
 
-\begin{figure}[t]
+\begin{figure}[tbp]
     \centering
     \includegraphics[width=0.7\textwidth]{figures/leading_figure.pdf}
     \caption{A single model that can handle a variety of related writing tasks is more efficient than separate models per task.}
@@ -581,7 +545,7 @@ Unless otherwise noted, all evaluation is done without goal conditioning and use
     \end{tabular}
 \end{table}
 
-\begin{figure}[t]
+\begin{figure}[tbp]
     \centering
     \includegraphics[width=0.49\textwidth, trim={0 0.55cm 0 0}, clip]{figures/human_eval}
     \caption{Human ratings of \FitB{} generations (left) and continuation generations (right). Error bars are 95\% confidence intervals.}
@@ -620,7 +584,7 @@ One possible reason is that we did not do a sufficiently exhaustive search for a
 It is possible there exists a prompt for which in-context learning techniques would prove effective for fill-in-the-blank, but our exploration did not discover it.dg
 What we can conclude is that the process of finding an ideal prompt requires time-consuming trial-and-error and is quite difficult!
 
-\begin{figure}
+\begin{figure}[tbp]
     \centering
     \includegraphics[width=0.49\textwidth]{figures/fs_eval_sets_sizes}
     \caption{For many of the (validation set, few-shot prompt) combinations, not all validation set examples fit into the maximum sequence length for the \LLM.
@@ -650,9 +614,9 @@ Each example was shown to three raters, and annotations were rejected if the rat
 A total of 3 annotations were rejected.
 Overall, the Fleiss' kappa agreement of pairs of annotators giving the same numerical score to the same question was 0.26.
 
-\begin{figure}[ht]
+\begin{figure}[tbp]
     \centering
-    \includegraphics[width=0.6\textwidth, frame]{figures/amt_screenshot.png}
+    \includegraphics[width=0.4\textwidth, frame]{figures/amt_screenshot.png}
     \caption{A screenshot of the question structure for human evaluation.}
     \label{fig:amturk_ui}
 \end{figure}
@@ -676,9 +640,9 @@ Goal conditioning, while not strictly necessary for either either task, has been
 Finetuned T5 is able to use all of the specified goal words over 79\% of the time.
 
 
-\begin{figure}
+\begin{figure}[tbp]
     \centering
-    \includegraphics[width=0.8\textwidth]{figures/t5_lengths}
+    \includegraphics[width=0.95\textwidth]{figures/t5_lengths}
     \caption{For each of the \FitB{} validation sets, a histogram of the distribution of sequence lengths (measured in words) of the {groundtruth} blanked out text and the proposed infills from T5 {after} and {before} finetuning). We see that pre-trained T5 tends to produce text that is shorter than the groundtruth.}
     \label{fig:t5_lengths}
 \end{figure}
@@ -717,27 +681,42 @@ We show how conditioning signals such as target length and goal text when added 
 % Consider citing previous work on relevant mitigation strategies for the potential risks of the work (e.g., gated release of models, providing defenses in addition to attacks, mechanisms for monitoring misuse, mechanisms to monitor how a system learns from feedback over time, improving the efficiency and accessibility of NLP).
 
 
-\section{Wordcraft: An editor for AI-assisted writing.}
+\section{Wordcraft: An editor for AI-assisted writing}
 \label{section:wordcraft}
 
-How do we evaluate natural language generation in realistic settings? In all the human evaluations discused so far in my thesis, we recruited annotators to evaluate text in artifical settings. In Sections \ref{section:detection} and \ref{section:roft}, university students were asked to label text as human-written or machine-generated in user interfaces custom-tailored to collect these sorts of annotations. In Sections \ref{section:fitb} and Section \ref{section:style_transfer}, novel natural language systems were evaluated by asking raters on Amazon Mechnical Turk to view and score generated text.
-Notably, the annotators were not asked to use the proposed NLG tools to accomplish a task of interest; they were only asked to evaluate pre-generated outputs.
+In all the human evaluations discussed so far in my thesis, we recruited annotators to evaluate text in artificial settings.
+In Sections \ref{section:detection} and \ref{section:roft}, university students were asked to label text as human-written or machine-generated in user interfaces custom-tailored to collect these sorts of annotations.
+In Sections \ref{section:fitb} and Section \ref{section:style_transfer}, novel natural language systems were evaluated by asking raters on Amazon Mechanical Turk to view and score generated text.
+However, contrived annotation tasks like these give an incomplete picture as to the progress of natural language generation.
+Notably, the annotators were never asked to use the NLG to accomplish a task of interest; they were only asked to evaluate pre-generated outputs.
 
-When building novel systems for cotrollable text generation, it is crucial to keep in mind why these tools are being built and who their target audience might be.
-This is especially true in the area of AI-assisted creative writing, where there is often significant discrepency between how novel tools are evaluated (Amazon Mechanical Turker workers paid per annotation) and how they are intended to be used in the real world (writers seeking support or inspiration while performing their craft).
+While contrived evaluation tasks have their place, it is also crucial to keep in mind why NLG systems are being built and who their target audience might be.
+This is especially true in the area of AI-assisted creative writing, where there is often a significant discrepancy between how novel tools are evaluated (Amazon Mechanical Turker workers paid per annotation) and how they are intended to be used in the real world (writers seeking support or inspiration while performing their craft).
 
 Wordcraft is an AI-augmented text processor which is intended as a real-world test bed for controllable text generation paradigms in the domain of creative writing.
-Our goal in developing Wordcraft was to learn how people interact with modern state-of-the-art NLG systems, what tasks they ask the NLG systems to do do and how well the systems deliver, and how this feeds back into the works people ultimately create.
-The user interface for Wordcraft consists of of a traditional text editor alongside a set of controls that vary based on where the user's cursor is and whether they have selected any text.
+Our goal in developing Wordcraft was to learn how people interact with and want to interact with NLG systems--what tasks do they ask the NLG systems to do, how well do the systems deliver, and how does this feed back into the works people ultimately create.
+The user interface for Wordcraft consists of of a traditional text processor alongside a set of NLG-powered controls that vary based on where the user's cursor is and whether they have selected any text.
 The user also has access to a chatbot they can talk about their story with.
 
-In this section, I describe the controls included in  Wordcraft, how they're implemented, and the motivation for including them.
-I then describe how Wordcraft offers the chance for a more realistic evaluation of state-of-the-art language generation systems through user studies with both amateur and expert writers.
+In this section, I first describe the controls implemented in Wordcraft and the motivations for including each of them.
+I then describe the ways in which Wordcraft offers the chance for a more realistic evaluation of state-of-the-art language generation systems through user studies with both amateur and expert writers.
 
+\begin{figure}[tbh]
+  \centering
+  \includegraphics[width=0.99\linewidth]{figures/interface_meta_custom}
+  \caption{(left) Custom prompting in the Wordcraft interface. The user makes a novel request of the AI agent via a custom prompt (1), and the model attempts to fulfill the request (2). (right) Meta prompting in the Wordcraft interface. The user asks for suggestions for requests they could make of the model (3), and browses those suggestions (4).}
+  \label{fig:interface_meta_custom}
+\end{figure}
 
-\subsection{Features of Wordcraft}
+\subsection{The Wordcraft Application}
 \label{section:wordcraft_controls}
-Wordcraft uses few-shot in-context learning techniques \cite{brown2020language} to support a variety of generative controls.
+Wordcraft is a web application intended for story writing with NLG assistance.
+The interface consists of a traditional text editor and a set of controls that prompt a large language model to perform various writing tasks.
+For example, Figure \ref{fig:interface} (left) shows Wordcraft performing text infilling by suggesting alternatives for a selected passage of text, which the user can splice into their story.
+In Figure \ref{fig:interface} (right), Wordcraft can be seen suggesting continuations for the user's story.
+Wordcraft also includes controls for rewriting or elaborating on a selection of text. In addition to using these pre-built controls, users can also construct custom operations on the fly.
+
+Wordcraft uses few-shot in-context learning techniques \cite{brown2020language} to support each of its generative controls.
 The underlying neural language model backing all these interactions is LaMDA \cite{thoppilan2022lamda}, which is described in detail in Section \ref{subsection:lambda_description}.
 Because LaMDA was finetuned for dialog, we frame our prompts in terms of a conversation.
 The remainder of this section enumerates the controls available in Wordcraft and gives an example few-shot prompt that supports each.
@@ -774,6 +753,7 @@ It is supported with the following few-shot prompt:
 \subsubsection{Fill in the blank}
 When the user has some text selected in the editor, they are able to see alternatives that fit into the place of their selection.
 This is exactly the fill-in-the-blank task described in Section \ref{section:fitb}.
+Fill-in-the-blank is useful to writers because it allows them to insert sentences within an existing paragraph as well as see alternative phrasings for pieces they have already written.
 Though in Section \ref{section:fitb} we showed that finetuned models perform much better at this than few-shot prompting techniques, due to the computational complexities of hosting multiple models, we ended up also supporting this operation with a few-shot learning prompt:
 
 \begin{lstlisting}
@@ -792,7 +772,8 @@ Though in Section \ref{section:fitb} we showed that finetuned models perform muc
 
 \subsubsection{Elaboration}
 When the user has some text selected, they can use the elaboration button to get the model to expand upon it.
-This operation is supported with the following few-shot prompt:
+This is especially useful for description generation.
+The elaboration operation is supported with the following few-shot prompt:
 
 \begin{lstlisting}
 > Here's a new story: {The long shadow of the tree crept up the sidewalk} Describe the tree.
@@ -832,6 +813,12 @@ The following prompt is used.
 > Rewrite the sentence <REWRITING INSTRUCTION>.
 \end{lstlisting}
 
+\begin{figure}[tbp]
+  \centering
+  \fbox{\includegraphics[width=0.8\linewidth]{figures/wc.png}}
+  \caption{Screenshot of Wordcraft with the custom prompting feature.\label{fig:wc}}
+\end{figure} 
+
 \subsubsection{Custom Prompting}
 In the custom prompting control, users have the ability to write any request to the system they want. For example, they could ask "Give me an origin story for the ogre" or "Tell me what happens next." We use a similar approach to style transfer, with a prompt demonstrating a variety of requests:
 
@@ -847,7 +834,7 @@ In the custom prompting control, users have the ability to write any request to 
 > Here's a new story: {<USER'S STORY>} <CUSTOM PROMPT>
 \end{lstlisting}
 
-\subsection {Suggested Prompts}
+\subsubsection {Suggested Prompts}
 Finally, we implemented a control that allows users to request suggestions for what to write about next.
 We expected this feature to be useful for novice writers to overcome writer's block.
 It uses the following prompt:
@@ -883,7 +870,7 @@ The goal of this user study was to understand which controls writers prefered us
 
 \subsubsection{Methodology} 
 
-\begin{figure}[t]
+\begin{figure}[tbp]
   \centering
   \includegraphics[width=\linewidth]{figures/recruitment_survey.png}
   \caption{Writing habits survey results.}
@@ -904,7 +891,7 @@ Then we carried out a within-subjects study, giving each user three writing prom
     The \textit{chat} condition enables us to evaluate the utility of the prompt and UX scaffolding we designed for Wordcraft against giving users straightforward access to the underlying model, without any scaffolding. An omniscient user could theoretically reproduce the functionality of the \textit{full} condition by replicating Wordcraft's prompts.
 \end{enumerate}
 
-\begin{figure}[t]
+\begin{figure}[tbp]
   \centering
   \includegraphics[width=1\linewidth]{figures/conditions.png}
   \caption{Experimental conditions for the user study. The stories written by participants as part of the study can be viewed here: \href{https://storage.googleapis.com/wordcraft-stories/index.html}{https://storage.googleapis.com/wordcraft-stories/index.html}. The website also includes purely machine-generated baselines.}
@@ -1065,14 +1052,14 @@ Participants made significantly more requests of the AI agent using Wordcraft (7
 
 % Users spent less time overall using Wordcraft (9.97m \textpm 37s) than continuation-only (11.52m \textpm 131.5s), even though the stories they wrote with Wordcraft are longer (267.7w \textpm 21.6w versus 237.3w \textpm 16w). However, these differences are not statistically significant.
 
-\begin{figure}[h]
+\begin{figure}[tbp]
   \centering
   \includegraphics[width=\linewidth]{figures/exit_interview_results.png}
   \caption{Exit interview results. 1: Strongly disagree, 2: Disagree, 3: Neutral, 4: Agree, 5: Strongly agree.}
   \label{fig:exit_interview_results}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[tbp]
   \centering
   \includegraphics[width=0.8\linewidth]{figures/favorite_ops.png}
   \caption{Results from exit interview question `Which controls did you enjoy using?'}
@@ -1123,14 +1110,22 @@ Finally, participants found the chatbot to be effective at retrieving informatio
 
 \subsection{User Study with Expert Writers}
 
+% Professional writers and amateur writers are very different .
+
+
+For the Wordcraft Writers Workshop, we commissioned 12 published writers from diverse stylistic backgrounds, ranging from poetry to fantasy, to craft stories using Wordcraft. The writers were instructed to work on pieces of about 1,500 words. They were also asked to keep informal journals of their observations during the process. Finally, we conducted entrance and exit interviews with each writer before the workshop started and after they had finished with their stories.
+
 \TODO{
-This is ongoing work which should wrap up over the next six weeks.
-We commissioned 15 professional writers to craft stories using Wordcraft and conducted interviews before and after.
-This section will cover the trends in the authors' responses.
+Finish inserting this section.
 }
 
+\section{Conclusion}
+In this chapter, I have presented two ways--natural language-specified style transfer and fill-in-the-blank--that language models can be applied to more specific tasks that simply continuing a prompt.
+I then incorporated these tasks into Wordcraft, a tool for human-AI collaboration for creative writing.
+User studies with Wordcraft revealed both the strengths and challenges of incorporating NLG into the creative writing process and suggested several avenues for future research.
+These include \TODO{}.
 
-\subsection{Summary of Contributions}
+\section{Summary of Contributions}
 The work on models for doing both fill-in-the-blank and continuation generation tasks was published as ``The Case for a Single Model that can Both Generate Continuations and Fill in the Blank'' in the 2022 Findings of the North American Association of Computational Linguistics \citep{fitb_fite}.
 The work was performed with my collaborators Daphne Ippolito, Liam Dugan, Emily Reif, Ann Yuan, Andy Coenen, and Chris Callison-Burch.
 I led this project, designed and ran all experiments, and performed most of the analysis.
