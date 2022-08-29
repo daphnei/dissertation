@@ -13,11 +13,11 @@ AI-assisted creative writing is a particularly interesting testbed for how far w
 Unlike in machine translation or summarization, where it is critical that the generated text is factual and stays faithful to the source material, in creative domains, the "hallucinations" and unusual word choices that are pervasive in modern NLG may be beneficial to a creative writer's process.
 Indeed, ideation tools, such as decks of cards which suggest writing topics, are commonplace in creative writing circles.
 The creative writing domain allows us to evaluate whether NLG systems are useful for accomplishing real writing tasks and whether systems can be easily \textit{controlled} by non-technical users.
-This allows us to more holistically evaluate the strengths and limitations of machine-generated text than the narrowly targeted evaluation tasks typically employed the academic literature.
+This allows us to more holistically evaluate the strengths and limitations of machine-generated text than the narrowly targeted evaluation tasks typically employed in the academic literature.
 
-Before discussing the application of assisted writing, this thesis first examines two important considerations around the use of modern NLG systems.
+Before discussing the applications of assisted writing, this thesis first examines two important considerations around the use of modern NLG systems.
 Modern NLG relies on neural language models, neural networks trained on billions of words of text in order to represent human language.
-Chapter \ref{chap:background} gives an overview of these systems work. 
+Chapter \ref{chap:background} gives an overview of how these systems work. 
 Understanding the limitations of these language models and the nature of the text they are capable of generating is crucial to the ultimate use of these systems in real applications.
 
 A significant limitation for creative applications like Wordcraft is the difficulty in generating text that is diverse (containing uncommon and interesting words and phrases) and high quality (as perceived by human readers).
@@ -38,7 +38,7 @@ The RoFT platform allowed us to collect over 40,000 annotations of whether playe
 Chapter \ref{section:roft} presents a detailed analysis of the factors we found that most impacted detectability. 
  
 Of course, machine-generated text is most undetectable when it looks \textit{exactly} like its training data.
-Large languages are worryingly capable of memorizing and regurgitating significant amounts of their training data.
+Large language models are worryingly capable of memorizing and regurgitating significant amounts of their training data.
 For example, GPT-3, a popular model that has already been incorporated into several products, when prompted with the first sentence of \textit{Harry Potter} or \textit{Lord of the Rings} will accurately generate the first several paragraphs of each book.
 This behaviour is especially problematic for the domain of AI-assisted creative writing, as writers using tools such as Wordcraft have the expectation that the generations they are being shown are unique and not plagiarized.
 Memorization also makes the task of studying the detectability of generated text more challenging.

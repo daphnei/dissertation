@@ -42,12 +42,12 @@ Neural network-based language models replace the statistical models described in
 In contrast to $n$-gram models, neural language models are capable of assigning non-zero probability to sequences never seen in their training corpora, and thus they can be used to model longer sequences.
 State-of-the-art neural language models can model sequences in the thousands of words.
 
-One of the key advancements in neural language modeling was the transition from operating on sequences of discrete words to operating on sequences continuous vector representations.
-The sequence of words $w_1, \ldots, w_n$ is mapped to sequence of embedding vectors $\by_1, \ldots, \by_n$.
+One of the key advancements in neural language modeling was the transition from operating on sequences of discrete words to operating on sequences of continuous vector representations.
+The sequence of words $w_1, \ldots, w_n$ is mapped to a sequence of embedding vectors $\by_1, \ldots, \by_n$.
 In early work on neural language modeling, these vector representations were computed separately.
-Algorithms such as word2vec \citep{mikolov2013word2vec} and GloVe \citep{pennington2014glove} were employed to consturct embedding matrices where each row corresponded to a word in the vocabulary.
+Algorithms such as word2vec \citep{mikolov2013word2vec} and GloVe \citep{pennington2014glove} were employed to construct embedding matrices where each row corresponded to a word in the vocabulary.
 In today's neural language models, the embedding matrix is typically treated as part of the neural language model, initialized randomly than optimized along with the reset of the network.
-Let $\mathbf{E}_\theta$ be a learned embedding matrix where each row correspond to the vector represention of one word in the vocabulary.
+Let $\mathbf{E}_\theta$ be a learned embedding matrix where each row correspond to the vector representation of one word in the vocabulary.
 
 Typical neural language models emit $\hat{\by}_t$, a predicted embedding for the $t$th position in the sequence given the previous word embeddings in the sequence. This can be written as
 \begin{align}
@@ -88,7 +88,7 @@ This paradigm is known as an encoder-decoder or sequence-to-sequence model, and 
     \label{eq:cond_lm_feq}
 \end{align}
 where $\bx_1, \ldots, \bx_n$ is the additional input sequence. 
-The most popular application of encoder-decoder models is machine translation, where to convert some text from French to English, the language model predicts the next word of the English sequence given the entirety of the French sequence and the preceedings words of the English sequence.
+The most popular application of encoder-decoder models is machine translation, where to convert some text from French to English, the language model predicts the next word of the English sequence given the entirety of the French sequence and the preceding words of the English sequence.
 
 Most state-of-the-art neural language models uses a variant of the Transformer architecture \cite{vaswani2017attention} as the neural network $f_\theta$.
 Prior to the development of Transformers, recurrent neural architectures, typically based on Long Short Term Memory units \citep{hochreiter1997long}, were most commonly employed.
@@ -135,13 +135,13 @@ Table \ref{tab:tokenization} shows a sentence under a few different tokenization
 For all of the types of vocabularies discussed, a decision must be made on whether to convert strings to lowercase before vocabulary creation.
 Removing case allows for a more compact vocabulary, but it also removes potentially useful information about the location of proper nouns.
 
-Subword vocabularies were designed to be a compromise between the advantage and disadvantages of word-level and character-level vocabularies.
+Subword vocabularies were designed to be a compromise between the advantages and disadvantages of word-level and character-level vocabularies.
 Character-level vocabularies are usually very small, no more than a couple hundred tokens.
 However, the vocabulary can cover near every possible string a person could write.
-Word-level vocabularies cannot feasible contain the hundreds-of-thousands of words present in English text.
+Word-level vocabularies cannot feasibly contain the hundreds-of-thousands of words present in English text.
 Realistically, only the most common words are kept, and less common ones are replaced with a special \texttt{UNK} token.
 When text is tokenized with character-level vocabularies, the resulting sequences are very long, while word-level tokenization yields shorter sequences since there is just one token per word.
-Lastly, word-level representations learned by a neural net tend to more meaningful than character-level representations since a word has semantics associated with it that are common across uses.
+Lastly, word-level representations learned by a neural net tend to be more meaningful than character-level representations since a word has semantics associated with it that are common across uses.
 Subword vocabularies adopt the best of both worlds, using word-level tokens for common words but falling back to subword, or in the worst case, character-level, tokenization for uncommon words.
 This approach eliminates the need for an out-of-vocabulary token and results in tokenized sequence lengths which are somewhere between the two strategies.
 
