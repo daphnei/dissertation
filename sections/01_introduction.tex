@@ -4,34 +4,37 @@ One of the oldest yet most elusive promises of AI is computers that can converse
 In 1950, Alan Turing, one of the fathers of modern computing, framed this goal as an imitation game--computers ought to be able to imitate real human interaction so well that ``an average interrogator will not have more than 70 per cent, chance of making the right identification after five minutes of questioning.''
 He expected that by 1950 this game would be solved.
 
-Natural Language Generation (NLG) is a critical component to solving the imitation game.
+Natural Language Generation (NLG) is a critical component to solving the \textit{imitation game}.
 NLG is the task of writing novel text in a human language such as English. 
 Improvements over the last half-decade have led to natural language generation systems which are capable of producing incredibly fluent text.
 These systems have been applied to practical domains such as machine translation and text summarization and simplification, but they have also been applied to more fanciful ones, such as story generation, video games development, and tooling for creating writing.
 
 AI-assisted creative writing is a particularly interesting testbed for how far we have come toward achieving Turing's goal.
-Unlike in machine translation or summarization, where it is critical that the generated text is factual and stays faithful to the source material, in creative domains, the "hallucinations" and unusual word choices that are pervasive in modern NLG may be beneficial to a creative writer's process.
+Unlike in machine translation or summarization, where it is critical that the generated text is factual and stays faithful to the source material, in creative domains, the hallucinations and unusual word choices that are pervasive in modern NLG may be beneficial to a creative writer's process.
 Indeed, ideation tools, such as decks of cards which suggest writing topics, are commonplace in creative writing circles.
 The creative writing domain allows us to evaluate whether NLG systems are useful for accomplishing real writing tasks and whether systems can be easily \textit{controlled} by non-technical users.
-This allows us to more holistically evaluate the strengths and limitations of machine-generated text than the narrowly targeted evaluation tasks typically employed in the academic literature.
+This allows us to conduct more holistic evaluations of the strengths and limitations of machine-generated text than the narrowly targeted evaluation tasks typically employed in the academic literature.
 
 Before discussing the applications of assisted writing, this thesis first examines two important considerations around the use of modern NLG systems.
 Modern NLG relies on neural language models, neural networks trained on billions of words of text in order to represent human language.
 Chapter \ref{chap:background} gives an overview of how these systems work. 
 Understanding the limitations of these language models and the nature of the text they are capable of generating is crucial to the ultimate use of these systems in real applications.
 
-A significant limitation for creative applications like Wordcraft is the difficulty in generating text that is diverse (containing uncommon and interesting words and phrases) and high quality (as perceived by human readers).
-Very often, practitioners choose text generation startegies that err on the side of human-perceived quality at the expense of lexical diversity.
+A significant limitation for creative applications is the difficulty in generating text that is diverse (containing uncommon and interesting words and phrases) and high quality (as perceived by human readers).
+Very often, practitioners choose text generation strategies that err on the side of human-perceived quality at the expense of lexical diversity.
 This decision leaves subtle signatures in the generated text which make it easy for automatic classifiers to distinguish it from genuine human-written text.
 
 Chapter \ref{chap:decoding} focuses on this challenge and its ramifications to the detectability of generated text.
-The proliferation of machine-generated text, especially when it lacks attribution, is of significant concern to the public, and understanding detectability is also imperative because it gives us a proxy for how far along NLG systems are at fooling humans and whether undesired use of machine-generated text can be mitigated.
+The proliferation of machine-generated text, especially when it lacks attribution, is of significant concern to the public \citep{vincent2019openai}.
+Internet users on Reddit, 4chan, and other social netoworks have shown themselves gullible to generated text \citep{heaven2020gpt,chatgptfourchan}.
+Since the research conducted for this dissertation was conducted, language models such as ChatGPT have been used to cheat on school assignments, sparking some school districts to ban their use \citep{chatgptban}.
+Thus, understanding detectability is imperative because it gives us a proxy for how far along the capabilities of NLG systems are at fooling humans and whether undesired use of machine-generated text can be mitigated.
 In this chapter, I measure the ability of humans as well as automatic systems to detect machine-generated text, and show the connection between detectability and the diversity-quality tradeoff in generated text.
 
 % As tools for generating text become more powerful and easier to use, they could enable nefarious uses such as fabricated product reviews and social media posts.
 
 One difficulty in studying human ability to detect machine-generated text is that it can be very difficult to collect annotations.
-Many of the errors NLG systems make are subtle and require closely reading several sentences of text to be able to identify.
+Many of the errors NLG systems make are subtle and require closely reading several sentences of text to make a correct identification.
 Common strategies for soliciting human annotators, such as paying crowd workers a fixed dollar amount per annotation, do not tend to yield useful annotations since annotators are not incentivized to spend the extra time to do a close read.
 In order to be able to study human detection ability at scale, we built the Real or Fake Text game (RoFT), a website that gamifies the task of identifying machine-generated text \citep{dugan2020roft}.
 The RoFT platform allowed us to collect over 40,000 annotations of whether players could correctly identify when a passage of text transitioned from being human-written to being machine-generated .
@@ -39,10 +42,10 @@ Chapter \ref{section:roft} presents a detailed analysis of the factors we found 
  
 Of course, machine-generated text is most undetectable when it looks \textit{exactly} like its training data.
 Large language models are worryingly capable of memorizing and regurgitating significant amounts of their training data.
-For example, GPT-3, a popular model that has already been incorporated into several products, when prompted with the first sentence of \textit{Harry Potter} or \textit{Lord of the Rings} will accurately generate the first several paragraphs of each book.
-This behaviour is especially problematic for the domain of AI-assisted creative writing, as writers using tools such as Wordcraft have the expectation that the generations they are being shown are unique and not plagiarized.
+For example, GPT-3, a popular model that has already been incorporated into several products, when prompted with the first sentence of a Harry Potter or Lord of the Rings book, will accurately generate the first several paragraphs of each book.
+This behaviour is especially problematic for the domain of AI-assisted creative writing, where writers have the expectation that the generations they are being shown are unique and not plagiarized.
 Memorization also makes the task of studying the detectability of generated text more challenging.
-If an NLG system generates Chapter 1 of \textit{Harry Potter}, should this text be labeled as human-written or machine-generated?
+If an NLG system generates Chapter 1 of \textit{Harry Potter and the Philosopher's Stone}, should this text be labeled as human-written or machine-generated?
 Chapter \ref{chap:memorization} focuses on this question of memorization.
 First, we show how performing thorough deduplication of training data results in models that are less likely to exhibit memorization.
 Then we conduct experiments showing how observable memorization scales with respect to the number of times a sequence occurs in the training set, the model size, and the length of conditioning prompt \citep{carlini2022quantifying}.
@@ -59,13 +62,13 @@ In user studies with both amateur and skilled writers, we found Wordcraft to be 
 
 
 \section{Thesis Statement}
-In this thesis, I argue that we need to build a deeper understanding of neural network-powered language generation systems before they are safe to deploy these systems widely.
+In this thesis, I argue that we need to build a deeper understanding of neural network-powered language generation systems before it is safe to deploy these systems widely.
 To thwart NLG systems being used in ways that are detrimental to society, it is crucial to understand how machine-generated text differs from the text a human would write given the same writing task.
 My research focuses on two such differences: (1) how the word choices made by NLG systems cause generated text to be distinguishable from human-written text, and (2) the tendency of NLG systems to plagiarize verbatim from their training data when asked to produce novel content.
 Both of these issues make it difficult to evaluate machine-generated text.
 In the first case, the tradeoff between generating high-quality versus generating lexically diverse text makes it challenging to simultaneously optimize for text that is pleasing to human readers and text that is statistically indistinguishable from human-written text.
-In the second case, memorization leads to us over-representing the strength of NLG systems by attributing generalization ability to what is actually memorization ability.
-To this end, I argue that we should be evaluating NLG systems holistically as part of larger tools meant to \textit{assist} human writers in tasks they wish to accomplish (in addition to evaluating on isolated individual tasks).
+In the second case, memorization leads to an over-representation of the strength of NLG systems by attributing generalization ability to what is actually memorization ability.
+To this end, I argue that we should be evaluating NLG systems holistically as part of larger tools meant to \textit{assist} human writers in tasks they wish to accomplish (in addition to conducting evaluation on isolated individual tasks).
 I present a case study evaluation of human-AI writing collaboration in the domain of creative writing.
 
 \section{Publications Presented}

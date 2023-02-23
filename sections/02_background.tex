@@ -7,7 +7,7 @@ This chapter gives a brief overview of how modern text generation systems based 
 \section{What is a Language Model?}
 A language model is any model that assigns probabilities to sequences of words.
 Given a sequence of words $w_1, \ldots, w_n$, a language model outputs the likelihood $P(w_1, \ldots, w_n)$ of this sequence.
-An ideal language model would have high likelihood to natural-sounding text, like the sentences in this paragraph, and  low likelihood to gibberish.
+An ideal language model would assign high likelihood to natural-sounding text, like the sentences in this paragraph, and  low likelihood to gibberish.
 Most language models make the assumption that the likelihood of a word is dependent only on the words that precede it.
 Thus, the chain rule applies:
 
@@ -16,7 +16,7 @@ Thus, the chain rule applies:
     P(w_1, \ldots, w_n) = P(w_1) \times \ldots \times P(w_i | w_1, \ldots, w_{i-1}) \times \ldots \times P(w_n | w_1, \ldots, w_{n-1})
 \end{align}
 Before the transition to neural network-based models, the most common form of language model was a statistic language model called the $n$-gram model.
-Instead of trying to estimate the probability of a word given all preceding words, $n$-gram model make the Markov assumption that the probability of a word is only dependent on a fixed $n$-1 preceding words. The $n$ in $n$-gram refers to the number of words used in the conditional probability distribution, and ``gram'' simply means ``word.''
+Instead of trying to estimate the probability of a word given all preceding words, $n$-gram models make the Markov assumption that the probability of a word is only dependent on a fixed $n$-1 preceding words\footnote{The $n$ in $n$-gram refers to the number of words used in the conditional probability distribution, and ``gram'' simply means ``word.''}.
 For example, using a 3-gram model, we would approximate each factor in Equation \ref{eq:lm_base} as
 \begin{align}
    P(w_i | w_1, \ldots, w_{i-1}) \approx P(w_i | w_{i-2}, w_{i-1})
@@ -42,7 +42,7 @@ Neural network-based language models replace the statistical models described in
 In contrast to $n$-gram models, neural language models are capable of assigning non-zero probability to sequences never seen in their training corpora, and thus they can be used to model longer sequences.
 State-of-the-art neural language models can model sequences in the thousands of words.
 
-One of the key advancements in neural language modeling was the transition from operating on sequences of discrete words to operating on sequences of continuous vector representations.
+One of the key advances in neural language modeling was the transition from operating on sequences of discrete words to operating on sequences of continuous vector representations.
 The sequence of words $w_1, \ldots, w_n$ is mapped to a sequence of embedding vectors $\by_1, \ldots, \by_n$.
 In early work on neural language modeling, these vector representations were computed separately.
 Algorithms such as word2vec \citep{mikolov2013word2vec} and GloVe \citep{pennington2014glove} were employed to construct embedding matrices where each row corresponded to a word in the vocabulary.
@@ -78,25 +78,26 @@ More precisely, we can write the training loss for a sequence $\by_1, \ldots, \b
 \end{align}
 
 In these equations, $i^*$ is the index of the groundtruth word at position $t$ in the sequence. 
-By taking the dot product between the neural network's predicted embedding and the embedding of the true word at each position $t$ (Eq. \ref{eq:loss_3}), we get a score for how correct the neural network's prediction for this position is.
+By taking the dot product between the neural network's predicted embedding and the embedding of the true word at each position $t$ (Eq. \ref{eq:loss_3}), we get a score indicating how correct the neural network's prediction for this position is.
 Training with an objective of maximizing the sum of these scores over every word position is equivalent to minimizing the negative log likelihood (or maximizing the likelihood) of the sequence.
 
-In some language modelling applications, it is common to have an additional sequence which the model is conditioned on in addition to the tokens of the target sequence.
+In some language modelling applications, it is common to have an additional sequence on which the model is conditioned on in addition to the tokens of the target sequence.
 This paradigm is known as an encoder-decoder or sequence-to-sequence model, and the formulation above is modified to
 \begin{align}
     \hat{\by}_t = f_\theta(\by_1, \ldots, \by_{t-1}; \bx_1, \ldots, \bx_n)
     \label{eq:cond_lm_feq}
 \end{align}
 where $\bx_1, \ldots, \bx_n$ is the additional input sequence. 
-The most popular application of encoder-decoder models is machine translation, where to convert some text from French to English, the language model predicts the next word of the English sequence given the entirety of the French sequence and the preceding words of the English sequence.
+The most popular application of encoder-decoder models is machine translation; for example, to convert some text from French to English, the language model predicts the next word of the English sequence given the entirety of the French sequence and the preceding words of the English sequence.
 
-Most state-of-the-art neural language models uses a variant of the Transformer architecture \cite{vaswani2017attention} as the neural network $f_\theta$.
+Most state-of-the-art neural language models use a variant of the Transformer architecture \cite{vaswani2017attention} as the neural network $f_\theta$.
 Prior to the development of Transformers, recurrent neural architectures, typically based on Long Short Term Memory units \citep{hochreiter1997long}, were most commonly employed.
 Transformers have several advantages over their recurrent predecessors, most notably that operations are parallelized across all tokens in the sequence.
-This immensely speeds up computation time during training, and computation time is no longer dependent on the length of the sequence.
-Transformers also are much better than recurrent models at making connections between information that may be very far apart in the sequence.
-Recurrent architectures keep track of a ``hidden state'' which gets updated for every position in the sequence, which means it may no longer encode much information about the beginning of the sequence by the time it arrives at the end.
-In contrast, Trasnformers use an ``attention mechanism'' that allows any position in the input sequence to easily ``attend'' to any other position.
+This speeds up the computation time need for training immensely, and the computation time is no longer dependent on the length of the sequence.
+Transformers are also much better than recurrent models at making connections between information that may be very far apart in the sequence.
+Recurrent architectures keep track of a ``hidden state'' which gets updated for every position in the sequence.
+A ramification of this sequential updating is that the final hidden state may no longer encode much information about the beginning of the sequence.
+In contrast, Transformers use an ``attention mechanism'' that allows any position in the input sequence to easily ``attend'' to any other position.
 
 
 \section{Encoding Text into a Vocabulary}
@@ -120,7 +121,7 @@ Table \ref{tab:tokenization} shows a sentence under a few different tokenization
 
 \begin{table}[h]
     \centering
-    \caption{Examples of the string ``A hippopotamus ate my homework." tokenized using three different vocabularies. With the subword tokenizer, the rare word ``hippopotamus" gets broken up into multiple tokens. For word-level tokenizers, if the word ``hippopotamus'' occurred very infrequently in the corpus used to build the vocabulary (or perhaps the writer of the sentenced misspelled it), it would typically get replaced with an out-of-vocabulary token (row 4).}
+    \caption{Examples of the string ``A hippopotamus ate my homework." tokenized using three different vocabularies. With the subword tokenizer, the rare word ``hippopotamus" gets broken up into multiple tokens. For word-level tokenizers, if the word ``hippopotamus'' occurs very infrequently in the corpus used to build the vocabulary (or perhaps the writer of the sentenced misspelled it), it would typically get replaced with an out-of-vocabulary token (row 4).}
     \label{tab:tokenization}
     \begin{tabular}{l|p{5in}}
         Vocab Type & Example \\
@@ -137,7 +138,7 @@ Removing case allows for a more compact vocabulary, but it also removes potentia
 
 Subword vocabularies were designed to be a compromise between the advantages and disadvantages of word-level and character-level vocabularies.
 Character-level vocabularies are usually very small, no more than a couple hundred tokens.
-However, the vocabulary can cover near every possible string a person could write.
+However, the vocabulary can cover nearly every possible string a person could write.
 Word-level vocabularies cannot feasibly contain the hundreds-of-thousands of words present in English text.
 Realistically, only the most common words are kept, and less common ones are replaced with a special \texttt{UNK} token.
 When text is tokenized with character-level vocabularies, the resulting sequences are very long, while word-level tokenization yields shorter sequences since there is just one token per word.
@@ -175,7 +176,7 @@ Top-$k$ random sampling accomplishes this by restricting sampling to only the $k
 Nucleus sampling, also referred to as top-$p$ random sampling, accomplishes this by restricting sampling at timestep $t$ to the $k_t$ most likely tokens, where $k_t$ is selected such that these tokens cover no more than $p$\% of the probability mass.
 For all three of these techniques there is a parameter ($\tau$, $k$, or $p$) which controls the amount of randomness we want to permit in the generation.
 Choosing a low value for these parameters results in an increasingly peaky distribution, which, at its extreme, is the same as taking the $\arg \max$. 
-Choosing a high value for these parameters results in the distribution that looks closer and closer to the original scores produced by the model.
+Choosing a high value for these parameters results in the distribution that looks closer to the original scores produced by the model.
 % Figure \TODO{Add figure showing some probability distributions.} shows how these different strategies affect the shape of the distribution.
 
 \subsection{Search-Based Approaches}
@@ -219,7 +220,8 @@ Algorithm \ref{alg:beam-search-inference} gives an overview of the beam search a
 \end{algorithm}
 
 As neural language models came to be applied increasingly to open-ended tasks, such as chatbot dialog or story generation, beam search was found to be ill-suited to generating a set of \textit{diverse} candidate sequences
-Since beam search only explores a limited portion of the overall search space, it tends to yield multiple variants of the same high-likelihood sequence, sequences that often only differ in punctuation or minor morphological changes \cite{li2016mutual}.  
+Since beam search only explores a limited portion of the overall search space, it tends to yield multiple variants of the same high-likelihood sequence.
+The outputted sequences often only differ in punctuation or minor morphological changes \cite{li2016mutual}.  
 To try and solve this problem, many researchers proposed modification to beam search to encourage it to produce more diverse sets of candidate generations.
 We summarize several of these here:
 
@@ -262,7 +264,7 @@ Some use it as a synonym for sentence interestingness or unlikeliness \citep{tat
 Others consider diversity a measure of how different two or more sentences are from each other \citep{vijayakumar2016diverse,gimpel2013systematic}.
 In some framings, diversity is measured across a set of generations coming from the same prompt.
 Given a particular prompt or input, the goal is to measure the breadth of possible generations the model will produce \citep{mayhew2020simultaneous}.
-Diversity can also be measured as a corpus-level: given all the sentences generated by the model for all prompts, what is the overall lexical diversity?
+Diversity can also be measured at a corpus-level: given all the sentences generated by the model for all prompts, what is the overall lexical diversity?
 
 In my research, I use three definitions of diversity.
 First, when performing conditional generation, I define diversity as the ability of a generative method to create a set of possible outputs that are each valid given a particular input but vary as widely as possible in terms of word choice, topic, and meaning.
@@ -272,16 +274,18 @@ Finally, in some of my work, I ask human raters to evaluate generation interesti
 
 \subsection{Generation Quality}
 For all generation tasks, it is important for the output text to be high quality, though this property can also be difficult to define.
-In some downstream applications, ``quality'' can be evaluated directly with human raters by asking them questions like "how good is this text?" (though definitions of ``good'' vary widely across the literature \citep{van2019best}).
+In some downstream applications, ``quality'' can be evaluated directly
+by asking human raters questions like "How good is this text?"
+(though question phrasings and explanations of what it means to be ``good'' vary widely across the literature \citep{van2019best}).
 In others, it can be quantified as how many times a user interacts with the generative system (for example, the number of conversation turns with a dialog agent) before losing interest.
 
 To some extent, quality can also be measured automatically.
 In tasks with a clear goal, like machine translation or summarization, one can compare the generation against a gold standard.
-Quality is strongly associated with fluency, and it is generally true that the lower perplexity a language model assigns some text, the more fluent the text is, and thus the higher quality.
+Quality is strongly associated with fluency: it is generally true that the lower perplexity a language model assigns some text, the more fluent the text is, and thus the higher quality.
 However, my collaborators and I show that this relationship between quality and perplexity breaks down for extremely high-likelihood generated text \citep{zhang2021trading}.
 
 In some of my research, we evaluate quality by asking humans to assess generations in terms of their fluency, adequacy, and interestingness.
-In Chapter \ref{chap:decoding}, we propose a novel method for assessing generation quality based on the premise that humans (or a trained discriminator) ought to have a hard time distinguishing between real human-written text and model outputs when the model outputs text that is high-quality.
+In Chapter \ref{chap:decoding}, we propose a novel method for assessing generation quality based on the premise that humans (or a trained discriminator) ought to have a hard time distinguishing between real human-written text and model outputs when the model produces text that is high-quality.
 
 \subsection{The Diversity-Quality Tradeoff}
 The goal of generating high-quality text is often at odds with the goal of generating diverse text.
@@ -318,23 +322,23 @@ Finally, we report \textbf{perplexity}, averaged over \textit{all} the top 10 ou
     \label{fig:correlations}
 \end{figure}
 
-For all three diversity measures, we see what the decoding strategies which produce the most diverse text also produce the least fluent and least adequate responses to the input utterances.
-For example, given the prompt ``\texttt{Look, nobody knows we did it.},'' random sampling generates the candidate responses ``\texttt{We didn’t have a plan I engineered a policy.}'' and ``\texttt{Same time you pick us up at six and get we.}.''
-These are pretty interesting but don't make much sense.
+For all three diversity measures, we see that the decoding strategies which produce the most diverse text also produce the least fluent and least adequate responses to the input utterances.
+For example, given the prompt ``\texttt{Look, nobody knows we did it.}'' random sampling generates the candidate responses ``\texttt{We didn’t have a plan I engineered a policy.}'' and ``\texttt{Same time you pick us up at six and get we.}''
+These are interesting but don't make much sense.
 In contrast, beam search generates ``\texttt{I don’t know what to say},'' which is neither interesting (as evaluated by human raters) nor diverse (many generated responses started with \texttt{I don't know}).
 However, it is a reasonable response to the prompt.
 
-One important ramification of the diversity-quality tradeoff is how detectable the generated text is to humans and automatic discriminators.
+One important consequence of the diversity-quality tradeoff is how detectable the generated text is to humans and automatic discriminators.
 The relationship between detectability and the lexical diversity of model generations is described in detail in Chapter \ref{section:detection}.
 
 \section{Language Generation Tasks in This Dissertation}
-My dissertation addresses several different tasks in language generation.
-A brief summary of each task, as well is the means by which performance on it is evaluated, is provided here.
+My dissertation touches upon several tasks in language generation.
+A brief summary of each task, as well as the means by which performance is evaluated, is provided here:
 
 \paragraph{Continuation}
-An NLG system is asked to generate a continuation for a prompt. It is then evaluated on how close the generated continuation is to the true continuation. Automatic evaluation can either be performed using word overlap metrics such as BLEU \citep{papineni2001bleu}, or by measuring fluency (computing the perplexity of a model on the generated continuation).
+An NLG system is asked to generate a continuation for a prompt. It is then evaluated on how closely the generated continuation matches the true continuation. Automatic evaluation can either be performed using word overlap metrics such as BLEU \citep{papineni2001bleu}, or by measuring fluency (computing the perplexity of a model on the generated continuation).
 Human evaluation usually involves showing a rater the prompt and generation and asking them to make some decision about it.
-In Chapter \ref{section:detection}, the decision is to try and distinguish whether the presented text was machine-generated or not.
+In Chapter \ref{section:detection}, the decision is to try and distinguish whether or not the presented text was machine-generated or not.
 
 \paragraph{Fill-in-the-blank}
 The fill-in-the-blank or infilling task is similar to continuation, except that the system also has access to the text which should occur \textit{after} the generation.
@@ -343,25 +347,25 @@ Chapter \ref{section:fitb} describes this task in detail.
 
 \paragraph{Chitchat Dialog}
 Chitchat dialog is the task of predicting the next utterance in a conversation given the previous turns.
-As describes in the previous section, we evaluate how choice of decoding strategy impacts the ability of an NLG system to produce an utterance that is both high quality and diverse.
+As described in the previous section, we evaluate how choice of decoding strategy impacts the ability of an NLG system to produce an utterance that is both high quality and diverse.
 In addition to conducting automatic evaluation with BLEU and perplexity, human evaluation can be performed by asking raters to evaluate each generated utterance in terms of fluency, adequacy, and interestingness.
 
 \paragraph{Textual Style Transfer and Rewriting}
-Textual style transfer is the task of taking an input passage of text and a desired style and rewriting the input text to be in that style.
+Textual style transfer is the task of taking an input passage of text and a desired style and rewriting the input text to reflect that style.
 Typical tasks include sentiment transfer (for example, rewrite a negative restaurant review to have positive sentiment) and formality transfer (rewrite informal language to be formal).
 In my work, I am broadly interested in the task of rewriting input text to fulfill a user-specified writing objective.
 These rewriting tasks are a superset of style transfer; for example a user may ask for text to be ``rewritten to include the word 
-balloon'' or to ``have a cliffhanger at the end.''
+\textit{balloon}'' or to ``have a cliffhanger at the end.''
 Such rewriting could change both the content and the style.
 We evaluate rewriting using automatic metrics, such as measuring how often an automatic classifier identifies the rewritten task as having fulfilled the rewriting goal.
-We can also use metrics like BLEU score to compare against both the input sentence and a human-written groundtruth, though word-overlap metrics break down the more open-ended and transformational the rewriting task is.
+We can also use metrics like BLEU score to compare against both the input sentence and a human-written groundtruth, although word-overlap metrics break down when the writing text is more open-ended or transformational.
 Finally, human raters can be used to assess quality of the rewrite.
 
 \paragraph{Story Ideation and Brainstorming}
 For many writers, the process of writing is collaborative.
 They may use an ideation tool such as a deck of trigger cards to come up with initial ideas, or they may share their in-progress draft with readers to get feedback.
 One of the goals of my research is to be able to use neural language models to provide an alternative collaboration source for creative writers.
-This includes a suite of user-defined tasks centered around allowing writers to make requests such as ``what should happen next in my story'' or ``help me write a description of the old man introduced in the first sentence.''
+This includes a suite of user-defined tasks centered around allowing writers to make requests such as ``what should happen next in my story?'' or ``help me write a description of the old man introduced in the first sentence.''
 Because the goals here are so broad, evaluation is best done holistically--by conducting user studies to evaluate whether NLG outputs are useful to human writers in their writing goals.
 
 \section{Controllability and Task-Specific Generation}
@@ -372,11 +376,11 @@ If one wanted a system able to perform text summarization, one would likewise tr
 At the time, the neural networks being used for these sorts of tasks were relatively small, and training and maintaining one model per task, was mostly feasible.
 
 In 2018, Howard and Ruder \citep{howard2018universal} and Radford et al. \citep{radford2018improving} concurrently proposed the idea of pre-training a single universal task-agnostic language model.
-To accomplish any specific language task of interest, that model could subsequently be trained for extra steps on the training data of the desired task, a process known as finetuning.
-The idea of finetuning a more general model for a specific task had already taken off in computer vision, where researchers had shown a convolutional neural network pre-trained on the ImageNet task of classifying the contents of images could be finetuned for tasks ranging from image segmentation to cancer detection.
+To accomplish any specific language task of interest, that model could subsequently be trained for extra steps on the training data of the desired task, a process known as \textit{finetuning}.
+The idea of finetuning a more general model for a specific task took off in computer vision when researchers showed that a convolutional neural network pre-trained on the ImageNet task of classifying the contents of images could be finetuned for tasks ranging from semantic image segmentation \citep{orsic2019defense} to cancer detection \citep{cadrin2022moving}.
 
 General-purpose language models intended for generation tasks tend to be pre-trained on massive datasets scraped from the internet (Table \ref{tab:dataset_list}).
-It is common to use both decoder-only models trained only to predict the next token given the previous ones \citep{radford2019language}, as well as encoder-decoder architectures trained with a de-noising loss, where the input is a corrupted version of the text, and the task is to recover the uncorrupted text \citep{raffel2019exploring,lewis2020bart}.
+It is common to use both decoder-only models trained only to predict the next token given the previous ones \citep{radford2019language}, as well as encoder-decoder architectures trained with a de-noising loss, in which the input is a corrupted version of the text, and the task is to recover the uncorrupted text \citep{raffel2019exploring,lewis2020bart}.
 Table \ref{tab:common_pretrained_models} gives examples of several pre-training objectives that have been employed by popularly-used pre-trained models.
 Each of these models has been finetuned for a large diversity of downstream tasks.
 
@@ -392,10 +396,10 @@ Each of these models has been finetuned for a large diversity of downstream task
     C4 \citep{raffel2019exploring}   &  365M examples,      & {Yes} & Most English & {T5} \\
     mC4 \citep{xue2020mt5}   &  8.5B examples  & {Yes} & 101 languages & {mT5} \\
     The Pile \citep{gao2020pile} & 825 GiB & {Yes} & Mostly English & {GPT-Neo, Megatron-Turing} \\
-    RealNews &       & {Yes} &       \\
-    PanGu-$\alpha$ train set & {1.1TB} & {No} & Chinese & {PanGu-$\alpha$} \\
-    WebText &  40 GiB & {No} & Mostly English &  {GPT-2} \\
-    GPT-3 train set & {500B tokens} & {No} & Mostly English & {GPT-3} \\
+    RealNews \citep{zellers2019defending} &   120GB    & {Yes} &   English & GROVER    \\
+    PanGu-$\alpha$ train set \citep{zeng2021pangualpha} & {1.1TB} & {No} & Chinese & {PanGu-$\alpha$} \\
+    WebText \citep{radford2019language} &  40 GiB & {No} & Mostly English &  {GPT-2} \\
+    GPT-3 train set \citep{brown2020language} & {500B tokens} & {No} & Mostly English & {GPT-3} \\
     \bottomrule
     \end{tabular}%
 \end{table*}%
@@ -424,17 +428,17 @@ Each of these models has been finetuned for a large diversity of downstream task
 
 Finetuning such models has yielded immense success in tasks across the field of natural language processing.
 Chapter \ref{section:fitb} focuses on the feasibility of finetuning for the fill-in-the-blank task.
-There are however several limitations to the paradigm of pre-training followed by finetuning.
+There are, however, several limitations to the paradigm of pre-training followed by finetuning.
 As state-of-the-art neural language models increase in number of parameters, the computational expense of finetuning is becoming increasingly prohibitive.
 Furthermore, the need to store (potentially in GPU memory) one set of model weights per task makes it very difficult to build downstream applications which need to perform several different tasks.
-In addition, finetuning only works where there is enough data to fine-tune on.
+In addition, finetuning only works when there is enough on which data to fine-tune.
 Overfitting is a significant challenge when training or finetuning in low-resource settings, where there may only be a handful of training examples.
 
-For these reasons, various approach have been proposed for replacing the finetuning step with methods which require either no or minimal weight training.
-Brown et al. \citep{brown2020language} introduce the technique of few-shot prompting.
+For these reasons, various approaches have been proposed for replacing the finetuning step with methods which require either no or minimal weight training.
+Brown et al. \citep{brown2020language} introduce the technique of \textit{few-shot prompting}.
 By constructing a textual prompt which contains several examplars of the goal task, a general-purpose language model can be made to perform the task.
 Lester et al. \citep{lester2021power} introduce \textit{prompt tuning} as an improvement over few-shot prompting that trains a small neural network to produce an optimal prompt in embedding-space for the goal task.
 
 In this dissertation, I explore both finetuning and few-shot prompting.
-Chapter \ref{section:style_transfer} uses prompting techniques for the task of textual style transfer, while Chapter \ref{section:wordcraft} shows how they can be used for a variety of story editing operations.
+Chapter \ref{section:style_transfer} uses prompting techniques for the task of textual style transfer, while Chapter \ref{section:wordcraft} shows how these techniques may be used for a variety of story editing operations.
 Chapter \ref{section:fitb} focuses on fill in the blank, a task where finetuning outperforms other more training-efficient methods.
