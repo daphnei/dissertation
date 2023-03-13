@@ -13,16 +13,16 @@
 \label{chap:memorization}
 
 \section{Motivation}
-Machine-generated text is most undetectable when it looks exactly like its training data.
+Machine-generated text is most undetectable (by both humans and machines) when it looks exactly like its training data.
 In fact, the log-likelihood loss used during training explicitly encourages models to be able to exactly reproduce their training data.
-The result is models that are capable of exactly reproducing multi-paragraph sequences verbatim from their training data.
+The result is models that are capable of outputting multi-paragraph sequences verbatim from their training data.
 As models have grown from millions to trillions of parameters \citep{fedus2021switch}, with their training sets similarly growing from millions to trillions of tokens, they  are at increased risk of memorizing their training data.
 The problem is made worse by the fact that these enormous datasets are only minimally curated.
-For example, Carlini et al. \citep{carlini2020extracting} found that while most instances of memorization are innocuous, such as news articles or religious text, models are also capable of memorizing things like contact information or the names of real individuals (referenced outside of news contexts).
+For example, Carlini et al. \citep{carlini2020extracting} found that while most instances of memorization are innocuous, such as news articles or religious texts, models are also capable of memorizing things like contact information or the names of real individuals (referenced outside of news contexts).
 This sort of memorization is harmful if it breaches expectations of privacy or content ownership from those whose data is included in the train set.
-Memorizaiton also reduces generalizability if models are biased toward examples that are not representative of the underlying distribution of natural language.
+Memorization also reduces generalizability if models are biased toward examples that are not representative of the underlying distribution of natural language.
 
-In this chapter, we quantify the properties which raise the risk of memorization, notably the size of the model and the number of times a document occured during training.
+In this chapter, we quantify the properties which raise the risk of memorization, notably the size of the model and the number of times a document occurs during training.
 We also show how passing in a long prompt to the model increases the chance we will extract memorized content.
 Finally, we describe one actionable step--thorough dataset deduplication--which can be employed before training to diminish the risk of memorization.
 
@@ -30,16 +30,11 @@ Finally, we describe one actionable step--thorough dataset deduplication--which 
 \subsection{Definitions of Memorization}
 \label{sec:mem-def}
 
-Memorization is an intuitive concept.
-When presented with two passages of text, humans are able to make judgement calls over whether they are similar to each other.
-In order to systematically study memorization, it is necessary to develop definitions which attempt, imperfectly, to capture this intution.
-In this chapter, we employ several different imperfect measurements of memorization, each capturing a slightly different notion of what it means for a language model to memorize.
-
-There is extensive prior work that qualitatively studies memorization in neural language models.
-Much of this work has defined memorized as \emph{extraction}, the ability to extract training data examples from a trained model.
-These works have demonstrated that it possible to recover various forms of memorized data including URLs, phone numbers, or other forms of personal information~\citep{carlini2020extracting, ziegler2021copilot}, or in other work, synthetically injected ``canaries''~\citep{carlini2019secret, henderson2017ethical, thakkar2020understanding, thomas2020investigating}.
+There is extensive prior work that studies memorization in neural language models.
+Much of this work has defined memorization as \emph{extraction}, the ability to extract training data examples from a trained model.
+Earlier research has demonstrated that it possible to recover various forms of memorized data including URLs, phone numbers, or other forms of personal information~\citep{carlini2020extracting, ziegler2021copilot}, as well as synthetically injected ``canaries''~\citep{carlini2019secret, henderson2017ethical, thakkar2020understanding, thomas2020investigating}.
 %
-However, extraction attacks typically aim to demonstrate the existence of extractable data, rather than precisely quantifying how much models memorize.
+However, extraction attacks typically aim to demonstrate the existence of extractable data, rather than precisely quantifying how much data models are capable of memorizing.
 For example, the unprompted memorization evaluation of \citet{carlini2020extracting} found just 600 examples of memorization in GPT-2.
 
 In contrast, in Section \ref{section:quantifying_memorization}, our goal is to establish tight approximations to the fraction of a dataset that can be adversarially extracted from a language model.
@@ -53,12 +48,19 @@ A string $s$ is \emph{extractable with $k$ tokens of context} from a model $f$ i
 
 For example, if a model's training dataset contains the sequence \textit{``My phone number is 555-6789''},
 and given the length $k=4$ prefix \textit{``My phone number is''}, the most likely output is \textit{``555-6789''}, then we call this sequence extractable (with 4 words of context).
-We choose greedy decoding because it is a cheap to run (compared to beam search), and we found that memorization is correlated with generated sequences being assigned very high likelihood.
+We choose greedy decoding because it is inexpensive to run (compared to beam search), and we found that memorization is correlated with generated sequences being assigned very high likelihood.
 
 In Section \ref{section:dedup}, we use a slightly different definition of ``extractable''.
-Instead of generating with greedy decoding, we use top-$k$=50 random sampling, and instead of checking if the generation verbatim matches the true continuation, we check if the edit similarity between the generation and the true continuation is above a chosen threshold.
+Instead of generating with greedy decoding, we use top-$k$=50 random sampling, and instead of checking if the generation  matches the true continuation verbatim, we check if the edit similarity between the generation and the true continuation is above a chosen threshold.
 Section \ref{section:dedup} also measures memorization in unconditioned generation.
-We generate 100,000 sequences each of 512 tokens, and then counted the fraction of generated tokens which are part of 50-token long substrings that occur in the train set. 
+We generated 100,000 sequences each of 512 tokens, and then counted the fraction of generated tokens which are part of 50-token long substrings that occur in the train set. 
+
+% Extractive definitions of memorization are closely tied to the concept of plagiarism.
+% % Ultimately, which has been under-studied in the language modeling literature, is whether humans perceive plagiarism to have occurred.
+% When presented with two passages of text, humans are typically able to make judgement calls over whether the passages are similar enough to each other to be seen as plagiarism.
+% Automatic methods for identifying memorization in generated sequences are really attempting to capture human intuition for identifying plagiarism.
+% In this chapter, we employ several different imperfect measurements of memorization, each capturing a slightly different notion of what it means for a language model to memorize.
+
 
 All of these definitions are inspired by the broad literature on privacy attacks in machine learning.
 For example, membership inference attacks~\citep{shokri2017membership, yeom2018privacy} allow an adversary to detect the presence of a given example in a model's training dataset, and other forms of data leakage permit an adversary to learn dataset properties \citep{ganju2018property,fredrikson2015model}.
@@ -81,13 +83,13 @@ It is important to  quantify factors that lead to increased memorization of a mo
 % understand to what extent these future models may \emph{memorize} their training data.
 %
 Indeed, recent work has shown that \emph{training data extraction attacks} are a practical threat for current language models ~\citep{carlini2020extracting}.
-In a training data extraction attack, an adversary ``attacks'' a trained neural network by interacting with it with the goal of establushing whether an item was in the training data.
-While current attacks are effective, they only represent a lower bound on how much memorization occurs in existing models.
+In a training data extraction attack, an adversary ``attacks'' a trained neural network by interacting with it with the goal of establishing whether a specific item was in the training data.
+While current attacks are effective, they represent a lower bound on how much memorization occurs in existing models.
 %
 For example, by querying
-the GPT-2 language model, \citet{carlini2020extracting} (manually) identified just $600$ memorized training examples out of a $40$GB training dataset.
+the GPT-2 language model, \citet{carlini2020extracting} (manually) identified only $600$ memorized training examples out of a $40$GB training dataset.
 %
-This attack establishes a (loose) lower bound that at least
+This attack establishes a loose lower bound that at least
 0.00000015\%
 % $1.5\times10^{-7}\%$
 of the dataset is memorized. % The authors hypothesized that this lower bound is likely very loose.
@@ -141,10 +143,10 @@ This subset should be small enough that it is feasible to test for extraction,
 but also large enough that
 it gives statistical confidence.
 %
-In our experiments, we choose subsets of roughly $50{,}000$ sequences.
+In our experiments, we chose subsets of roughly $50{,}000$ sequences.
 %\footnote{Even at this low number of sequences, the generations analyzed in this paper still require 
 %over $1{,}000$ GPU-hours of compute.}
-The primary criteria when choosing a subset of the training data is to obtain a representative sample that allows
+As our primary criteria for choosing a subset of the training data, we aimed to obtain a representative sample that would allow
 us to draw meaningful conclusions from the data.
 %
 Yet, naively sampling from the data independently at random to construct a representative subset of the data distribution is not the best approach.
@@ -158,39 +160,37 @@ accurately measure the tail of this distribution.
 
 
 
-Instead, we construct a duplication-normalized subset.
+Instead, we constructed a duplication-normalized subset.
 %
 For each sequence length $\ell \in \{50,100,150,\dots,500\}$,
 and integer $n$,
-we select 1,000 sequences of length $\ell$ that are contained in the training dataset between $2^{n/4}$ and $2^{(n+1)/4}$ times.
-We do this until we reach an $n$ for which 1,000 sequences are not available.
+we selected 1,000 sequences of length $\ell$ that are contained in the training dataset between $2^{n/4}$ and $2^{(n+1)/4}$ times.
+We did this until we reached an $n$ for which 1,000 sequences were not available.
 %
-This gives us $1000$ sequences that repeat between $6$ and $8$ times ($\approx 2^{11/4}$ and $\approx 2^{12/4}$) and also $1000$ sequences that repeat between $724$ and $861$ times ($\approx 2^{38/4}$ and $\approx 2^{39/4}$).
+This gave us $1000$ sequences that repeat between $6$ and $8$ times ($\approx 2^{11/4}$ and $\approx 2^{12/4}$) and also $1000$ sequences that repeat between $724$ and $861$ times ($\approx 2^{38/4}$ and $\approx 2^{39/4}$).
 %
 This biased sampling allows us to more accurately measure memorization as a function of a sample's duplication factor, without querying the entire dataset.
 %
-Note that constructing this duplicate-normalized data subset requires some work,
-as efficiently identifying duplicate substrings in an $800$GB training dataset is
-computationally challenging.
-%
-We make use of the suffix array construction from \citet{lee2021deduplicating} to identify sequences which are present in the training set a specific number of times.
+Constructing this duplicate-normalized data subset requires significant computational work,
+as efficiently identifying duplicate substrings in an $800$GB training dataset is an expensive task.%
+We made use of the suffix array construction from \citet{lee2021deduplicating} to identify sequences which are present in the training set a specific number of times.
 
-For each sequence length between $50$ and $500$ tokens, this collection process gives us roughly $50,000$ examples duplicated varying numbers
+For each sequence length between $50$ and $500$ tokens, this collection process gave us roughly $50,000$ examples duplicated varying numbers
 of times,
 totaling roughly $500{,}000$ sequences.
 %
-For each length $\ell$ sequence, we prompt the model with the first $\ell-50$ tokens and report the sequence
+For each length $\ell$ sequence, we prompted the model with the first $\ell-50$ tokens and report the sequence
 as ``extractable'' if the next $50$ tokens emitted by the model exactly match the $50$ token suffix of this sequence.
 Fifty tokens corresponds to an average of 127 characters or 25 words\footnote{As measured by \href{https://spacy.io/}{spaCy} on the GPT-Neo training set.}, well over the length of a typical English sentence.
 %
-Finally, we compute the average probability that a sequence is extractable by averaging over all lengths $\ell$.
+We compute the average probability that a sequence is extractable by averaging over all lengths $\ell$.
 
 
 \subsection{Experiments}
 \label{section:scaling_laws_experiments}
 
 \subsubsection{Model and Dataset}
-We primarily study the GPT-Neo model family~\citep{gpt-neo,gpt-j} trained on the Pile dataset~\citep{gao2020pile}.
+We primarily study the GPT-Neo model family~\citep{gpt-neo,gpt-j} trained on The Pile dataset~\citep{gao2020pile}.
 The GPT-Neo models are decoder-only language models 
 trained with the objective of predicting the next token in a sequence given the previous ones.
 They come in four sizes: $125$ million, $1.3$ billion, $2.7$ billion and $6$ billion parameters. 
@@ -206,16 +206,15 @@ ability to memorize $<$30 URLs \citep{carlini2020extracting}.
 % As mentioned earlier, prior work has shown qualitative relationships between model size and
 % memorization ability (e.g., by showing that larger GPT-2 models memorize a few more URLs (suspected to be in the GPT-2 training dataset) than smaller models \citet{carlini2020extracting}).
 %
-In contrast, we study \emph{a million} model generations in order to describe
+In contrast, our study included \emph{a million} model generations in order to describe
 how model scale relates to memorization.
 
-\paragraph{Results.}
 
 \begin{figure}[h]
     \includegraphics[height=12.2em]{figures/exactly_mem-vs-model_size-prompt-all-gen-50-xlabel-ylabel.pdf} %[height=10.5em]
     \centering
-    \caption{We prompt various sizes of GPT-Neo models (green) with data from their training set---The Pile. 
-As a baseline (yellow), we also prompt the GPT-2 family of models with the same Pile-derived prompts, even though they were trained on WebText, a different dataset.
+    \caption{We prompted various sizes of GPT-Neo models (green) with data from their training set---The Pile. 
+As a baseline (yellow), we also prompted the GPT-2 family of models with the same Pile-derived prompts, even though they were trained on WebText, a different dataset.
 Larger models memorize a larger fraction of their training dataset, following a log-linear relationship.
 This is not just a result of better generalization, as shown by the lack of growth for the GPT-2 baseline models.
 The dark shaded region is one std away from the mean, and the lighter shaded region represents the min and max over all document lengths.
@@ -223,14 +222,14 @@ The dark shaded region is one std away from the mean, and the lighter shaded reg
 \label{fig:main-res-size}
 \end{figure}
 
-The results of this experiment are given in Figure~\ref{fig:main-res-size}.
+The results of this experiment are shown in Figure~\ref{fig:main-res-size}.
 %
 The y-axis reports the fraction of generations which exactly reproduce the true suffix for their prompt, averaged over all prompt and sequence lengths we experimented on.
 %
 We find that larger models memorize significantly more than smaller models do, with \emph{a near-perfect log-linear fit} ($R^2$ of 99.8\%): a ten fold increase in model size corresponds to an increase in memorization of 19 percentage points.\footnote{This trend cannot continue indefinitely; the maximum percentage is 100\%.
 We do not address these complications as our results max out at $\sim$60\%, but future work may need to handle these additional difficulties when extrapolating to even larger models.}
 
-To confirm that larger models are indeed \emph{memorizing} more data, and not simply \emph{generalizing} better, we also perform the same analysis with the GPT-2 model family as a baseline. 
+To confirm that larger models are indeed \emph{memorizing} more data, and not simply \emph{generalizing} better, we also performed the same analysis with the GPT-2 model family as a baseline. 
 %
 The GPT-2 family of models are similarly sized, and also trained on Internet-scraped data.
 If our result that larger models memorize more was due to the general predictive strength of larger models, and not the memorization of specific training data, we would expect a similar relationship between comparably sized GPT-2 models trained on similar data. 
@@ -249,20 +248,18 @@ A qualitative analysis (see examples in Appendix Figure~\ref{fig:egs-mem-by-gpt2
 sequences (e.g., number sequences, repetitions of the same few tokens, or common phrases).
 %
 Therefore, we conclude that when larger models have a higher fraction of extractable training data,
-it is because they have memorized the data; it is not simply because the larger models are generally more accurate.
+it is because they have indeed memorized the data; it is not simply because the larger models are generally more accurate.
 
 
 \subsubsection{Repeated Strings are Memorized More Often}
 \label{sec:duplicates}
-Prior work has provided preliminary evidence that memorization in language models increases with the number of times sequences are repeated in the training set \citep{carlini2020extracting, lee2021deduplicating}.
+Prior work has provided preliminary evidence that memorization in language models increases with the frequency with which sequences are repeated in the training set \citep{carlini2020extracting, lee2021deduplicating}.
 %
-We expand on this observation and systematically measure the effect number of repetitions has on memorization.
+We expanded on this observation by systematically measuring the effect of number of repetitions on memorization.
 %
-Using our experimental methodology, we measure the fraction of sequences which are extractable, for sequences in each bucket of duplicate counts, varied between 2 duplicates and 900 duplicates.
-Each bucket consists of $1{,}000$ distinct sentences, and we compute the average amount of memorization for each bucket.
+Using our experimental methodology, we measured the fraction of sequences which were extractable, for sequences in each bucket of duplicate counts, ranging from 2 duplicates to 900 duplicates.
+Each bucket consisted of $1{,}000$ distinct sentences, and we computed the average amount of memorization for each bucket.
 
-
-\paragraph{Results.}
 
 \begin{figure}[ht]
         \includegraphics[height=12em]{figures/exactly_mem-vs-repetitions-mean-xlabel-markers.pdf} %[height=10.75em]
@@ -276,20 +273,20 @@ Each bucket consists of $1{,}000$ distinct sentences, and we compute the average
 \end{figure}
 
 Figure~\ref{fig:main-res-dups} shows an analysis of our results, aggregated over all sequence lengths.
-We find a clear log-linear trend in memorization. While the model struggles to regurgitate strings which are repeated just a handful of times, this probability increases dramatically as strings have more repetitions.
+We find a clear log-linear trend in memorization. While the model struggles to regurgitate strings which are repeated only a handful of times, this probability increases dramatically as strings have more repetitions.
 %
 %Strings repeated only once are memorized by the 1.3B parameter model with probability $TODO$, and even at 5 repetitions this probability is still only 8\%. 
 These small memorization values at low numbers of repetitions corroborate the impact of training dataset deduplication on memorization observed by \citet{lee2021deduplicating}.
 %
-However, we find that memorization does still happen, even with just a few duplicates---thus, deduplication will not perfectly prevent leakage.
+However, we find that memorization does still happen, even with just a few duplicates---thus, deduplication will not  prevent leakage perfectly.
 %
 While this relationship is perhaps obvious, and has been corroborated for specific training examples in prior work \citep{carlini2019secret, carlini2020extracting}, our results show that it holds \emph{across the entire training set}.
 
 
 \subsubsection{Longer Context Discovers More Memorization}
 \label{sec:context}
-The previous two questions evaluated how data collection and model training decisions impact the leakage of a model's training data when it is provided a fixed number of tokens from a sequence as context.
-As a result, those experiments suggest particular actions that could be taken to mitigate memorization (by reducing model size, or limiting the number of duplicate examples).
+The previous two sections evaluated how data collection and model training decisions impact the leakage of a model's training data when it is provided with a fixed number of tokens from a sequence as context.
+Our experiments suggested particular actions that could be taken to mitigate memorization (by reducing model size, or limiting the number of duplicate examples).
 
 However, even when the model is fixed, it is possible to vary the amount of extractable training data by controlling the length of the prefix passed to the model. 
 By studying how the number of tokens of context impacts extractability, we demonstrate the difficulty of \emph{discovering} memorization---language models may only exhibit their memorization under favorable conditions.
@@ -300,8 +297,8 @@ By studying how the number of tokens of context impacts extractability, we demon
         \centering
         \includegraphics[height=12em]{figures/exactly_mem-vs-prompt_len-seq-500-gen-50-xlabel-markers.pdf} %[height=10.5em]
         \caption{
-        We prompt various sizes of GPT-Neo models (green) with data from their training set---The Pile. 
-    As a baseline (yellow), we also prompt the GPT-2 family of models with the same Pile-derived prompts, even though they were trained on WebText, a different dataset.
+        We prompted various sizes of GPT-Neo models (green) with data from their training set---The Pile. 
+    As a baseline (yellow), we also prompted the GPT-2 family of models with the same Pile-derived prompts, even though they were trained on WebText, a different dataset.
     As the number of tokens of context available increases, so does our ability to extract memorized text.
     }
         \label{fig:main-res-context}
@@ -320,13 +317,13 @@ This makes ``discovering'' memorization difficult.
 %Here, the model might not be able to give the correct answer, despite the fact that
 %the model could know the answer if only more context were available.
 
-The discoverability phenomenon may seem natural: conditioning a model on $100$ tokens of context is more specific than conditioning the model on $50$ tokens of context, and it is natural that the model would estimate the probability of the training data as higher in this situation. 
-However, the result is that some strings are ``hidden'' in the model and require more knowledge than others to be extractable.
+The discoverability phenomenon may seem natural: conditioning a model on $100$ tokens of context is more specific than conditioning the model on $50$ tokens of context, and it is expected that the model would estimate the probability of the training data as higher in this situation. 
+However, the result is that some strings are ``hidden'' in the model and require more knowledge of the training data to be extractable than others.
 
-From one point of view, it is good that some memorization is difficult to discover.
-This makes it harder for attackers to perform training data extraction attacks \citep{carlini2020extracting},
+From one perspective, it is good that some memorization is difficult to discover.
+This makes it harder for attackers to perform training data extraction attacks \citep{carlini2020extracting}
 or otherwise exploit memorization.
-Indeed, if an exact $100$ token prompt is required to make the model output a given string, then, in practice, an adversary will likely be unable to perform the attack.
+If an exact $100$ token prompt is required to make the model output a given string, then, in practice, an adversary will likely be unable to perform the attack.
 %
 The difficulty in discovering memorization also reduces the likelihood of \emph{non-adversarial} training data regurgitation.
 For example, the GitHub CoPilot model~\citep{chen2021evaluating} reportedly rarely emits memorized code in benign situations, and most memorization occurs only when the model has been prompted with long code excerpts that are very similar to the training data~\citep{ziegler2021copilot}.
@@ -340,7 +337,7 @@ it is common to attempt post-hoc \emph{privacy auditing}~\citep{jayaraman2019eva
 %
 Our results suggest that correctly auditing large language models will likely require prompting the model with training data, as there are currently no known techniques to identify the tail of memorized data without conditioning the model with a large context.
 %
-Improving upon this limitation is an interesting problem for future work.
+Improving upon this limitation is an interesting challenge for future work.
 
 
     
@@ -352,42 +349,42 @@ Improving upon this limitation is an interesting problem for future work.
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.5\textwidth]{figures/random-exactly_mem-vs-model_size-prompt-all-gen-50-xlabel-ylabel} 
-    \caption{Percentage of sequences extracted as a function of model scale where we sample randomly from the training set. }
+    \caption{Percentage of sequences extracted as a function of model scale where we sampled randomly from the training set. }
     \label{fig:other_approaches_randomsize}
 \end{figure}
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.5\textwidth]{figures/random_exactly_mem-vs-prompt_len-seq-varyseqlen-gen-50-xlabel-ylabel-markers} %[height=10.75em]
-    \caption{Percentage of sequences extracted as we vary the length of the prompt. For each sequence length $n$, $n$-50 tokens are used as the prefix, and we check for extraction of the remaining 50 tokens.}
+    \caption{Percentage of sequences extracted as we varied the length of the prompt. For each sequence length $n$, $n$-50 tokens were used as the prefix, and we checked for extraction of the remaining 50 tokens.}
     \label{fig:other_approaches_randomlength}
 \end{figure}
 
 
-The experiments presented thus far use subsets of the training data that were explicitly sampled according to how many duplicates of the example exist in the datas.
+The experiments presented thus far use subsets of the training data that were explicitly sampled according to how many duplicates of the example exist in the training.
 %
-We now explore what would happen if we instead choose a
+We now explore an alternative experimental setting in which we instead choose a
 truly random subset of the training data, where each sequence is sampled uniformly.
 %
-Specifically, we randomly sample $100,000$ sequences
-from The Pile dataset of length 100, 200, 500, and 1000;
-prompt the model with the first $N-50$ tokens; and then
-test for memorization by verifying if the model can emit the remaining $50$ tokens perfectly.    
+Specifically, we randomly sampled $100,000$ sequences
+from The Pile dataset of token length 100, 200, 500, and 1000;
+prompted the model with the first $N-50$ tokens; and then
+tested for memorization by verifying if the model could emit the remaining $50$ tokens perfectly.    
 %
 We explore the result of this analysis in
 Figure~\ref{fig:other_approaches_randomsize} and Figure~\ref{fig:other_approaches_randomlength}.
-We again vary the size of the models we train and the
-context length we provide to understand how this impacts memorization---but this time through prompting the models
+Like in the previous experiments, we varied the size of the models and the
+context length we provided to understand how these factors impact memorization---but we did this through prompting the models
 with randomly sampled training sequences.
 %
 As expected, the absolute probability of memorization is much lower than in Figure~1 where we prompted models with training data from the sampled duplication-normalized subset.
 
-As before, we observe similar trends with model scale and context length.
-Larger models memorize more training examples than smaller models---and much more than the baseline GPT-2 model
+Much like before, we observed similar trends with model scale and context length.
+Larger models memorized more training examples than smaller models---and much more than the baseline GPT-2 model
 that was not trained on The Pile.
 %
-Similarly, providing more context to a model increases
-the likelihood we can discover memorization.
+Providing more context to a model increased
+the chance of discovering memorization.
 %
 In Figure~\ref{fig:other_approaches_randomlength}, we prompt models with: $\text{prompt length} = \text{sequence length} - 50$. We see that the longer prompts are easier to predict correctly than shorter prompts. 
 % Here, however, we find that longer sequences \emph{are}
@@ -399,26 +396,25 @@ sequences of length $1000$ (prompt length $ = 950$) compared to sequences of len
 We can extract the last 50 tokens of
 a length-1000 sequence with nearly $7\%$ probability
 for the largest GPT-J 6B model compared to $4\%$ probability 
-for the smallest $125$M GPT-Neo model. (And both
+for the smallest $125$M GPT-Neo model.
+Bboth
 of these are much larger than the $2\%$ probability 
-of extraction for the $1.5$B parameter GPT2-XL model.)
+of extraction for the $1.5$B parameter GPT2-XL model.
 %
-These results taken together allow us to establish an estimated lower bound that
-there is $1\%$ of The Pile dataset that is extractable
-by the 6B GPT-J model, but not by GPT-2 XL.
+These results taken together allow us to establish an estimated lower bound: that is $1\%$ of The Pile dataset is extractable by the 6B GPT-J model, but not by GPT-2 XL.
 
 
 \subsubsection{Alternate Experimental Setting: Beam Search Decoding}
 We previously defined memorization as the ability of a model to generate the exact true continuation when the \emph{most likely} token is chosen at every step of decoding.
 However, using greedy decoding strategy does not produce the overall most likely sequence.
-Many language model applications use other decoding strategies, such as beam search (an algorithm for efficiently searching over the exponential space of sequences that could possibly be generated) to find the one with highest possible likelihood.
-To understand how our choice of decoding strategy affects the amount of memorization we measure, we compare greedy decoding with beam search in Figure \ref{fig:other_approaches_search}(c).
+Many language model applications use other decoding strategies, such as beam search (an algorithm for efficiently searching over the exponential space of possible sequences that could be generated) to find the one with highest possible likelihood.
+To understand how our choice of decoding strategy affects the amount of memorization we measure, we compared greedy decoding with beam search (Figure \ref{fig:other_approaches_search}).
 
-We find that using beam search (with $b = 100$) results in only slightly more extracted memorization.
-The average difference in fraction of extractable memorization is just under 2 percentage points on average, with a maximum of 5.6. %, for the bucket containing sequences with about 1300 repetitions, and the average difference is around $2\%$.
+We found that using beam search (with $b = 100$) resulted in only slightly more extracted memorization.
+The average difference in fraction of extractable memorization was just under 2 percentage points on average, with a maximum of 5.6. %, for the bucket containing sequences with about 1300 repetitions, and the average difference is around $2\%$.
 Interestingly, beam search and greedy decoding generated the same output 45\% of the time.
 
-The most common decoding strategy employed by modern LMs is \emph{random sampling}, where the next token is selected at random according to a probability distribution derived from the model's predictions.
+The most common decoding strategy employed by modern LMs is \emph{random sampling}, in which the next token is selected at random according to a probability distribution derived from the model's predictions.
 \citet{mccoy2021raven} found that random sampling resulted in generated text with a greater number of novel $n$-grams.
 Since the goal of our study is to maximize discoverability---an antithetical goal to maximizing linguistic novelty---we do not present experiments that use random sampling.
 
@@ -468,14 +464,14 @@ By comparing these two methods (checking for memorization within the ground trut
     \label{fig:other_approaches_search}
 \end{figure}
 
-Searching within the entire dataset finds more memorized content than comparing with the ground truth (Figure \ref{fig:other_approaches_search}). 
+Searching within the entire dataset reveals more memorized content than comparing with the ground truth (Figure \ref{fig:other_approaches_search}). 
 For examples at 100 repetitions $32.6\%$ of outputs are contained somewhere in the dataset but just $15.8\%$ match the ground truth continuation.
 This difference becomes more pronounced as the number of repetitions increases. 
 The maximum difference between these approaches is 28.4\%, at 2{,}200 repetitions.
 %difference between searching the entire dataset vs. comparing with the continuation is $28\%$ 
 %(0.2839999999999999, 2234.016)
 
-We refrain from using this approach for our main experiments,
+We refrained from using this approach for our main experiments
 %First, studying repetition in internet datasets requires understanding how so many repetitions of an example came to be. 
 %There are many approximate duplicates such as those containing text generated from templates~\cite{lee2021deduplicating}.
 %Thus, $80\%$ memorization when checking in the entire dataset and also nearly $60\%$ memorization when comparing with the groundtruth are both not as concerning as the raw numbers might suggest.
@@ -487,7 +483,7 @@ because this definition requires substantially larger computation resources; it 
 querying whether hundreds of thousands of sequences are contained in an 800GB
 training dataset.
 %
-Therefore, to promote reproducability, the remainder of this section continues with testing the generated suffix against the single expected training suffix.
+Therefore, to promote reproducibility, the remainder of this section continues with testing the generated suffix against the single expected training suffix.
 % And while we have developed special suffix-array tooling to perform this computation efficiently,
 % in order to allow our work to be more easily reproduced, we TODO our main methodology
 % that only requires a simple equality test between two length-50 sequences.
@@ -521,36 +517,33 @@ Therefore, to promote reproducability, the remainder of this section continues w
          \cellcolor{blue!50}10{,}273 & \cellcolor{blue!26}5{,}402 & \cellcolor{blue!20}4{,}070 & - \\
          \bottomrule
     \end{tabular}
-            \centering\caption{The number of sequences memorized by one model, and not memorized by another. Not all sequences memorized by a small model are also memorized by a larger model. As a model gets larger, it memorizes more unique sequences.}\vspace{1em}
+            \centering\caption{The number of sequences memorized by one model and not memorized by another. Not all sequences memorized by a small model are also memorized by a larger model. As model size increases, a greater number of unique sequences are memorized.}
     \label{tab:memorized_by_model}
 \end{table}
 
-We now turn to inspect the training sequences memorized by the models.\footnote{For these results we sample 50-token prompts, 50-token continuations, and randomly sample across duplication counts.} Figure~\ref{fig:egs-mem-by-all} in the appendix shows examples of sequences that are memorized by \emph{all} the models. We found most of these universally-memorized sequences to be ``unconventional'' texts such as code snippets or highly duplicated texts such as open source licenses. %Note the license texts are memorized verbatim---the asterisks due to C/C++ style comments formatting are reproduced faithfully.
+We will now inspect the training sequences memorized by the models.\footnote{For these results we sample 50-token prompts, 50-token continuations, and randomly sample across duplication counts.} Figure~\ref{fig:egs-mem-by-all}  shows examples of sequences that are memorized by \emph{all} the models. We found most of these universally-memorized sequences to be ``unconventional'' texts such as code snippets or highly duplicated texts such as open source licenses. %Note the license texts are memorized verbatim---the asterisks due to C/C++ style comments formatting are reproduced faithfully.
 
-More interestingly, Table~\ref{tab:memorized_by_model} summarizes the total number of sequences that are memorized by
+Table~\ref{tab:memorized_by_model} summarizes the total number of sequences that are memorized by
 one model but not another.
-Increasing model size leads to large numbers of nonoverlapping memorized sequences, although every model has some amount of memorization not shared by each other model.
-(Even the $125$M model memorizes a few sequences the $6$B model does not.)
+Increasing model size leads to large numbers of nonoverlapping memorized sequences, although every model has some amount of memorization not shared by the other models.
+Even the $125$M model memorizes a few sequences the $6$B model does not.
 
 In Figure~\ref{fig:egs-mem-by-6b-body}, we present qualitative examples that are only memorized by the largest (6B) model.
 In these examples, the 50-token generations of the 6B model match the groundtruth continuations exactly, but the generations from the smaller models match \emph{neither} the groundtruth continuations of the prompted examples \emph{nor} any other training examples with the same prompts.
-We highlight some interesting patterns in these sequences: while the generations from the smaller models do not match the training data, they are generally thematically-relevant and locally consistent. However, a closer inspection reveals that those generations are syntactically sound but semantically incorrect.
-Figure~\ref{fig:egs-mem-by-all} lists examples that are memorized by models of \emph{all} sizes, in the sense that the 50-token generations match the groundtruth continuations of the prompts.
+We highlight some interesting patterns in these sequences: while the generations from the smaller models do not match the training data, they are generally thematically-relevant and locally consistent.
+However, a closer inspection reveals that those generations are syntactically sound but semantically incorrect.
+Figure~\ref{fig:egs-mem-by-all} lists examples that are memorized by models of \emph{all} sizes.
 
-
-In Figure~\ref{fig:egs-mem-by-125M} we show examples that are only memorized by the smallest model, using similar criterion as when we filter examples that are only memorized by the largest model. There are significantly fewer examples that are only memorized by the smallest model (35) than only memorized by the largest model (2860).
-The first row of Figure~\ref{fig:egs-mem-by-125M} is particularly interesting: the groundtruth continuation contains a typo due to formatting cutoff.
-While the smallest model memorized the typo, larger models try to fix the typo.
-
-In Figure~\ref{fig:egs-mem-but-not-rep} and Figure~\ref{fig:egs-rep-but-not-mem} we show examples that are memorized but not heavily duplicated in the training set, and examples that are heavily duplicated but not memorized, respectively. Finally, we show examples that are memorized by GPT2-XL in Figure~\ref{fig:egs-mem-by-gpt2}.
-
-\begin{figure}
+\begin{figure}[h]
     \centering
     \includegraphics[width=.8\linewidth]{figures/text-egs/style2-mem-by-all_pg1.pdf}
     \caption{Text examples that are memorized by all the models: given 50-token prompts on the left, the next 50 tokens generated by all the models match the groundtruth continuation.}
     \label{fig:egs-mem-by-all}
 \end{figure}
 
+In Figure~\ref{fig:egs-mem-by-125M} we show examples that are only memorized by the smallest model, using similar criteria as when we filter examples that are only memorized by the largest model. There are significantly fewer examples that are only memorized by the smallest model (35) than only memorized by the largest model (2860).
+The first row of Figure~\ref{fig:egs-mem-by-125M} is particularly interesting: the groundtruth continuation contains a typo due to a formatting error.
+While the smallest model memorized the typo, larger models try to fix the typo.
 
 \begin{figure}
     \centering
@@ -559,17 +552,20 @@ In Figure~\ref{fig:egs-mem-but-not-rep} and Figure~\ref{fig:egs-rep-but-not-mem}
     \label{fig:egs-mem-by-125M}
 \end{figure}
 
+In Figure~\ref{fig:egs-mem-but-not-rep} and Figure~\ref{fig:egs-rep-but-not-mem} we show examples that are memorized but not heavily duplicated in the training set, and examples that are heavily duplicated but not memorized, respectively. Finally, we show examples that are memorized by GPT2-XL in Figure~\ref{fig:egs-mem-by-gpt2}.
+
+
 \begin{figure}
     \centering
     \includegraphics[width=0.7\linewidth]{figures/text-egs/style2-mem-but-not-rep_pg1.pdf}
-    \caption{Text examples that are memorized but are not heavily duplicated in the training set. Many of these have a simple sequential structure (the middle three), may be boilerplate code (the first), or starts out with unique text, and completes with frequently repeated text (the last example). Overall, these are easily completed sequences.}
+    \caption{Text examples that are memorized but are not heavily duplicated in the training set. Many of these have a simple sequential structure (the middle three), may be boilerplate code (the first), or start out with unique text and complete with frequently repeated text (the last example). Overall, these are easily completed sequences.}
     \label{fig:egs-mem-but-not-rep}
 \end{figure}
 
 \begin{figure}
     \centering
     \includegraphics[width=0.7\linewidth]{figures/text-egs/style2-rep-but-not-mem_pg1.pdf}
-    \caption{Text examples that are heavily replicated in the training set but not memorized. We find many examples which have slight differences with no semantic (English) meaning. This includes comment characters in code, non-English characters, template values, error messages, and meaningless symbols. We also surprisingly find a large number of slightly different but heavily repeated documents about dumpsters.}
+    \caption{Text examples that are heavily replicated in the training set but not memorized. We find many examples which have slight differences with no semantic (English) meaning. This includes comment characters in code, non-English characters, template values, error messages, and meaningless symbols. We were also surprised to find a large number of slightly different but heavily repeated documents about dumpsters.}
     \label{fig:egs-rep-but-not-mem}
 \end{figure}
 
@@ -582,15 +578,15 @@ In Figure~\ref{fig:egs-mem-but-not-rep} and Figure~\ref{fig:egs-rep-but-not-mem}
 
 % Appendix~\ref{app:qualitative-examples} contains details of this experiment, along with examples of sequences which are memorized by the 6B parameter model despite only being repeated a few times in its training set (Figure~\ref{fig:egs-mem-but-not-rep}). These tend to be easily completed text. We also present in Figure~\ref{fig:egs-rep-but-not-mem} examples which are repeated thousands of times but are surprisingly not memorized by the 6B parameter model. Many of these are mostly correctly completed, only differing on semantically unimportant characters.
 
-\subsection{Replication Study--T5}
+\subsection{Replication Study: T5}
 
-The above analysis presents convincing evidence that memorization scales in a log-linear relationships with model size, data duplicates, and context length.
+The above analysis presents convincing evidence that memorization scales in log-linear relationships with model size, data duplicates, and context length.
 %
-We now replicate this analysis for different language model families trained on different datasets
+We replicated this analysis for different language model families trained on different datasets
 and with different training objectives, and performed the same memorization analysis on
 
 %
-We expected our results to cleanly generalize across settings---and this was indeed the case for model scale. Yet, we found the situation to be more complicated when considering training data duplication.
+We expected our results to generalize cleanly across settings---and this was indeed the case for model scale. Yet, we found the situation to be more complicated when considering training data duplication.
 
 % \subsubsection{T5 Masked Language Modeling}
 
@@ -637,7 +633,7 @@ We expected our results to cleanly generalize across settings---and this was ind
     \label{fig:other-models}
 \end{figure*}
 
-The T5 v1.1 models are masked encoder-decoder models trained to reproduce spans that were randomly deleted from an input sequence. The models vary in size from between 77M and 11B billion parameters.
+The T5 v1.1 models are masked encoder-decoder models trained to reproduce spans that are randomly deleted from an input sequence. The models vary in size from between 77M and 11B billion parameters.
 %
 These models were trained on C4, a cleaned and filtered version of the English web pages from the Common Crawl, which totals 806 GB in size.
 %
@@ -652,17 +648,17 @@ T5 models are trained by removing a random $15\%$ of tokens from each training s
 %\todo{random 15\% of tokens that are all over the sequence. Memorized is over a specific masking. }
 %
 As a result of this different training objective,
-Definition~\ref{def:extractable} is not directly applicable because the model does not operate on a \emph{prefix} and output a \emph{suffix}.
+Definition~\ref{def:extractable} of memorization is not directly applicable because the model does not operate on a \emph{prefix} and output a \emph{suffix}.
 We instead define a sequence as memorized if the model \emph{perfectly} solves the masked language modeling task on that sequence.
 %
-For example, we call a 200-token sequence memorized if the model can
-use the 170 ($=200 \cdot 0.85)$) tokens of context to perfectly predict the remaining 30 tokens ($=200 \cdot 0.15$).
+For example, we label a 200-token sequence as memorized if the model can
+use the 170 ($=200 \cdot 0.85$) tokens of context to perfectly predict the remaining 30 tokens ($=200 \cdot 0.15$).
 %
 Because this token-dropping procedure is stochastic, it is possible that one set of dropped tokens might yield
 an output of ``memorized'' and another might not.
 %
-For simplicity, we inspect only one set of masked tokens per sequence; because we are already averaging over
-$50,000$ sequences this additional randomness does not harm the results of our analysis.
+For simplicity, we inspected only one set of masked tokens per sequence; because we were already averaging over
+$50,000$ sequences this additional randomness did not harm the results of our analysis.
 
 %
 We are able to reproduce the model scaling effect shown in Figure~\ref{fig:main-res-size} for the T5 model family;
@@ -671,12 +667,15 @@ Figure~\ref{fig:other-models-size} presents these results.
 Increasing the number of parameters in the model similarly increases the ability of the model
 to perfectly solve the masked prediction task.
 
-Surprisingly, while the overall scaling trend holds true here, we discover an order of magnitude less data in masked models than in a comparably sized decoder-only language model.
+While the overall scaling trend holds true here, we discovered an order of magnitude less data in masked models than in a comparably sized decoder-only language model.
 %
 For example, the $3$B parameter T5-XL model memorizes just $3.5\%$ of sequences repeated 100 times, compared to the $53.6\%$ of sequences repeated 100 times memorized by GPT-Neo 2.7B (with a context length of 150). 
-We believe (without evidence) that this difference can be explained because the choice of tokens to mask at training-time varies for each duplicate of a training example, while decoder-only language models are always provided the same prediction task each time an example and its duplicates are seen during training.
+We believe (without evidence) that this difference can be explained by randomness in how examples are constructed within the T5 training pipeline.
+Each time a duplicate sequence is seen during training, a different set of tokens are randomly chosen to be masked out.
+This means, it is very unlikely the same masked example will ever be seen during twice.
+In contrast, decoder-only language models are always provided the same prediction task each time a sequence and its duplicates are seen during training.
 
-Next, we turn to reproducing the analysis on the effect of duplicate examples in the models' training data on memorization.
+Next, we reproduced the analysis of the effect of duplicate examples in the models' training data on memorization.
 %
 The situation here becomes significantly less clear.
 %
@@ -686,23 +685,23 @@ there is not an obvious log-linear scaling relationship to be found.
 In particular, compared to the smooth curves we observe in the case of GPT-Neo evaluated on The Pile,
 there is significant variance in the results for T5 models trained on C4.
 %
-Even more surprising is that this variance is \emph{statistically significant}:
+Even more surprising is the observation that this variance is \emph{statistically significant}:
 sequences repeated between 159 and 196 times are memorized with probability no more than 5.1\% with $99.7\%$ confidence (three standard deviations of variance),
-however sequences repeated between 138 and 158 (that is, \emph{less often}) are memorized with probability
+however sequences repeated between 138 and 158 (that is, \emph{less often}) are memorized with probability of
 at least 6.2\% with $99.7\%$ confidence.
 %
-That is, for some reason, sequences that occur $\sim$140 times are \emph{more likely to be memorized, despite occurring less often}, even if we assume a three-sigma error in both measurements simultaneously.
+For some reason, sequences that occur $\sim$140 times are \emph{more likely to be memorized, despite occurring less often}, even if we assume a three-sigma error in both measurements simultaneously.
 
-In order to explain this counter-intuitive phenomenon, we qualitatively study each of these two buckets
+In order to explain this counter-intuitive phenomenon, we qualitatively studied each of these two buckets
 of examples to understand why there is a pronounced difference.
 %
-Surprisingly, we find that most of the duplicate examples contained in the 138-158 repeat bucket are mostly whitespace tokens, making these sequences much easier to predict correctly than sequences found at other repeat counts.
+We found that most of the duplicate examples contained in the 138-158 repeat bucket consist almost entirely of whitespace tokens, making these sequences much easier to predict correctly than sequences found at other repeat counts.
 This effect, to a lesser extent, can be found in other buckets which contain many approximately near duplicates.
 %, for example repeatedly listing out various types of birds.
 
-\subsection{Replication Study--Language Models Trained on Deduplicated Data}
+\subsection{Replication Study: Language Models Trained on Deduplicated Data}
 
-We further attempt replication with a family of 1.5B parameter decoder-only language models trained on deduplicated versions of C4.
+We further attempted replication with a family of 1.5B parameter decoder-only language models trained on deduplicated versions of C4.
 Described in detail in Section \ref{section:dedup}, this model family consists of one model trained on C4 (the same dataset as T5), one model trained on a version of C4 that was deduplicated by removing all documents which were near-duplicates of other documents, and one model trained on a version of C4 that was deduplicated by deleting any string of length-50 tokens that occurred more than once.
 We were most interested in whether models trained on deduplicated data would still exhibit increased memorization of examples which were repeated frequently in the original, non-deduplicated C4 dataset.
 % Because \citet{lee2021deduplicating} trained models with few model sizes, we did not perform experiments investigating memorization as a function of scale.
@@ -713,15 +712,15 @@ Figure~\ref{fig:other-models-dedup} plots this fraction of sequences memorized b
 We draw two interesting conclusions from this data.
 
 
-First, we find that models trained on deduplicated datasets memorize less data than models trained without deduplicated datasets.
+We found that models trained on deduplicated datasets memorize less data than models trained without deduplicated datasets.
 %
 For example, for sequences repeated below 35 times, the exact deduplicated model memorizes an average of 1.2\% of sequences, compared to 3.6\% without deduplication, a statistically significant ($p<10^{-15}$) increase by a factor of 3. 
 %\todo{the counts used to generate figures are similarly incorrect}
 %\todo{include qualitiative examples of the prompts}
-Second, while deduplication does help for sequences repeated up to $\sim$100 times,
-it does not help for sequences repeated more than this.
+While deduplication did help for sequences repeated up to $\sim$100 times,
+it did not help for sequences repeated more than this.
 %
-We observe a spike beginning at 408 repeats: the extractability of the smallest spike is larger than any value before the spike (largest is at 265 repeats, $p<10^{-20}$).
+We observed a spike beginning at 408 repeats: the extractability of the smallest spike is larger than any value before the spike (the largest was at 265 repeats, $p<10^{-20}$).
 %
 We hypothesize that this is due to the fact that any deduplication strategy is necessarily
 imperfect in order to efficiently scale to hundreds of gigabytes of training data.
@@ -1275,7 +1274,7 @@ Existing models also suffer from the problem of generating text from their train
 We find that $1.38\%$ of the tokens in the official release of 25k GROVER-Mega outputs
 %\footnote{\url{gs://grover-models/generation_examples/generator=mega~dataset=p0.90.jsonl}}  % TODO SPACE
 are part of verbatim matches in RealNews of at least length $50$.
-Likewise, more than 5\% of the tokens in \textasciitilde 200k sequences outputted by GPT-Neo 1.3B \citep{gpt-neo} are part of a $50$ token matches of its training data, the Pile \citep{pile}.
+Likewise, more than 5\% of the tokens in \textasciitilde 200k sequences outputted by GPT-Neo 1.3B \citep{gpt-neo} are part of a $50$ token matches of its training data, The Pile \citep{pile}.
 
 \subsection{Discussion}
 The results in this section demonstrate the crucial nature of the text used to train and evaluate language models.
