@@ -62,7 +62,7 @@ We also foresee that our strategy of prompting an LLM with non-task specific exa
 % \label{section:tasks}
 % We evaluate augmented zero-shot prompting on a number of text style transfer tasks.
 We consider six style transfer tasks that we deem non-standard, listed in Table \ref{tab:style-transfer-examples}.
-These styles were chosen to be representative of most frequent style adjustments made by users of an AI-assisted text editor that employs our method (discussed further in $\S$\ref{subsec:potential}). 
+These styles were chosen to be representative of most frequent style adjustments made by users of Wordcraft in the user study described in Chapter \ref{section:wordcraft}.
 As source sentences, we use 50 sentences randomly drawn from the Reddit Writing Prompts validation set \citep{fan2018hierarchical}, excluding those that already clearly exhibited one of the styles or were ungrammatical/incoherent.
 We use human evaluation for these styles, since not all styles have readily available classifiers.
 % For input sentences, we draw a random set of 50 sentences\footnote{We only evaluate 50 sentences because style transfer for arbitrary styles can only be evaluated manually, and we have many styles and models (totaling 7200 ratings.)} from short stores in the Reddit Writing Prompts validation set \citep{fan2018hierarchical}, excluding sentences that were incoherent or clearly exhibited one of the styles already. 
@@ -195,16 +195,8 @@ Fourth, for \textit{LLM} and \textit{LLM-dialog}, we find that augmented zero-sh
 
 \input{tables/yelp_comparisons_with_length}
 
-\paragraph{Comparison with a Range of Prior Methods}
-To compare against a larger range of prior supervised methods, we used automatic evaluation, and found comparable performance with the highest-scoring method for transfer strength.
-The results are shown in Table \ref{tab:prior-methods}.
-We were also significantly more fluent than all other methods.
-% However, this is hardly surprising and should be taken with a grain of salt: GPT-2 is another generative language model, so it stands to reason that the token probabilities would be similar to our model's.
-Finally, our method fell short on semantic preservation compared to other methods. However, BLEU is known to penalize long sentences, and the scores do not always align with human judgements.
-For example, our model's worse performance could be because it was not explicitly trained on Yelp data, so its generations are less likely to be in the style of Yelp reviews than models that were.
-
 \paragraph{Comparison across Different LLMs}
-We also compared between three varieties of model: GPT-3 \citep{DBLP:journals/corr/abs-2005-14165}, LLM, and  LLM-Dialog. We adjusted the prompt template slightly to accommodate these differences: for  LLM and GPT-3, the prompt template replaced {\small
+We compared between three varieties of models: GPT-3 \citep{DBLP:journals/corr/abs-2005-14165}, LLM, and  LLM-Dialog. We adjusted the prompt template slightly to accommodate these differences: for  LLM and GPT-3, the prompt template replaced {\small
 \texttt{``Rewrite it to be \textbf{<style>}''}
 with \small \texttt{``Here is a rewrite of the text, which is \textbf{<style>}''}.}
 For our augmented zero-shot prompts we also see that the LLM-dialog version had higher accuracy than the LLM and GPT-3, but lower BLEU. Based on qualitative inspection, we believe the lower BLEU is due to the LLM-dialog adding additional detail in the generated sentences, which is consistent with an ``interestingness'' objective that is typically encoded into dialog training. 
@@ -690,6 +682,13 @@ In Sections \ref{section:fitb} and Section \ref{section:style_transfer}, novel n
 However, contrived annotation tasks like these give an incomplete picture as to the progress of natural language generation.
 Notably, the annotators were never asked to use the NLG to accomplish a task of interest; they were only asked to evaluate pre-generated outputs.
 
+\begin{figure}[tbh]
+  \centering
+  \includegraphics[width=0.99\linewidth]{figures/interface_meta_custom}
+  \caption{(left) Custom prompting in the Wordcraft interface. The user makes a novel request of the AI agent via a custom prompt (1), and the model attempts to fulfill the request (2). (right) Meta prompting in the Wordcraft interface. The user asks for suggestions for requests they could make of the model (3), and browses those suggestions (4).}
+  \label{fig:interface_meta_custom}
+\end{figure}
+
 While contrived evaluation tasks have their place, it is also crucial to keep in mind why NLG systems are being built and who their target audience might be.
 This is especially true in the area of AI-assisted creative writing, where there is often a significant discrepancy between how novel tools are evaluated (Amazon Mechanical Turker workers paid per annotation) and how they are intended to be used in the real world (writers seeking support or inspiration while performing their craft).
 
@@ -701,15 +700,17 @@ The user also has access to a chatbot they can talk about their story with.
 In this section, I first describe the controls implemented in Wordcraft and the motivations for including each of them.
 I then describe the ways in which Wordcraft offers the chance for a more realistic evaluation of state-of-the-art language generation systems through user studies with both amateur and expert writers.
 
-\begin{figure}[tbh]
-  \centering
-  \includegraphics[width=0.99\linewidth]{figures/interface_meta_custom}
-  \caption{(left) Custom prompting in the Wordcraft interface. The user makes a novel request of the AI agent via a custom prompt (1), and the model attempts to fulfill the request (2). (right) Meta prompting in the Wordcraft interface. The user asks for suggestions for requests they could make of the model (3), and browses those suggestions (4).}
-  \label{fig:interface_meta_custom}
-\end{figure}
-
 \subsection{The Wordcraft Application}
 \label{section:wordcraft_controls}
+
+\begin{figure}[th]
+  \centering
+  \includegraphics[width=0.99\linewidth]{figures/interface}
+  \caption{The Wordcraft interface. (left) Shows how a user can select a passage of text (1), click `replace selection' (2), and get suggestions for alternatives (3) from the large language model. (right) Shows how a user can click `generate text' (4) to get suggestions for continuations from the language model. Demo video: \href{https://youtu.be/HthbABWE-xw}{https://youtu.be/HthbABWE-xw}}
+  \label{fig:interface}
+\end{figure}
+
+
 Wordcraft is a web application intended for story writing with NLG assistance.
 The interface consists of a traditional text editor and a set of controls that prompt a large language model to perform various writing tasks.
 For example, Figure \ref{fig:interface} (left) shows Wordcraft performing text infilling by suggesting alternatives for a selected passage of text, which the user can splice into their story.
@@ -1108,22 +1109,465 @@ Nevertheless, we observed high user engagement with the chatbot assistant - on a
 
 Finally, participants found the chatbot to be effective at retrieving information. Some treated the chatbot as a search box, asking questions such as: \textit{how many people are fathers around the world}. In the exit interview, one user commented about the chatbot: ''\textit{I loved that it felt like a more targeted version of Google, and I could do background research while writing}'' (U21).
 
-\subsection{User Study with Expert Writers}
+\section{User Study with Expert Writers}
 
-% Professional writers and amateur writers are very different .
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Motivation}
+
+Nearly all prior research on AI-assisted creative writing methods, including the previous sections in this chapter, conducted evaluation in contrived settings testing narrow functionality, typically with amateur writers \citep{lark2018creative,yuan2022wordcraft,roemmele2015creative,roemmele2021inspiration,nichols2020collaborative}.
+While these sorts of evaluations are valuable as preliminary assessments, we believe it is also crucial to solicit feedback from actual domain experts in creative writing: professional writers, educators, and language experts.
+Skilled writers comprise a unique user group with a different set of needs and expectations than amateurs.
+They may be better equipped than amateurs to assess where AI-powered creative writing technology can fit into writing workflows, and how this technology needs to improve to become more impactful and useful.
+For example, they are more likely to be sensitive to the issue of voice (and have their own unique voices), and they are more likely to have already honed writing processes.
+
+Some of the closest research to that completed in this section are the works of \citet{akoury2020storium}, who incorporated a suggestion engine into an online story writing game and analyzed how game users interacted with it; \citet{mirowski2022co}, who hired expert playwrights to cowrite scripts using a language model that suggested characters, scene summaries, and other script components; \citet{calderwood2020novelists}, who observed four professional novelists experimenting with GPT-2.
+
+% \begin{figure}[t]
+%     \centering
+%     \includegraphics[width=1.05\textwidth]{figures/wordcraft.pdf}
+%     \caption{Screenshots of the story writing tool's user interface when no text is selected (left), when text is selected (middle), and in the chatbot interface (right).}
+%     \label{fig:wordcraft}
+% \end{figure}
+
+In the research presented in this section, I aim to better understand how professional writers perceive and interact with state-of-the-art language generation tools for creative writing.
+To accomplish this, we commissioned 13 (1) \textbf{published} writers from (2) \textbf{diverse} backgrounds to use an NLG-powered text editor over an (3) \textbf{extended period of time}, collecting open-ended qualitative feedback along the way.
+The study participants represent a diverse pool, both in terms of background (participants are from a variety of countries and ethnicities) and in terms of expertise (participants are scriptwriters, poets, educators, novelists, and more).
+Our study is also novel in its format; rather than asking participants to adopt a contrived workflow, we invited them to incorporate the provided tools into their writing process in whatever way they saw fit.
+Participants were engaged over a period of eight weeks, in line with industry norms for commissioned works of fiction.
+This long duration allowed participants to become intimately familiar with the capabilities of the provided tools in order to provide rich feedback regarding their capabilities and deficiencies.
+
+Participants were given access to an online story writing tool whose name we omit in this anonymous submission \citep{yuan2022wordcraft}.
+The website consisted of a standard text processor with various additional controls users could harness to generate from or modify the text they had written so far, as well as a conversational chatbot interface.
+Both the controls and the chatbot were supported using a large neural language model trained on public dialog data and other public web documents \citep{thoppilan2022lamda}.
+
+From written feedback and conversations with participants, we learned about the workflows for which the story writing tool worked well, and areas where there is still room for improvement.
+Participants desired a tool that was variously a brainstorming partner, a co-writer, a beta reader, and a research assistant.
+Some participants cared most about it having the ability to produce high-level plot and narrative ideas while others wanted it to be capable of producing phrases and passages which were good enough to be pasted directly into a story.
+Participants emphasized that the user interface of the tool matters as much as the underlying language model backing it.
 
 
-For the Wordcraft Writers Workshop, we commissioned 12 published writers from diverse stylistic backgrounds, ranging from poetry to fantasy, to craft stories using Wordcraft. The writers were instructed to work on pieces of about 1,500 words. They were also asked to keep informal journals of their observations during the process. Finally, we conducted entrance and exit interviews with each writer before the workshop started and after they had finished with their stories.
+% \TODO{I ended up inadvertently removing the concept of trade-offs from the introduction, but I 
+% would like to add it back in somewhere. Feel free to try to incorporate it back in}
+% I really like this paragraph, but I think it should go in the Discussion
 
-\TODO{
-Finish inserting this section.
-}
+Participants also spoke extensively about the limitations of the technology---that the generations lacked a distinctive voice and the suggestions were uninteresting, and that it was difficult to control Wordcraft to accomplish specific writing tasks.
+Wordcraft's bland suggestions posed an important dilemma.
+A system that always errs on the side of avoiding transgression is hamstringing itself from ever achieving human-level creativity, which is often grounded in a rejection of tropes and norms.
+
+In the remainder of this section, we first describe the expectations participants had before starting the project.
+We then describe the workflows participants experimented with and the limitations participants encountered.
+We end with a discussion of lessons learned---areas where technology built with large language models needs to improve before it can achieve broad usefulness in the creative domain and beyond.
+
+
+
+% \input{controls_table}
+
+\subsection{Study Design}
+Thirteen published writers were invited to participate in a event we called the ``Wordcraft Writers Workshop.''
+We refer to the 13 authors as A1 through A13.
+We requested and received permission from all author to use their full names in this study (we believe that each writer's perspective is best understood within the context of their background and prior published work), and this information will be added to the paper for publication.
+
+
+We aimed to select writers with a diverse range of experience with AI and computer technology, and with diverse writing and personal backgrounds.
+The participants include novelists (A13, A7, A9), short story writers (A6, A3, A12, A11), poets (A1, A5, A4), educators (A5, A9), comedians (A10), and game designers (A8, A1).
+They entered the workshop with a variety of prior experience with NLG, including some who had not yet interacted with an NLG system (A5, A2, A9, A12), some who had experimented with generative language models like GPT-2 before (A13, A11, A3, A6), and some who had already actively worked on incorporating NLG into their writing process (A7, A1, A10, A4).
+
+We choose to refer to each participant by their initials (see Table \ref{tab:writer_initials}) rather than anonymizing them because each writer's perspective is best understood within the context of their background and prior published work.
+
+
+Participants were asked to write a story of 1,000-1,500 words using our tool.
+They were intentionally given no initial guidance or tutorial in using Wordcraft, so that their choices in how to use the tool would not be biased by us.
+In addition to delivering a story, participants were asked to keep a journal in any format of their choice, keeping in mind the following questions:
+
+\begin{table}[t]
+    \centering
+    \small
+    \caption{List of workshop participants and the initials we will use to refer to them.}
+    \begin{tabular}{cr|cr}
+    \hline
+Allison Parrish & A1 & Aaron Winslow & A8 \\
+Diana Hamilton & A2 & Ernest Hebert & A9 \\
+Eugenia Triantafyllou & A3 & Jamie Brew & A10 \\
+Joseph Mosconi & A4 & Ken Liu & A11 \\
+Michelle Taransky & A5 & Nelly Geraldine Garcia-Rosas & A12 \\
+Wole Talabi & A6 & Robin Sloan & A13 \\
+Yudhanjaya Wijeratne & A7 & & \\
+\hline
+    \end{tabular}
+    \label{tab:writer_initials}
+\end{table}
+
+\begin{itemize}
+    \item Jot down any generations or decisions Wordcraft makes which are especially interesting, surprising, problematic, or otherwise noteworthy (even if they don't end up in the final story).
+    \item What did you find challenging / frustrating about Wordcraft?  What does it utterly fail at?
+    \item  What sorts of things would be really helpful for the AI to do better, or be able to do at all?
+    \item What did you find valuable / interesting about Wordcraft?
+    \item How did you imagine the underlying AI model working?
+    \item How might you imagine AI-assisted writing changing your work habits? 
+    \item What features would you have liked to see exist in Wordcraft?
+    \item Does working with an AI assistant through built-in “controls” feel natural? Does working with a chat-based assistant feel better?
+\end{itemize}
+
+We also conducted two 45 minute interviews with each participant, one at the beginning of the Workshop and one after they had completed the workshop and sent us their story and journal.
+Participants consented to their stories being published in a digital literary magazine of human-AI collaborative stories, and to the use of their feedback in the journals and interviews in this paper.
+Participants were compensated for participating in the study.
+
+Two authors of this paper coded the participants' journals as well as the authors' notes from the two interviews.
+Any disagreements were resolved by discussing the point together.
+Our high-level code set included 10 codes: desired use cases; emergent workflows; mental model for how the system worked; other comments; and strengths/criticisms of the user interface, of the generations from Wordcraft's controls, and of the conversational skills of the chatbot.
+
+\subsection{Initial Hopes and Expectations}
+\label{sec:expectations}
+
+In our initial interviews with participants, we asked them what how they hoped to be able to use an AI-assisted writing tool. Several themes emerged.
+Perhaps the most common desire was for a brainstorming partner; participants envisioned a tool that provided ideas a writer could riff off or helped with overcoming writer's block.
+A2 noted how brainstorming functionality would be especially useful for novice writers.
+Multiple participants described to us their process for working with human writing partners and beta readers. 
+They were curious to see if Wordcraft could imitate some aspects of these interactions.
+However, participants stressed that they did not want to \q{offload the creative process} (as A10 put it) to the AI; rather they wanted to use the AI to enhance their own thoughts and ideas.
+
+More concretely, participants desired a tool that could expand upon their existing ideas and text, for example, generating background details about a character (A10);  refining a story arc (A2); and designing and keeping track of pieces of the environment, such as the geography and social systems of a fantasy world (A7).
+Writers also hoped to use Wordcraft to produce rewrites and alternative phrasings (A8, A11), generate humor (A10), and analyze and replicate stylistic patterns (A5).
+
+Several participants wanted to be able to use Wordcraft to facilitate access to information.
+The idea of using the language model as a search engine repeatedly came up.
+In A5's words: \q{I can’t read the entire internet or all the books by my favorite authors, but I can use a model like this one to leverage prolific catalogues} of information.
+A2 hoped to be able to use the technology to draw connections between all the notes she's ever taken or all the books in a genre.
+
+Finally, nearly all the participants were curious to probe the language model's boundaries, especially with respect to its ability to represent marginalized and under-represented ideas and groups.
+For example, A11 wanted to be able to ``tell'' Wordcraft to focus on including references from outside of North America, and A2 wanted to explore whether Wordcraft could take on the first-person perspective and language of a lesbian individual.
+
+% \TODO{Another paragraph we could have here would be on the topic of: Participants expressed a mixture of excitement and skepticism about whether the outputs from a system like Wordcraft could truly be creative. Is this worth adding?}
+
+\begin{table}[t]
+  \centering
+  \small
+  \caption{Participants approached the chatbot with a diverse set of goals, including using it as research assistant, a beta reader, a writing partner, and a brainstorming tool. Several examples of queries participants wrote to the chatbot are shown here.}
+  \label{table:chatbot_uses}
+    \begin{tabular}{p{2.6in}|p{3.2in}}
+    \hline
+    \textbf{Chatbot as research assistant} & \textbf{Chatbot as beta reader} \\
+    $\rhd$ what kinds of bears live in northern california (A8) & $\rhd$ which paragraph is the most interesting (A6) \\
+    $\rhd$ What's a verb that means bolting forward? (A11) & $\rhd$ what do you think of my story so far? (A12) \\
+    $\rhd$ Tell me about Venice in 1700 (A3) &  $\rhd$ does this paragraph contradict anything else in the story? (A6) \\
+    % $\rhd$ give a name to the syndrome where you falsely think there’s a child trapped inside an ATM (A11) & \\
+    \hline
+    \textbf{Chatbot as writing partner} & \textbf{Chatbot as brainstorming tool} \\
+    $\rhd$ do you have an idea for my ending? (A12) & $\rhd$ what's a good crime for a murder mystery? (A8) \\
+    $\rhd$ Can you write the next paragraph? (A7) & $\rhd$ A news story about a controversial insurance startup, Reflect AI. (A10) \\
+    $\rhd$ How would cats and technology work in the plot? (A3) & $\rhd$ Can you start telling me a story about a woman who discovers a new fantasy land by climbing through a window in the back of her closet? (A11) \\
+    \hline
+    \end{tabular}%
+\end{table}%
+
+\subsection{Emergent Workflows}
+In order to collect data on authentic usage of Wordcraft, we intentionally did not give participants any instructions regarding how often they should consult with Wordcraft or how much of their final story text should be written directly by them versus the AI.
+This freedom allowed participants to discover workflows through prolonged usage and exploration, with some emergent techniques going well beyond the tasks we had explicitly designed the tool for.
+In their feedback, participants emphasized that the user interface matters as much as the underlying language generation model.
+That is, the novel workflows that a technology enables are themselves \textit{part} of the technology, but they are not necessarily known at the time the technology is introduced.
+% In this case, our study participants  of the LLM. For example, our writers emphasized how much they enjoyed being able to explore new authorial voices, despite having an established voice.
+
+A recurring theme in participants' feedback was that they had to learn what the specialized abilities of Wordcraft's natural language generation system were before they could productively collaborate with the tool. 
+Each participant's preferred workflow ended up depending strongly on the initial path they took to explore the tool.
+The widely differing attitudes participants took toward include verbatim text generated by Wordcraft into the bodies of their stories were particularly notable.
+Several participants took the workshop as a challenge to produce a story that was largely formed around generated text (A1, A2, A4, A5, A8).
+Others predominantly used Wordcraft to generate ideas, and though they may have incorporated choice phrases outputted by Wordcraft into their stories, the bulk of the story text was written by the authors themselves (A11, A6, A12).
+Finally, some participants siloed out specific sections of their stories to which generated text could be included without the author needing to cede too much creative control to Wordcraft (A13).
+
+In the remainder of this section, we describe in more detail the workflows identified by participants.
+
+\begin{table}[t]
+  \centering
+  \small
+  \caption{Examples of participant requests to the custom prompt control (left) and to the rewrite request control (right).}
+  \label{table:control_uses}
+    \begin{tabular}{p{2.7in}|p{3in}}
+    \hline
+    \textbf{Custom prompts} & \textbf{Rewrite Requests} \\
+    Tell me a poignant detail & to be spicy \\
+    i need a verb for the thing fireflies do  & to be extremely boring \\
+    what did the young woman answer  & to be more apocalyptic \\
+    what kind of bread is it? is it magical bread or normal?  & to appeal more to the 50 to 60 demographic \\
+    \hline
+    \end{tabular}%
+\end{table}%
+% Example uses of custom prompting 
+% "tell me a flashback" (A1)
+% "tell me a poignant detail." (A1)
+% "write a satisfying conclusion that includes the wind chimes" (A1)
+
+
+\paragraph{Idea Generation and Brainstorming}
+The ``story seeds'' control allowed writers to experiment with using Wordcraft to generate ideas at the very beginning of the writing process.
+A5 described the ``story seeds'' control as giving her \q{a place on my computer to go that looked like a blank page but did not behave as such.}
+A3 described how \q{it can be very useful for coming up with ideas out of thin air, essentially. All you need is a little bit of seed text, maybe some notes on a story you’ve been thinking about or random bits of inspiration and you can hit a button that gives you nearly infinite story ideas. \ldots It gets your mind going in all kinds of directions with very little effort.}
+
+Participants also used the ``custom prompt'' control and chatbot interface extensively for brainstorming.
+A12 wrote that the chat interface was as \q{an amazing tool for brainstorming or rubber-ducking. Its conversational quality is perfect to talk about plot, characters and worldbuilding.}
+Table \ref{table:chatbot_uses} shows several examples of requests participants made to the chatbot.
+
+Participants found suggestions from Wordcraft to be helpful for worldbuilding and detail generation even when they did not end up incorporating the exact wording of the suggestions into their stories.
+For example, A3 used the chatbot interface to hone in on the appearance of the Worm-Mothers, the god-like entities in their story.
+The tool suggested details such as the Worm-Mothers swallowing birds whole.
+
+
+\paragraph{Treating Wordrcaft as a Fellow Writer}
+When using Wordcraft as a co-writer, participants tended to put themselves in the position of curator and editor. 
+They repeatedly used the ``continuation,'' ``elaboration,'' ``custom prompting,'' and ``rewriting'' tools to get suggestions from the tool, and the best suggestions were edited into their stories. 
+Participants who experimented with this approach noted that it required relinquishing control of the narrative to Wordcraft, as the suggestions would rarely follow the author's own agenda for the story.
+Participants reported having the most success when they leaned into Wordcraft's limitations.
+For example, A4 chose to make use of Wordcraft's tendency to produce repetitive suggestions by deliberately selecting language that had no narrative pay off (and then filling in the narrative gaps himself later).
+
+Several participants noted the occasionally surreal quality of Wordcraft's suggestions. For example, it suggested a wolf plucking petals with human hands (A2), or man’s best friend being an inanimate rod (A2). A9 described the tone of these suggestions as \q{absurdist, spooky action at distance,} 
+which they found was well-suited for writing poetry. % (indeed Ernest’s poem is comprised entirely of generated text). 
+
+\paragraph{Using Wordcraft as an Improv Partner}
+\label{section:improv}
+Our tool was designed to work like an improviser, taking an author's directions and scenes as givens and then trying to elaborate the premise or raise the stakes by inserting new details.
+Participants found that their collaboration with Wordcraft worked best when they assumed the same attitude, taking Wordcraft’s disconnected and often batty suggestions as a given, then trying to make sense of them as a story.
+A11 observed: \q{By taking the seed from LaMDa and saying, `Yes, and ...' I can force myself to go down routes I wasn’t thinking of exploring and make new discoveries.}
+
+Multiple participants started off their experimentation with a particular story in mind, but ended up giving up on their desired direction and instead writing the story Wordcraft seemed to want them to (A13, A8, A7).
+A8 wrote: \q{I had the most success using Wordcraft when I let it guide my writing – when I tailored a story around the affordances and abilities of Wordcraft, I had more fun and came up with more interesting, original, and unexpected stories than when I tried to use Wordcraft to help with stories about which I had previous ideas.}
+
+\paragraph{Chatbot as an Assistant and Beta Reader}
+Beyond being useful for idea generation, participants attempted to treat the chatbot interface as a research assistant or beta reader who could answer specific questions or request for information.
+For example, A6 attempted to ask it the kind of questions they would normally address to a human reader, such as ``Which parts of the story need more details?'' and ``Does this feel like a fast-paced action story?''.
+Others asked it to riff off of made-up scenarios, for example: ``give a name to the syndrome where you falsely think there’s a child trapped inside an ATM'' (A11).
+A couple participants found success using the chatbot as a convenient search engine alternative (A11, A6).
+A11 wrote: \q{It’s kind of great to use the chat interface and treat LaMDa as a thesaurus, quote finder, and general research assistant.}
+% A6 wrote: \q{The chat function was good for quickly getting information like definitions, etc without having to go out of the story to do a Google search. }.
+Several examples of queries participants made to Wordcraft's chatbot interface are shown in Table \ref{table:chatbot_uses}.
+
+\paragraph{Theme and Variations}
+One workflow many writers discovered was using Wordcraft to generate a series of suggestions based on a common theme.
+A13 successfully got Wordcraft to produce a list of ways characters perish in fantasy novels.
+A1 was able to generate many rewrites of a passage from the novel Frankenstein.
+A8 asked it to produce lists of magical items.
+A11 asked for lists of items for sale at a store, and A12 attempted to generate a list of ``rabbit breeds and their magical qualities.''
+
+\subsection{System Limitations Experienced by Participants}
+In this section, we describe the limitations participants encountered that prevented them from using Wordcraft in the ways they would have liked. 
+
+\paragraph{Difficulty Maintaining a Style and Voice}
+% The language model struggles to capture distinct styles and voices.
+A primary limitation noted by writers was that Wordcraft was unable to generate text in the style or voice desired by the author.
+This problem was especially prominent when authors attempted to write a story with multiple voices.
+For example, both A12 and A10 attempted stories that jumped between two points of views, but Wordcraft struggled to maintain the different voices.
+Nearly all the writers noticed that there seemed to be a ``default'' voice to the language model's generations, one that was bland and somewhat elementary in its use of language.
+A5 described this as the AI having an implicit target audience: internet users.
+Multiple participants compared Wordcraft's suggestions to those of a novice fan fiction writer. 
+A1 felt as though Wordcraft was only capable of producing a draft of a narrative---that is, schematic descriptions of events and plot points. When it came to actually turning these into prose, Wordcraft consistently chose the most ``boring'' narrative voice possible.
+
+There are a couple reasons why Wordcraft may have struggled with style and voice.
+One reason might have been that the user interface as well as the in-context learning implementation used to control the underlying language model did not unlock this kind of controllability.
+Perhaps the tendency toward elementary language was caused by our in-context learning exemplars being too unsophisticated.
+Had we iterated on the interface more, we might have gotten style control working better.
+Another reason could have been limitations of the underlying model.
+Language models are trained to be most confident on the kind of text they see most often, which is typically internet data.
+However, professional creative writers are usually writing for a very particular audience, not the generic audience of the internet.
+
+\paragraph{Suggestions too Easily Revert to Tropes and Repetition}
+As described in Section \ref{sec:expectations}, one hope participants had was for Wordcraft to be useful as a brainstorming and ideation tool.
+However, in practice, participants found it challenging to get suggestions that were interesting enough to be useful.
+A13 questioned why he should bother using Wordcraft for it to simply \q{inject a few details I might have come up with on my own}.
+The need to wade through dozens of suggestions before the tool produced a ``good'' one was a common complaint.
+A7 described using Wordcraft for idea generation \q{like being a scholar in the Library of Babel, with only a broken lamp for company . . . within reach is every shining, new idea that could possibly come out of a phrase or a sentence, but also every meaningless, rehashed trope; and the challenge for the writer is to stay in a place that gives you the former without too much of the latter.}
+
+Clichéd and biased suggestions seemed especially common when the system was confronted with scenarios which were less likely to be well-represented in the model's training data.
+For example, A12 noted the difficulty in writing a story with a lesbian romance plot---the system kept suggesting that she insert a male character or that she have the female protagonists talk about friendship.
+A6 found that when no gender was specified, Wordcraft's suggestions tended to default to a male voice.
+A7 attempted to give Wordcraft a premise which contained a mixture of standard fantasy tropes (a nondescript town where heroes are born) and intentional deviations from these tropes (the heroes are cartographers and builders, not warriors), but Wordcraft insisted on pushing the story toward the well-worn trope of a warrior hero fighting back enemy invaders.
+For Wordcraft, \q{fantasy is high fantasy, science fiction is robots and spaceships} (A12).
+% got worse, the more writers already had a vision
+A4 told us they preferred the generations from smaller, older models like GPT-2 to generations from the latest generation of larger language models such as GPT-3 and similarly-sized models.
+While smaller models make more mistakes, these mistakes are actually the interesting part, sparking new ideas.
+Perhaps with better tuning or sampling strategies, larger models can be made to retain the whimsical randomness of smaller models, but without sacrificing gains in overall coherence.
+This, as well as methods for bias reduction in the absence of unbiased pre-training data, are important directions for future research.
+
+\paragraph{The Fickleness of Working with Large Language Models}
+The fickleness of getting large language models working for specific tasks has been well studied by researchers.
+Two prompts which a human would find semantically equivalent, or that differ only in the order in which task exemplars are presented, can lead to very different outcomes on tasks such as sentiment classification, style transfer, and summarization \citep{lu2022fantastically,webson2021prompt}.
+Many of our participants battled with this seeming randomness and the difficultly in developing reproducible workflows.
+
+The limitations were especially visible to the writers who tried to get Wordcraft to perform structured tasks.
+For example, A3 attempted to build a workflow where Wordcraft produced lists of story pitches, but it didn't consistently pick up on the format of task.
+Similarly, A4 tried to get Wordcraft to produce an ``I remember'' poem (a poetic form where each line starts with ``I remember'' \citep{nla.cat-vn4853059}), but the tool would sometimes but not always pick up on this constraint.
+It could also be perplexing to participants when a request like ``rewrite this in the style of Gertrude Stein'' seemed to work okay, but ``rewrite this in the style of Franz Kafka'' failed.
+
+Wordcraft's controls were implemented by forming prompts out of several exemplars of each control task.
+Our choice of exemplars biased the model in ways Wordcraft's users felt the effects of but were not privy to the ``why'' of.
+For example, because we wrote the exemplars with a fantasy genre in mind, Wordcraft was better suited to producing generations in this domain than in others.
+In addition, several of Wordcraft's controls were implemented with exemplars that contained the name ``Sarah.'' This had the unintended consequence that the tool attempted to insert a character named ``Sarah'' into every single participant's story.
+
+Generally, participants who had spent time studying the technical underpinnings of large language models or who had worked with them before were better able to work around the tool's fickleness to figure out ways to get it to do what they wanted.
+They knew how to make small tweaks to the wording of their requests to get desired outcomes.
+% For example TODO found that ``TODO'' yielded better generations than ``''.
+However, these same ``experienced'' participants also tended to be frustrated with the lack of more fine-grained control knobs.
+Two repeated feature requests were the ability to set the randomness of the sampling method used during generation and the ability to view and edit the actual prompt being passed to the language model.
+
+% The varying experiences of our participants revealed the difficulty in designing a user interface around large language models that works well for users across the spectrum of technical expertise.
+% \TODO{more about user interface importance here}
+
+\paragraph{Chatbot Failed to Produce Meaningful and Opinionated Conversation}
+
+% People who did not use the chatbot: [A2, A4]
+Participants had mixed feelings about whether chatting with the chatbot interface was useful to their writing process.
+Some chose not to use the chatbot for philosophical reasons (for example, A2 disliked the \q{pretense of talking with someone}), while others were excited by its promise but disappointed by its execution. 
+Participants who found it to be useful for brainstorming early in the writing process saw it as less useful once the story was developed because it struggled to make suggestions which took into account what had been written so far. 
+A6, in particular, wanted to ask questions about their story contents (see Table \ref{table:chatbot_uses}), which the chatbot was incapable of coherently responding.
+Its failures were most acute in questions which required the formulation of opinions and preferences.
+In A6's words: \q{The chat-based assistant was a bit too inaccurate to really be helpful in most contexts and I ended up wasting time thinking about how to ask it questions rather than getting useful text. It would need to be significantly improved to the point where it has enough understanding of creative writing techniques and skills to contribute to the story/writing process meaningfully.}
+While the NLP research community has studied automatic question-answering extensively, nearly all work in this space has focused on factual questions with a clear right or wrong answer rather than subjective questions like ``Which part of the story is most exciting?'' or ``Does this character seem convincing?'' \citep{huang2020recent}. Subjective question-answering is hard, not only because it is more difficult to find training data for these types of questions, but because language models are notoriously bad at producing consistent answers to queries which have more than one right answer \citep{li2021addressing}.
+
+In addition, several participants showed us examples of the chatbot overselling its own capabilities---offering to take actions like email a story draft (A10), create a Google Doc (A12), or get back to them ``in a few days'' (A11).
+It would be impossible for the chatbot to actually complete these promises because it has an exclusively text-based interface, taking as input a conversational history and generating a textual response.
+The chatbot's promises were tantalizing because the ability to take action would have made it much more useful; for example, A10 would have liked it to be able to follow a user's instructions to modify or insert text into the story body.
+
+\paragraph{Model's Natural Language Understanding is Superficial and Insufficient}
+\label{section:nlu}
+As mentioned in the previous sections, one of the reasons the chatbot interface was seen as unsuccessful was because it lacked a deep understanding of the stories.
+This absence of understanding was visible not just in the chatbot, but across all of our creative writing tool's controls.
+All participants complained that the language model's understanding seemed superficial if not entirely absent.
+\q{Wordcraft seems to have a somewhat small memory, which makes it hard to work at higher-level writing tasks such as plot outlines} (A8).
+This problem got worse, the longer the story.
+One reason for this was technical.
+The maximum sequence length accommodated by our tool's underlying language model was 1024 tokens (about 900 English words).
+When the total length of the story plus the task exemplars exceeded this length, either exemplars or pieces of the story were truncated from the prompt.
+In the case of the chatbot interface, early chat history was truncated.
+This problem has partially been solved by newer generations of language models---the latest GPT-3 handles a sequence length of 4,000 tokens and Facebook's OPT can handle 2048 tokens \citep{zhang2022opt}---however, even 4k tokens would not be long enough to hold the entirety of some of our participant's stories.
+
+Various solutions have been proposed to better capture long document understanding with neural networks \citep{hutchins2022block,dai2019transformer,beltagy2020longformer,hawthorne2022general}.
+A promising research direction would be to investigate how these techniques improve system performance on the types of question-answering and context-constrained ideation tasks desired by creative writers.
+
+
+\paragraph{Concerns about the Origin of Wordcraft's Suggestions}
+Several participants (A4, A1, A9) expressed serious concerns over not knowing the source of Wordcraft's suggestions.
+While this concern may be less important for amateur writers, professional writers face reputational harm if their work is found to have plagiarized, especially if the copied material came from smaller, more obscure writers.
+A1 felt it was important to web search each of Wordcraft's suggestions to check she was not copying someone else’s text before including any of them in her story.
+Large language models trained on internet data can also reflect their training data in more subtle ways than direct plagiarism.
+A12 observed suggestions that proposed stories set in copyrighted franchises, such as \textit{Doctor Who} and \textit{Avatar}, or suggested adding in characters such as the the Wizard of Oz and Megatron (from the Transformers).
+A7 played off Wordcraft's propensity for fan fiction by testing out a story set in the world of Stephen King's \textit{Gunslinger}.
+
+Participant concerns are not unfounded.
+Prior work has documented language models' capability of memorizing large swaths of their training data \citep{carlini2020extracting,carlini2022quantifying}.
+Techniques for training set attribution will become an increasingly important research direction as language models are deployed in more applications intended for use by professionals.
+
+\subsection{Discussion}
+Several themes emerged in our conversations with participants, which suggest important research directions for the fields of Natural Language Processing and Human Computer Interactions.
+
+\paragraph{The Need for Taste and Intentionality}
+
+A recurring theme in participant feedback was that the language model lacked taste and intentionality.
+It was capable of playing the ``yes, and…'' improv game (Section \ref{section:improv}), taking the user's prompt as a given and running with it, but it lacked any narrative agenda of its own, which explains the abundance of clichés and generic tropes.
+In contrast, good writers are skilled not only in producing but also discerning good language.
+In other words, they have taste, the ability to decide why one sentence is interesting while another is not.
+Large, pre-trained language models lack this skill because they are trained on vast amounts of text, both the good and the bad, and they are rewarded equally for being able to reconstruct both.
+Moreover, their training objective is almost always local---predict the next word in a sequence given the previous ones.
+
+There are some research directions which could improve models on this front.
+One obvious step toward intentional language models would be for the creators of these models to be more intentional about what goes into their training data.
+For example, \citep{du2022glam} have demonstrated that a language model trained on a smaller dataset of curated data outperforms on standard benchmarks a model trained on a larger but less curated dataset.
+Finetuning on ``literary'' text could also be promising.
+However, training data changes will likely be insufficient without better neural architectures and learning paradigms to encourage longterm narrative and stylistic consistency.
+
+\paragraph{The Tradeoff Between Safety, Sensibility, and Good Writing}
+One participant described to us how good writing, the kind that makes a reader stop and take notice, is ``transgressive,” and a good writing partner is the same (A11).
+The creators of the language model underlying our tool attempted to instill in it the goal of being a safe conversational partner by finetuning on conversational data labeled by human annotators as safe and sensible.
+This intentional biasing is a strength in some respects, reducing the chance of toxic or incoherent generations, but it can also be limiting.
+For example, A5 found that \q{the software seemed very reluctant to generate people doing mean things}; however, a literary world where no character is ever mean is unlikely to be a very interesting one.
+It is evident that the goals of a safe bot for chitchat conversations are not perfectly aligned with the goals of a creative writing assistant.
+Similarity, groundedness and sensibility are not always desirable features.
+As A4 put it, \q{Wordcraft generally suggests simple and sensible metaphors; but sometimes one wants metaphors to be complex, or not quite sensible.}
+
+In recent years, the field of natural language processing has adopted the paradigm of training a single large language model then applying it to as many tasks as possible.
+It is important for the field to acknowledge that one language model cannot possibly be simultaneously good at all tasks because to be good at one task means to be worse at others that possess conflicting goals.
+The development of efficient methods for the personalization of a shared language model for individual tasks and users is a promising research direction \citep{lester2021power,li2021prefix}.
+Another interesting direction is building pre-trained models with controllable risk-taking, allowing practitioners to specify the boundaries of acceptable behaviour at inference time.
+
+\paragraph{Writers are Diverse and So are Their Needs}
+One of the major successes of our study was in revealing the heterogeneous set of needs and wants writers have for an AI assistant.
+Just as different writers need different roles to be performed by their beta readers and co-authors, we found that participant opinion about the proper role of AI varied widely.
+
+Some participants were excited by the idea of AI that could take on a human persona, replicating the roles of beta readers, brainstorming partners, and co-writers they already work with (A10, A6, A3, A5, A11).
+In A9's usage diary they described needing to give the AI behind our tool a name, and how they settled on one: 
+\q{"Bot" seemed both too generic and somewhat disrespectful. I finally settled on Rain Man, in honor of the Tom Cruise/Dustin Hoffman 1988 Rain Man movie. Hoffman plays an institutionalized savant who has special powers of mind alongside serious deficits.}
+In A11's usage diary, they discussed how \q{attributing intention to LaMDa is a form of magical thinking. … It’s like mental scaffolding needed to facilitate the use of LaMDa in the story composition process.}
+Others preferred to think of Wordcraft in more utilitarian terms, as a tool to accelerate the writing process, in the vein of typewriters and word processors (A8).
+A2 explained to us why they avoided the chatbot interface: they disliked the ``pretense'' of talking to a person.
+
+Another divergence in perspective occurred over whether AI-writing tools should be capable of mimicking a writer's existing skillset.
+Some participants discussed the value of having an AI that could replicate a writer's style as closely as possible, or even write an entire novel on its own.
+For example, A9 wished for a bot that remembered everything he had written and \q{could become an extension of me and replicate my style}, and A12 expressed interested in a tool that could write a book a specific person could have written.
+On the other hand, A13 felt that a system that learned to perfectly replicate their existing style would not be terribly useful since every good story has its own unique imprint.
+
+It was generally agreed that a co-writing AI, like a human co-writer, is most useful when it complements a writer's own skillset.
+If a writer already knows how to develop eloquent prose, the AI's ability to suggest interesting ideas is more crucial than the exact language it chooses.
+Conversely, if a writer already has a clear story arc in mind, an AI that can faithfully execute on this idea and insert expressive flavor text or character dialog may be of greater use.
+Existing evaluation of large language models is largely focused on whether systems are ``as good as humans'' \citep{srivastava2022beyond} rather than evaluating whether the systems are \textit{useful} to humans.
+There is a clear need for more research on what it takes for AI to complement human writers.
+
+% To this end, multiple participants requested added functionality in Wordcraft to accomplish very narrowly defined tasks, such as suggesting a synonym for a word based on context (A6) or creating a ``list of items, locations, and characters'' given a story setup (A8).
+
+While some participants were knowledgeable of the underlying machine learning techniques backing our creative writing tool, others guessed at its workings in ways that influenced their expectations of the technology.
+A5 imagined the AI as \q{a combination of a many-many sided dice rolling next to many intricately linked simultaneous google searches of the entire internet as it existed when Wordcraft was made.}
+A6 imagined the AI as a typical database, but with an additional layer of language rules it tried to combine together to generate text that makes sense.
+
+While in the end no participant found Wordcraft entirely suitable to their goals, they were all able to find different ways to leverage the language model.
+This underscores the importance of flexibility in future co-writing interfaces, and the lack of a one-size-fits-all solution.
+
+% Research on using AI creative writing captures a large gamut of levels of interactivity.
+% At one extreme are the efforts to write entire stories with no human involvement \TODO{citations}.
+% At the other end is the sentiment that 
+% with narrowly-defined goals to help writers execute their craft more efficiently, the same intent that typewriters and word processors had in their day.
+% There was no single consensus among study participants about the ideal relationship between creative writing AI and human writers.
+
+% In the 1997, Microsoft introduced a writing assistant in the form of Clippy the anthropomorphic paperclip \citep{clippy2001}.
+% Though panned at launch, Clippy's lasting footprint in popular culture raises the question of whether there is room for writing assistants with unique personas beyond dumb tool.
+% Much of the narrative around AI has focused on whether we are building technology that is ``as good as humans'' at various tasks.
+
+
+
+% Writers also differed in terms of what they were looking for from the language model to begin with. Some wanted a tool - meaning they had clear ideas of what they wanted to achieve with their stories, and hoped the language model might help them execute those ideas more efficiently (Allison).
+% Others were looking for a stand-in for a human writing partner, whose purpose is to expand the story and can be a helpful source of randomness (Michelle).
+
+
+% 
+
+
+% \subsection{User Interface is as Critical as the Underlying Model}
+% \TODO{Talk about how the same model can be perceived as useful or useless depending on the user interface built for it.} 
+
+% A3: I found that the plain generate text button without the prompt gave me more imaginative and useful answers.
+
+\paragraph{Who is the Target Audience for AI-Assisted Writing Tools?}
+Many of the participants suggested alternative audiences that would be a better fit for our creative writing than professional writers.
+A6, A7, A4, and A5 discussed the power of a tool like ours for writers who are just starting out or who are foreign language learners.
+A7 wrote: \q{the great bane of any writer is sitting down at an empty page and not having anything to say. This is why many new writers struggle to finish their work. Wordcraft would make for an incredible teaching tool.}
+Others expressed concern over the impact language generation tools like ours could have on novice writers, including facilitating cheating in writing classes (A4) and co-opting the identity of new writers to that of the writing machine (A3).
+A6 brought up mass market and write-to-market authors, such as those using Amazon Kindle Direct Publishing, who could be incentivized to use a tool like ours to speed up the process of putting out new works.
+A8 discussed the potential impact for character and game designers, who may benefit from being able to ideate very quickly.
+He also warned that the fear of job automation is am omnipresent concern for designers.
+
+Each of the audiences mentioned here has unique needs, and the development of bespoke tools targeted at particular use cases will hasten the successful adoption of AI writing tools.
+
+
+
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Conclusion}
 In this chapter, I have presented two ways--natural language-specified style transfer and fill-in-the-blank--that language models can be applied to more specific tasks that simply continuing a prompt.
 I then incorporated these tasks into Wordcraft, a tool for human-AI collaboration for creative writing.
 User studies with Wordcraft revealed both the strengths and challenges of incorporating NLG into the creative writing process and suggested several avenues for future research.
-These include \TODO{}.
+Participants unanimously agreed that AI-powered writing will not
+replace writers anytime soon.
+However, they also saw the promise in this technology---to make parts of the creative writing process easier, faster, and more fun, for skilled and amateur writers alike.
+To achieve this promise, developers of AI writing tools need to focus on the parts of writing that are
+most time-consuming and least enjoyable.
+It is crucial that the audience for these tools be involved in the conversation on how the tools---and the underlying language models which enable them---are developed.
+
 
 \section{Summary of Contributions}
 The work on models for doing both fill-in-the-blank and continuation generation tasks was published as ``The Case for a Single Model that can Both Generate Continuations and Fill in the Blank'' in the 2022 Findings of the North American Association of Computational Linguistics \citep{fitb_fite}.
