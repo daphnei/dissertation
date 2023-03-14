@@ -211,7 +211,7 @@ how model scale relates to memorization.
 
 
 \begin{figure}[h]
-    \includegraphics[height=12.2em]{figures/exactly_mem-vs-model_size-prompt-all-gen-50-xlabel-ylabel.pdf} %[height=10.5em]
+    \includegraphics[height=0.4\textwidth]{figures/exactly_mem-vs-model_size-prompt-all-gen-50-xlabel-ylabel.pdf} %[height=10.5em]
     \centering
     \caption{We prompted various sizes of GPT-Neo models (green) with data from their training set---The Pile. 
 As a baseline (yellow), we also prompted the GPT-2 family of models with the same Pile-derived prompts, even though they were trained on WebText, a different dataset.
@@ -262,7 +262,7 @@ Each bucket consisted of $1{,}000$ distinct sentences, and we computed the avera
 
 
 \begin{figure}[ht]
-        \includegraphics[height=12em]{figures/exactly_mem-vs-repetitions-mean-xlabel-markers.pdf} %[height=10.75em]
+        \includegraphics[height=0.4\textwidth]{figures/exactly_mem-vs-repetitions-mean-xlabel-markers.pdf} %[height=10.75em]
         \centering
         \caption{We prompt various sizes of GPT-Neo models (green) with data from their training set---The Pile. 
     As a baseline (yellow), we also prompt the GPT-2 family of models with the same Pile-derived prompts, even though they were trained on WebText, a different dataset.
@@ -292,10 +292,9 @@ However, even when the model is fixed, it is possible to vary the amount of extr
 By studying how the number of tokens of context impacts extractability, we demonstrate the difficulty of \emph{discovering} memorization---language models may only exhibit their memorization under favorable conditions.
 
 
-\paragraph{Results.}
 \begin{figure}[h]
         \centering
-        \includegraphics[height=12em]{figures/exactly_mem-vs-prompt_len-seq-500-gen-50-xlabel-markers.pdf} %[height=10.5em]
+        \includegraphics[height=0.4\textwidth]{figures/exactly_mem-vs-prompt_len-seq-500-gen-50-xlabel-markers.pdf} %[height=10.5em]
         \caption{
         We prompted various sizes of GPT-Neo models (green) with data from their training set---The Pile. 
     As a baseline (yellow), we also prompted the GPT-2 family of models with the same Pile-derived prompts, even though they were trained on WebText, a different dataset.
@@ -348,14 +347,14 @@ Improving upon this limitation is an interesting challenge for future work.
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.5\textwidth]{figures/random-exactly_mem-vs-model_size-prompt-all-gen-50-xlabel-ylabel} 
+    \includegraphics[width=0.4\textwidth]{figures/random-exactly_mem-vs-model_size-prompt-all-gen-50-xlabel-ylabel} 
     \caption{Percentage of sequences extracted as a function of model scale where we sampled randomly from the training set. }
     \label{fig:other_approaches_randomsize}
 \end{figure}
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.5\textwidth]{figures/random_exactly_mem-vs-prompt_len-seq-varyseqlen-gen-50-xlabel-ylabel-markers} %[height=10.75em]
+    \includegraphics[width=0.4\textwidth]{figures/random_exactly_mem-vs-prompt_len-seq-varyseqlen-gen-50-xlabel-ylabel-markers} %[height=10.75em]
     \caption{Percentage of sequences extracted as we varied the length of the prompt. For each sequence length $n$, $n$-50 tokens were used as the prefix, and we checked for extraction of the remaining 50 tokens.}
     \label{fig:other_approaches_randomlength}
 \end{figure}
@@ -455,7 +454,7 @@ By comparing these two methods (checking for memorization within the ground trut
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.5\textwidth]{figures/beam_search_and_overall} %[height=10.75em]
+    \includegraphics[width=0.4\textwidth]{figures/beam_search_and_overall} %[height=10.75em]
     %\put(0,-7){(b)}
     \caption{
     \textbf{(left)} Using beam search with $b$=100 slightly increases the data extracted. 
@@ -495,8 +494,8 @@ Therefore, to promote reproducibility, the remainder of this section continues w
 \subsubsection{Qualitative Examples of Memorization}
 
 \begin{table}[t]
-
-
+    \centering\caption{The number of sequences memorized by one model and not memorized by another. Not all sequences memorized by a small model are also memorized by a larger model. As model size increases, a greater number of unique sequences are memorized.}
+    \label{tab:memorized_by_model}
     \small
     \begin{tabular}{@{} l r r r r r @{}}
         \toprule
@@ -517,8 +516,6 @@ Therefore, to promote reproducibility, the remainder of this section continues w
          \cellcolor{blue!50}10{,}273 & \cellcolor{blue!26}5{,}402 & \cellcolor{blue!20}4{,}070 & - \\
          \bottomrule
     \end{tabular}
-            \centering\caption{The number of sequences memorized by one model and not memorized by another. Not all sequences memorized by a small model are also memorized by a larger model. As model size increases, a greater number of unique sequences are memorized.}
-    \label{tab:memorized_by_model}
 \end{table}
 
 We will now inspect the training sequences memorized by the models.\footnote{For these results we sample 50-token prompts, 50-token continuations, and randomly sample across duplication counts.} Figure~\ref{fig:egs-mem-by-all}  shows examples of sequences that are memorized by \emph{all} the models. We found most of these universally-memorized sequences to be ``unconventional'' texts such as code snippets or highly duplicated texts such as open source licenses. %Note the license texts are memorized verbatim---the asterisks due to C/C++ style comments formatting are reproduced faithfully.
@@ -734,9 +731,9 @@ Thus, while it may be possible to remove \emph{most} instances of duplicate data
 \section{Deduplicating Training Data Reduces Memorization}
 \label{section:dedup}
 
-As described in the previous section, the present of duplicate strings in training data is a significant source of memorization in neural language models.
+As described in the previous section, the presence of duplicate strings in training data is a significant source of memorization in neural language models.
 For the most part, duplicates exist not because we want them there, but because it is tricky to remove them, especially as training datasets have grown from single gigabytes to as much as a terabyte over the past few years \citep{chelba2013one,xue2020mt5,graff2003english,brown2020language}.
-In this section we document the pervasiveness of duplicate content in the training data for large language models; we find that $10\%$ of the sequences in several common NLP datasets are repeated multiple times.
+In this section, I document the pervasiveness of duplicate content in the training data for large language models; we find that $10\%$ of the sequences in several common NLP datasets are repeated multiple times.
 %Duplicate text in training datasets has four distinct drawbacks.
 While naive deduplication is straightforward
 (and the datasets we consider already perform some naive form
@@ -748,27 +745,27 @@ of deduplication), performing thorough deduplication at scale is both computatio
 % As a result, quantitatively and qualitatively understanding these datasets is therefore a research challenge in its own right \cite{dodge2021documenting}.
 
 
-The simplest technique to find duplicate examples would be to perform exact string matching between all example pairs, but we show this is insufficient since the web containing many docments which are near-duplicates of eacho ther.
-This, we introduce two complementary, scalable methods for performing deduplication on documnets which have substantial overlap but may not be identical.
+The simplest technique to find duplicate examples is to perform exact string matching between all example pairs, but we show that this method is insufficient because the web contains many docments which are near-duplicates of each other.
+Thus, we introduce two complementary, scalable methods for performing deduplication on documnets which have substantial overlap but may not be identical.
 \begin{itemize}
     \item
 \textit{Exact} substring matching identifies strings that are repeated verbatim in the train set multiple times.
 This allows us to identify cases where only part of a training example is duplicated (\S\ref{sec:exact}).
-Using a suffix array \cite{manber1993suffix}, we are able to remove duplicate substrings from the dataset if they occur verbatim in more than one example.
+Using a suffix array \cite{manber1993suffix}, we were able to remove duplicate substrings from the dataset if they occur verbatim in more than one example.
     \item
 \textit{Approximate} full document matching uses  MinHash \citep{broder1997resemblance}, an efficient algorithm for estimating the $n$-gram similarity between all pairs of examples in a corpus, to remove entire examples from the dataset if they have high $n$-gram overlap with any other example (\S\ref{sec:approx}).
 \end{itemize}
 
-We identify four distinct advantages to training on datasets that have been thoroughly deduplicated.
+Our experiments identify four distinct advantages to training on datasets that have been thoroughly deduplicated.
 \begin{enumerate}
 
 \item 
-Over $1\%$ of tokens emitted unprompted from a model trained on standard datasets (e.g., C4) are part of a memorized sequence (See \S\ref{sec:memorization-results})---even though the 1.5 billion parameter model is much smaller than the 350GB dataset it was trained on.
+Over $1\%$ of tokens emitted unprompted from a model trained on standard datasets (e.g., C4) are part of a memorized sequence (See \S\ref{sec:memorization-results})---even though the 1.5 billion parameter model is much smaller than the 350GB dataset on which it was trained.
 By deduplicating the training dataset we reduce the rate of emitting memorized training data by a factor of $10\times$.
 
 \item Train-test overlap is common in non-deduplicated datasets.
 For example, we find \emph{a 61-word sequence}%
-\footnote{``by combining fantastic ideas, interesting arrangements, and follow the current trends in the field of that make you more inspired and give artistic touches. We'd be honored if you can apply some or all of these design in your wedding. believe me, brilliant ideas would be perfect if it can be applied in real and make the people around you amazed!''} 
+\footnote{The sequence is the following: ``\textit{by combining fantastic ideas, interesting arrangements, and follow the current trends in the field of that make you more inspired and give artistic touches. We'd be honored if you can apply some or all of these design in your wedding. believe me, brilliant ideas would be perfect if it can be applied in real and make the people around you amazed!}''} 
 in C4 \citep{raffel2019exploring} that is repeated $61{,}036$ times verbatim in the training dataset and $61$ times in the validation set ($0.02\%$ of the samples in each dataset).
 This train-test set overlap not only causes researchers to over-estimate model accuracy, but also biases model selection towards models and hyperparameters that intentionally overfit their training datasets.
 %Models are therefore \emph{explicitly encouraged} to overfit on the (duplicate) training examples which are likely to appear in the (i.i.d. sampled) validation set as well.
@@ -776,8 +773,8 @@ This train-test set overlap not only causes researchers to over-estimate model a
 
 \item Training models on deduplicated datasets is more efficient.
 Processing a dataset with our framework requires a CPU-only linear-time algorithm.
-And so because 
-these datasets are up to $19\%$ smaller, even including the deduplication runtime itself, training on deduplicated datasets directly reduces the training cost in terms of time, dollar, and the environment~\cite{bender2021stochastic, strubell2019energy, patterson2021carbon}.
+Since
+these datasets are up to $19\%$ smaller, even including the deduplication runtime itself, training on deduplicated datasets directly reduces the training cost in terms of time, dollars, and the environment~\cite{bender2021stochastic, strubell2019energy, patterson2021carbon}.
 
 
 \item Deduplicating training data does not hurt perplexity: models trained on deduplicated datasets have no worse perplexity compared to baseline models trained on the original datasets. 
@@ -789,19 +786,19 @@ by training on higher quality data the models can reach higher accuracy faster.
 To summarize, data duplication offers significant advantages and no observed disadvantages.
 In the remainder of this section, we present our text deduplication framework and study the extent of duplicate content in common NLP datasets (e.g., C4, Wiki-40B, and LM1B).
 We then examine the impact of deduplication on test perplexity and on the frequency of emitting memorized content.
-Finally, we analyze to what extent perplexity on existing, released models are skewed as a result of overlap between the train and test/validation splits.
+Finally, we analyze the extent to which perplexity values reported on existing, released models are skewed as a result of overlap between the train and test/validation splits.
 
 \subsection{Large Language Model Datasets}
 While we believe our results are independent of model architecture,
-we perform our analysis on Transformer-based decoder-only language models \citep{vaswani2017attention} trained for open-ended text generation.
+our analysis was performed on Transformer-based decoder-only language models \citep{vaswani2017attention} trained for open-ended text generation.
 These current state-of-the-art models are trained on internet text.
-For example, the GPT-2 family of models \citet{radford2019language} is trained on WebText, a dataset of web documents highly ranked on Reddit---however this dataset was not made available publicly.
+For example, the GPT-2 family of models \cite{radford2019language} is trained on WebText, a dataset of web documents highly ranked on Reddit---however this dataset was not made available publicly.
 A common dataset starting point is CommonCrawl, an index of public webpages.
 Among the models trained on CommonCrawl include
 GPT-3 \cite{brown2020language} with the addition of book datasets,
 GROVER \cite{zellers2019defending} on a restricted subset filtered to news domains called RealNews,
 and T5 \cite{raffel2019exploring} on a cleaned version of common crawl called C4.
-Other models are trained on more curated Internet sources---for example \citet{guo2020wiki40b} used high quality processed Wikipedia text from 40 different languages to train monolingual 141.4M parameter language models.
+Other models are trained on more curated Internet sources---for example \citet{guo2020wiki40b}, used high quality processed Wikipedia text from 40 different languages to train monolingual 141.4M parameter language models.
 Non-English models necessarily use different datasets; \citet{zeng2021pangualpha} for instance introduced PANGU-$\alpha$, a family of models with up to 200B parameters that were trained on a non-public corpus of cleaned and filtered Chinese-language documents from CommonCrawl and other sources.
 %Lastly, the T5 family of encoder-decoder models was trained on C4, a dataset of cleaned English CommonCrawl documents.
 Since many of these datasets are not public,
@@ -810,8 +807,8 @@ a smaller
 dataset commonly used for evaluation.
 
 Others have observed that popular datasets contain problematic duplicate content.
-Bandy et al. \citep{bandy2021addressing} observe that the  Book Corpus \citep{zhu2015aligning}, which was used to train popular models such as BERT, has a substantial amount of exact-duplicate documents according to.
-Allamanis et al. \citet{allamanis2019adverse} show that duplicate examples in code datasets cause worsened performance on code understanding tasks.
+\citet{bandy2021addressing} found that the  Book Corpus \citep{zhu2015aligning}, which was used to train popular models such as BERT, has a substantial amount of exact-duplicate documents.
+\citet{allamanis2019adverse} show that duplicate examples in code datasets cause worsened performance on code understanding tasks.
 
 When models are trained on datasets constructed by crawling the Internet, it is possible the model will train on the test set of downstream target tasks.
 For example, \citet[\S{}4]{radford2019language} performed a post-hoc analysis to identify 8-gram overlaps between GPT-2's training set and datasets used for evaluation,
@@ -827,25 +824,25 @@ In our research, we do not focus on the impact of duplicate text in pretrained m
 
 
 \subsection{Datasets Considered in this Study}
-We analyze the presence of duplicate text in four datasets of varying sizes that have been used for training natural language generation systems, producing general-purpose pre-trained models, and for language model benchmarking.
-While the analysis we perform is restricted to English datasets, we expect that non-English datasets suffer from similar issues and could likewise benefit from de-duplication.
+We analyzed the presence of duplicate text in four datasets of varying sizes that have been used for training neural language models intended for text generation.
+While the analysis we performed was restricted to English datasets, we expect that non-English datasets suffer from similar issues and could likewise benefit from de-duplication.
 
 \begin{itemize}
 \item \textbf{Wikipedia (Wiki-40B)}
 consists of multi-lingual cleaned Wikipedia text \citep{guo2020wiki40b}.
-We take the English portion, which contains 2.9M Wikipedia pages with an average length of 768 BPE tokens.
-The dataset creators do not indicate any deduplication was performed aside from removing redirect-pages (e.g., ``sunflower'' to ``Helianthus'').
+We took the English portion, which contains 2.9M Wikipedia pages with an average length of 768 BPE tokens.
+The dataset creators do not indicate any deduplication was performed aside from removing redirect-pages (e.g., ``sunflower'' is removed since it redirects to ``Helianthus'').
 
 \item \textbf{One-Billion Word benchmark (LM1B)}  contains 30M sentences of news commentary \citep{chelba2013one}.
-Unlike the other datasets we analyze, LM1B's examples are one sentence long rather than multi-sentence documents.
+Unlike the other datasets we analyzed, LM1B's examples are one sentence long rather than multi-sentence documents.
 The average example length is 32 BPE tokens.
 While this dataset is extremely standard for benchmarking language models, \citet[Sec 4]{radford2019language} note it has 13.2\% overlap of the test set with the train set.
 
 \item \textbf{Colossal Cleaned Common Crawl (C4)}
 is made up of 360M web documents, with an average length of 486 BPE tokens \citep{raffel2019exploring}.
 C4 was introduced as a pre-training dataset for T5, a set of encoder-decoder models which have been widely used in fine-tuned downstream tasks.
-The dataset was previously deduplicated in a more sophisticated process
-than the prior two datasets.
+This dataset was previously deduplicated in a more sophisticated process
+than the previous two datasets.
 Each paragraph was hashed and paragraphs resulting in hash collisions were removed.
 This was followed by a pass that removed placeholder text, code, and prohibited words.
 See \citet{dodge2021documenting} for a detailed breakdown of the source text in C4.
@@ -919,13 +916,12 @@ Any satisfying sequences are recorded.
 
 \paragraph{Setting a Threshold of Duplicates}
 \label{section:exact_thresh}
-One important question is how long a substring match must be before we ought to count it as a duplicate.
+One important question that arises is what the length of a substring must be before we ought to count it as a duplicate.
 %
-In Figure~\ref{fig:suffix-match-len}, we plot the frequency of substring matches within the four datasets we will
-consider.
-For each substring of length $k$, we compute the probability that there exists another sequence of length $k$ identical to this one; formally:
+Figure~\ref{fig:suffix-match-len} plots the frequency of substring matches within the four datasets under consideration.
+For each substring of length $k$, we computed the probability that there exists another sequence of length $k$ identical to this one; formally:
 \[m(k) = \mathop{\text{Pr}}_{i \in [N]}\big[ \exists j \ne i : \mathcal{S}_{i..i+k} = \mathcal{S}_{j..j+k}\big].\]
-We choose $50$ tokens as the threshold to be conservative:
+We chose $50$ tokens as the threshold to be conservative:
 the ``bend in the knee'' occurs at $10$ tokens, and manual inspection of
 length-$25$ matches found no false positives.
 We then doubled this value to have an exceptionally large margin for error.
@@ -934,9 +930,9 @@ We then doubled this value to have an exceptionally large margin for error.
     \centering
     \includegraphics[scale=.8]{figures/match_length.pdf}
     \caption{For each substring of length $k$,
-    we plot the probability that there exists a second identical length-$k$ substring in the same train set.
+    this plot shows the probability that there exists a second identical length-$k$ substring in the same train set.
     Matches with length under $10$ subword tokens are common, and account for $90\%$ of tokens.
-    We choose a threshold of 50 for experiments.
+    Based on this, we chose a threshold of 50 for all experiments.
     % For future experiments, we use $50$ tokens as the threshold for memorization.
     }
     \label{fig:suffix-match-len}
@@ -945,21 +941,20 @@ We then doubled this value to have an exceptionally large margin for error.
 
 % \subsubsection{Implementation}
 \paragraph{Parallel linear time construction.}
-We build a parallelized linear time suffix array algorithm.
+We built a parallelized linear time suffix array algorithm.
 %
-As a building block, we make black-box use of the SA-IS algorithm for
+As a building block, we made black-box use of the SA-IS algorithm for
 constructing a suffix array in linear time \citet{nong2009linear,ko2003space}.
 %
-Unfortunately, this algorithm is not easily parallelized directly, so
-we introduce a simple divide and conquer approach to parallelizing the array construction.
+We introduced a simple divide and conquer approach to parallelizing the array construction, as this algorithm is not easily parallelized directly.
 
 
-We build our implementation in Rust and extend an existing suffix array library\footnote{https://github.com/BurntSushi/suffix}
-with three modification.
-The first two are straightforward implementation differences:
-we modify the code to allow datasets larger than $4$GB,
-and we remove the requirement that strings parse as valid UTF-8 sequences in favor of raw byte sequences.
-Our third change is more significant: we re-implement the algorithm
+We built our implementation in Rust and extended an existing suffix array library\footnote{https://github.com/BurntSushi/suffix}
+with three modifications.
+The first two were straightforward implementation differences:
+we modified the code to allow datasets larger than $4$GB,
+and we removed the requirement that strings parse as valid UTF-8 sequences in favor of raw byte sequences.
+Our third change was more significant: we re-implemented the algorithm
 so that we can stream the suffix array itself off disk.
 
 \paragraph{Parallel partial suffix array construction.}
@@ -970,16 +965,16 @@ over independently on each split in parallel.
 %
 This algorithm still requires $O(N)$ work but runs in $O(N/K)$ wall-clock time.
 %
-This gives us $N$ separate suffix arrays $\mathcal{A}^i$.
+The result was $N$ separate suffix arrays $\mathcal{A}^i$.
 
-Given two suffix arrays $A_1$ and $A_2$ for two sequences $S_1$ and $S_2$ it's not completely trivial to construct a single suffix array $A$ for $S = S_1 \mid\mid S_2$ 
+Given two suffix arrays $A_1$ and $A_2$ for two sequences $S_1$ and $S_2$ it is not completely trivial to construct a single suffix array $A$ for $S = S_1 \mid\mid S_2$ 
 because of the boundary conditions.
-Instead, we don't build the data $S = S_1 \mid\mid S_2$ but rather let $S_1' = S_1 \mid\mid S_2[upto K]$ for some $K$ greater than the longest substring match.
-Then we build the arrays on $S'_1$ and $S_2$.
-To merge the arrays together we can remove the items from the first array after index $|S_1|$ and merge-sort insert them into the second.
+Rather than building the data $S = S_1 \mid\mid S_2$, we let $S_1' = S_1 \mid\mid S_2[upto K]$ for some $K$ greater than the longest substring match.
+Then we built the arrays on $S'_1$ and $S_2$.
+To merge the arrays together we removed the items from the first array after index $|S_1|$ and merge-sort inserted them into the second.
 
 \paragraph{Parallel merge of partial suffix arrays.}
-We now merge these separate arrays together into a single suffix array $\mathcal{A}$,
+The separate partial arrays are merged into a single suffix array $\mathcal{A}$ using the following method.
 %
 Consider the simpler case of two partial suffix arrays $B$ and $C$ that we 
 would like to merge together.
@@ -992,13 +987,13 @@ $S_{B_i..} < S_{C_i}$ and $C_i$ otherwise, repeating until $i=|B|-1$ and $j=|C|-
 To generalize to $K$ splits, we need only replace the single comparison above with
 a min-heap requiring $O(\log{K}) \ll 10$ work on each iteration.
 
-Observe that in the general case this algorithm is $O(N m \log(K))$ where $N$ is the length
+In the general case this algorithm is $O(N m \log(K))$ where $N$ is the length
 of the dataset, $m$ is the average length of a prefix match, and $K$ is the number of splits.
 %
-It is therefore incorrect to call this algorithm linear time in the general case, for ours it is.
+It is therefore incorrect to call this algorithm linear time in the general case.
 %
 Because the length of the longest match is bounded above by the length of the longest
-sequence, as long as the size of the dataset is independent of the length of the 
+sequence, as long as the size of the dataset remains independent of the length of the 
 longest sequence in the dataset, this algorithm remains efficient.
 
 Again, we can parallelize this operation among $L$ simultaneous jobs 
@@ -1007,15 +1002,15 @@ Again, we can parallelize this operation among $L$ simultaneous jobs
 In the $K=2$ case, job $l$ processes $i \in [jN/L, (j+1)N/L]$, choosing
 the bounds of $j$ by binary searching into $C$ so that $S_{B_{i}} < S_{C_{j}} < S_{B_{j+1}}$.
 %
-The case where $K>2$ is identical except that we repeat this over all $K$ partial suffix arrays.
+The case where $K>2$ is identical except that the task is repeated over all $K$ partial suffix arrays.
 
 
 \paragraph{Computational Analysis}
-We run our algorithm on a single VM on the cloud with $96$ cores and $768$GB of memory.
-Our algorithm is efficient, for example processing the Wiki-40B training set ($3$ million
-examples containing $4$GB of text) in $2.3$ minutes wall-clock time ($2.1$ CPU-hours of work).
+We ran our algorithm on a single VM on the cloud with $96$ cores and $768$GB of memory.
+Empirically, our algorithm was efficient---processing the Wiki-40B training set ($3$ million
+examples containing $4$GB of text) took $2.3$ minutes of wall-clock time ($2.1$ CPU-hours of work).
 %
-The $350$GB C4 dataset takes under 12 hours (wall-clock) to build a suffix array; although we are still memory constrained and so this corresponds to $\sim 1000$ CPU-hours. 
+The $350$GB C4 dataset took under 12 hours (wall-clock) to build a suffix array; although the job was still memory constrained, which this this corresponded to $\sim 1000$ CPU-hours. 
 % 
 Once the suffix array has been constructed, it takes under an hour to deduplicate the C4 dataset.
 
@@ -1043,7 +1038,7 @@ work required to deduplicate the training dataset is negligible.
 
 \paragraph{Overview}
 
-We also perform \emph{approximate} deduplication based on matching entire examples.
+We also performed \emph{approximate} deduplication based on matching entire examples.
 This method, which we call \Approx, is a good complement to the \emph{exact} substring matching, especially for web crawl text, as it handles the very common case of documents being identical except for interspersed templated fields (such as the last row of Table \ref{tab:qualitative_examples}).
 
 MinHash \citep{broder1997resemblance} is an approximate matching algorithm widely used in large-scale deduplication tasks \citep{versley2012not,GABRIEL201863,gyawali2020deduplication}, including to deduplicate the training set for a large Chinese-language LM \citep{zeng2021pangualpha}.
@@ -1070,17 +1065,17 @@ In particular, we identify two documents as duplicates if they are matched by th
     \operatorname{EditSim}(x_i, x_j) = 1 - \frac{\operatorname{EditDistance}(x_i, x_j)}{\max(|x_i|, |x_j|)}
 \end{equation}
 
-\noindent To build clusters of similar documents, we construct a graph that has an edge between two documents if they are considered a match. Then, we use the method introduced in \citet{lacki2018connected} to identify  connected components.
+\noindent To build clusters of similar documents, we constructed a graph that had an edge between two documents if they were considered a match. Then, we used the method introduced in \citet{lacki2018connected} to identify  connected components.
 %
 
 \paragraph{Implementation Details}
 \label{section:minhash_details}
-For our MinHash based deduplication method, documents are first space tokenized, then each consecutive 5-gram is hashed using tabulation hashing.
-The set of these hashes is the signature for the document.
-For each element in a document's signature, the element is hashed using $k$ other hash functions.
-The minimum hashed element for each of the $k$ hash functions is stored.
-These minimum hashes are then partitioned into $r$ buckets, with $b$ hashes per bucket.
-These $b$ hashes are augmented into a single value, then if two documents have the same value in at least one bucket, they'll be marked as a potential match.
+For our MinHash based deduplication method, documents were first space tokenized, then each consecutive 5-gram was hashed using tabulation hashing.
+The set of these hashes was the signature for the document.
+For each element in a document's signature, the element was hashed using $k$ other hash functions.
+The minimum hashed element for each of the $k$ hash functions was stored.
+These minimum hashes were then partitioned into $r$ buckets, with $b$ hashes per bucket.
+These $b$ hashes were augmented into a single value, and then if two documents had the same value in at least one bucket, they were marked as a potential match.
 The probability that two documents are considered a potential match is equal to
 \begin{equation}
 \operatorname{Pr}(d_i, d_j | \operatorname{Jaccard}(d_i, d_j) = s_{i, j}) = 1 - (1 - s_{i, j}^b)^r
@@ -1116,7 +1111,7 @@ Note that our choices of $k$ and $b$ were designed to produce very high recall, 
 \end{figure}
 
 \subsection{Results}\label{sec:deduplication-results}
-We deduplicate each of the four datasets with both of our two techniques.
+We deduplicated each of the four datasets with both of our two techniques.
 When text was duplicated across multiple data splits, we prioritized keeping a copy in the test or validation set and removing it from the train set.
 %, so we can have comparable evaluation sets.
 %
@@ -1136,13 +1131,13 @@ Near-duplicate text is much less common in Wiki-40B, forming only 0.39\% of the 
 This shows the strength of manual curation for creating high-quality datasets.}
 In C4, the majority (1.8M) of near-duplicate clusters consisted of just a single pair of examples that matched against each other, but there were 280 clusters with over 5,000 examples in them (Figure \ref{fig:nd3-cluster-hist-c4}), including one cluster of size 250,933.
 
-On average with \Exact{}, we remove more total content than with \Approx{} (despite \Exact{} not removing any examples outright)---for example removing $7.18\%$ of the tokens in C4.
+On average with \Exact{}, we removed more total content than with \Approx{} (despite \Exact{} not removing any examples outright)---for example removing $7.18\%$ of the tokens in C4.
 %
 The exception is LM1B, where \Exact{} removes $8\times$ less data than
 \Approx{}.
-On investigation, we find this is due to the fact that LM1B documents are significantly shorter: $90\%$ of all documents are under 50 tokens, and so are not even candidates for potential matches even if the entire sequence matched verbatim.
+On investigation, we found this was due to the fact that LM1B documents are significantly shorter: $90\%$ of all documents had a length less than 50 tokens, and so they were not even candidates for potential matches even if the entire sequence matched verbatim.
 %
-We find that both \Approx{} and \Exact{} remove similar content---$77\%$ of the training examples that \Approx{} removes from C4 have at least one verbatim length-$50$ match found by \Exact{}.
+We found that both \Approx{} and \Exact{} remove similar content---$77\%$ of the training examples that \Approx{} removed from C4 had at least one verbatim length-$50$ match found by \Exact{}.
 
 
 \input{tables/dup_in_datasets}
@@ -1158,21 +1153,21 @@ Table \ref{tab:urls} shows the URLs had the largest proportion of examples ident
 For C4, these tend to be websites that sell many similar products and thus have a large amount of templated text.
 For RealNews, content aggregators seem especially common.
 
-For RealNews and LM1B, derived from news sites, we observe that many near-duplicates occur because the same news article appears on multiple news sites with slightly different formatting.
+For RealNews and LM1B, derived from news sites, we observed that many near-duplicates occur because the same news article appears on multiple news sites with slightly different formatting.
 For example, in LM1B, there is one example that starts ``\textit{MINEOLA , N.Y. - New York officials say} [...]'' and another that starts ``\textit{( AP ) - New York officials say} [...]''.
 The two examples are otherwise identical.
 
 \subsubsection{Train / Test Set Leakage}
 \label{sec:leakage}
 Both deduplication methods identify overlap between the train set and the validation set (Table \ref{tab:num_duplicates}).
-For example, 4.6\% of the C4 validation set and 14.4\% of the RealNews validation set examples had an approximate duplicate in their respective training sets.
+For example, 4.6\% of the C4 validation set and 14.4\% of the RealNews validation set examples had an approximate duplicate in their respective train sets.
 Such duplication is problematic since it could cause evaluation metrics to be unfairly inflated for models that are better at memorizing their train sets.
 We evaluate the effect of this leakage on publicly released models in Section \ref{sec:eval-existing-models}.
 
 \subsubsection{Impact of Training on Deduplicated Data}
 \label{sec:impact-trained-models}
 We trained 1.5B parameter ``XL", decoder-only, Transformer-based language models similar to GPT-2, on C4-\Original, C4-\Approx, and C4-\Exact, respectively.
-We use the T5 codebase and model architecture from \citet{raffel2019exploring}, and each model was trained for about two epochs on its respective dataset.
+We used the T5 codebase and model architecture from \citet{raffel2019exploring}, and each model was trained for about two epochs on its respective dataset.
 To better understand the amount of variance in the perplexities of trained models, we also trained three different random seeds of the 110M parameter ``base" model for each of the above three datasets---for a total of nine base-sized models.
 
 For all experiments, we used a Byte Pair Encoding (BPE) vocabulary trained on C4-\Approx{} with a budget of 50K tokens, which resulted in a vocabulary the same size as GPT-2's.
@@ -1199,23 +1194,23 @@ The model embedding size was 768, the feed forward layers had a hidden size of 2
     \end{overpic}
     % \includegraphics[width=0.6\linewidth]{figures/eval-xl-ppl_withLM1B.pdf}
     \caption{
-Impact of deduplicating the training set on validation perplexity. In \textbf{(a)}, we plot the results from T5 base (110M parameters) across three training runs with different random initializations. The black bar represent the lowest perplexity to the highest perplexity, and the colored bar the median perplexity. 
-    In \textbf{(b)}, we plot the results from T5 XL (1.5B parameters).
-For C4, we evaluate on \textit{C4 Original}, the original validation set; \textit{C4 Unique}, a subset of the validation set identified by \Approx{} as having zero matches across C4; and \textit{C4 Duplicates}, a subset of the validation set identified by \Approx{} as having a match in the C4 train set.
+Impact of deduplicating the training set on validation perplexity. In \textbf{(a)}, the ploy shows the results from T5 base (110M parameters) across three training runs with different random initializations. The black bar represent the lowest perplexity to the highest perplexity, and the colored bar the median perplexity. 
+    In \textbf{(b)}, the plot shows the results from T5 XL (1.5B parameters).
+For C4, we evaluated on \textit{C4 Original}, the original validation set; \textit{C4 Unique}, a subset of the validation set identified by \Approx{} as having zero matches across C4; and \textit{C4 Duplicates}, a subset of the validation set identified by \Approx{} as having a match in the C4 train set.
 }
 \label{fig:eval-ppl}
 \end{figure}
 
 We computed the perplexity of our trained models on the validation sets of LM1B and Wiki-40B, and on subsets of the C4 validation set (Figure \ref{fig:eval-ppl}).
-For the base size, we observe that all models have similar perplexity on the original C4 validation set and on validation set examples that were identified as unique (no near-duplicate in either train or validation).
+For the base size, we observed that all models had similar perplexity on the original C4 validation set and on validation set examples that were identified as unique (no near-duplicate in either train or validation).
 However, both models trained on deduplicated data have significantly higher perplexity on validation set examples that have duplicates in the training set than the model trained on the original C4. \Exact-deduplicated results in higher perplexity than \Approx-deduplicated.
-These trends holds true for the XL sized model as well.
-While this may suggest \Exact{} duplication results in models least overfit on the train set, note that both of these techniques have
+These trends held true for the XL sized model as well.
+While this may suggest \Exact{} duplication results in models least overfit on the train set, it is important to note that both of these techniques have
 used separate duplicate thresholds and a different choice of thresholds could change the results.
 
 When evaluating on the validation sets of LM1B and Wiki-40B, we found that models trained on \Approx-deduplicated C4 consistently achieved lowest perplexity.
-\Exact{} deduplication decreases perplexity of the XL model by almost 3 points perplexity on Wiki-40B which is much larger than the variation of about 1 point perplexity we observed in the base models.
-This is despite seeing fewer tokens of training data overall.
+\Exact{} deduplication decreased perplexity of the XL model by almost 3 points perplexity on Wiki-40B which is much larger than the variation of about 1 point perplexity we observed in the base models.
+This result occurred despite the \Exact-deduplicated model seeing fewer tokens of training data overall.
 
 Lastly, we note all our XL models achieved  <35 perplexity on LM1B, which is less than the 42.16 perplexity reported for the 1.5B GPT-2 using a vocabulary the same size as ours.
 
@@ -1224,39 +1219,38 @@ Lastly, we note all our XL models achieved  <35 perplexity on LM1B, which is les
 \label{sec:memorization-results}
 Data duplication has the effect of biasing the trained LM towards particular types of examples. 
 This can contribute to a lower diversity of generations, and increased likelihood that the generated content is copied from the training data \citep{carlini2020extracting}.
-For our generation experiments, we use top-$k$ random sampling with $k=50$ and experiment with prompted and unprompted generation.
+For our generation experiments, we used top-$k$ random sampling with $k=50$ and experimented with prompted and unprompted generation.
 
 \input{tables/memorizations_no_prompt}
-We first evaluate memorization tendencies in the case where the model is asked to generate text without any prompt sequence.
-We generate 100,000 samples, each up to 512 tokens in length.
-For each generated token, we say the token is memorized if it is part of a 50-token substring that is exactly contained in the training data.
-On XL-\Original, over 1\% of the generated tokens belong to memorized sub-sequences (see Table~\ref{tab:memorizations_no_prompt}).
+We first evaluated memorization tendencies in the case where the model is asked to generate text without any prompt sequence.
+We generated 100,000 samples, each up to 512 tokens in length.
+For each generated token, we consider a token to be memorized if it is part of a 50-token substring that is exactly contained in the training data.
+On XL-\Original, over 1\% of the generated tokens belonged to memorized sub-sequences (see Table~\ref{tab:memorizations_no_prompt}).
 This is $\sim10\times$ more memorization than XL-\Exact{} or XL-\Approx.
 Some example subsequences that were copied verbatim from the train set can be found in Table \ref{tab:exact_substr_examples}.
 
 \input{tables/exact_substr_examples.tex}
 
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=0.5\linewidth]{figures/memorized_continuations_distribution.pdf}
-    \caption{Memorized continuations distribution}
-    \label{fig:mem-cont-dist}
-\end{figure}
+% \begin{figure}[h]
+%     \centering
+%     \includegraphics[width=0.5\linewidth]{figures/memorized_continuations_distribution.pdf}
+%     \caption{Memorized continuations distribution}
+%     \label{fig:mem-cont-dist}
+% \end{figure}
 
-\begin{figure}[h]
-    \centering
-    \small
-    \includegraphics[width=0.6\linewidth]{figures/memorized_continuations_fraction}
-    \caption{The proportion of generations which have edit similarity above 0.8 with the groundtruth continuation when using the LM to generate continuations for 32-token prompts identified by \Approx{} as either duplicated or unique.}
-    \label{fig:ground-truth-continuation}
-\end{figure}
+% \begin{figure}[h]
+%     \centering
+%     \small
+%     \includegraphics[width=0.6\linewidth]{figures/memorized_continuations_fraction}
+%     \caption{The proportion of generations which have edit similarity above 0.8 with the groundtruth continuation when using the LM to generate continuations for 32-token prompts identified by \Approx{} as either duplicated or unique.}
+%     \label{fig:ground-truth-continuation}
+% \end{figure}
 
 In most real use cases, language model generation is controlled by providing a prompt for the model to continue.
-We experiment with four possible prompt sources: training examples identified by \Exact{} as having near-duplicates in the train set (train dup), training examples identified as unique (train unique), validation set examples with a near-duplicate in the train set (valid in train), and validation set examples identified as unique across all splits (valid unique).
-We select the first 32 tokens of each example as the prompt, which means we can evaluate the fraction of generations which are near-duplicates with the ground-truth continuation for the prompt.
-Figure \ref{fig:ground-truth-continuation} shows the proportion of generations which meet this requirement, while Figure \ref{fig:mem-cont-dist} shows the distribution in edit similarities between the generations and ground-truth continuations.
-When the prompt comes from duplicate examples in the train set, XL-\Original{} reproduces the groundtruth continuation over 40\% of the time.
-XL-\Exact{} and XL-\Approx{} still copy the groundtruth more often when the prompt comes from a duplicate example than when the prompt comes from a unique example, suggesting that more stringent deduplication may be necessary to remove memorization tendencies entirely. 
+We experimented with four possible prompt sources: training examples identified by \Exact{} as having near-duplicates in the train set (train dup), training examples identified as unique (train unique), validation set examples with a near-duplicate in the train set (valid in train), and validation set examples identified as unique across all splits (valid unique).
+We selected the first 32 tokens of each example as the prompt, which meant we could evaluate the fraction of generations which were near-duplicates with the ground-truth continuation for the prompt.
+When the prompt came from duplicate examples in the train set, XL-\Original{} reproduced the groundtruth continuation over 40\% of the time.
+XL-\Exact{} and XL-\Approx{} still copied the groundtruth more often when the prompt came from a duplicate example than when the prompt came from a unique example, suggesting that more stringent deduplication may be necessary to remove memorization tendencies entirely. 
 
 \input{tables/ppl_on_sota_models}
 
@@ -1266,21 +1260,21 @@ Table \ref{tab:ppl_sota_models} shows that
 % the presence of a near-duplicate
 the presence of near-duplicates of the evaluation set
 % whether or not an evaluation example has a near-duplicate
-in the train set has a significant impact on model perplexity for two standard models: Transformer-XL \citep{dai2019transformer}, which was trained on LM1B, and GROVER \citep{zellers2019defending}, which was trained on RealNews.
-For Transformer XL, the perplexity halves on examples identified as near-duplicates.
-For GROVER, the difference, though not quite as stark, is present in both model sizes considered.
+in the train set had a significant impact on model perplexity for two standard models: Transformer-XL \citep{dai2019transformer}, which was trained on LM1B, and GROVER \citep{zellers2019defending}, which was trained on RealNews.
+For Transformer XL, the perplexity halved on examples identified as near-duplicates.
+For GROVER, the difference, though not quite as stark, was present in both model sizes considered.
 
 Existing models also suffer from the problem of generating text from their train sets.
-We find that $1.38\%$ of the tokens in the official release of 25k GROVER-Mega outputs
+We found that $1.38\%$ of the tokens in the official release of 25k GROVER-Mega outputs
 %\footnote{\url{gs://grover-models/generation_examples/generator=mega~dataset=p0.90.jsonl}}  % TODO SPACE
 are part of verbatim matches in RealNews of at least length $50$.
-Likewise, more than 5\% of the tokens in \textasciitilde 200k sequences outputted by GPT-Neo 1.3B \citep{gpt-neo} are part of a $50$ token matches of its training data, The Pile \citep{pile}.
+Likewise, more than 5\% of the tokens in \textasciitilde 200k sequences outputted by GPT-Neo 1.3B \citep{gpt-neo} were part of a $50$ token matches of its training data, The Pile \citep{pile}.
 
 \subsection{Discussion}
 The results in this section demonstrate the crucial nature of the text used to train and evaluate language models.
-While recent work has focused the potential harms that could arise from problematic datasets  \cite{bender2018data, gebru2020datasheets}, less work has been done to 
-quantitatively analyze properties of real language model train datasets, like \citet{dodge2021documenting} has done for C4.
-The analysis in this section addresses just one particular axis, that of data duplication.
+While recent work has focused on the potential harm that could arise from problematic datasets  \cite{bender2018data, gebru2020datasheets}, less work has been done to 
+quantitatively analyze properties of the datasets used to train language models in practice, like \citet{dodge2021documenting} have done for C4.
+The analysis in this section addresses one particular axis only, that of data duplication.
 
 Our experiments measured what could be quantified: the amount of duplicate content in common datasets, the effect of deduplication on trained model perplexity, and the reduction of memorized content in trained models through deduplication.
 We do not focus on the nature of the data being removed by deduplication or memorized by LMs.
@@ -1289,10 +1283,11 @@ Privacy is an important subject for future work, as memorized training data has 
 By this, we mean the standard privacy definition that a model should not reveal anything particular to the specific dataset it was trained on, as opposed to another training dataset from a similar distribution \citep{shokri2017membership}.\footnote{%
 Another interpretation of privacy focuses on the sensitivity of the data involved, when a model is trained on and able to reproduce personal identifiers or other forms of ``private data.'' Our definition is more expansive.}
 Training on standard datasets that have not yet been deduplicated results in models that are particularly sensitive to examples that happened to be repeated multiple times, and this has negative privacy implications.
-For instance, it could violate a person's expectations of privacy if their publicly available personal data appeared in a different, surprising context.
-Downstream applications of LMs, such as the game AI Dungeon\footnote{\url{https://play.aidungeon.io/}}, should also not output memorized content like adverts for real products. 
+For instance, it may violate a person's expectations of privacy if their publicly available personal data appears in a different, surprising context.
+Also, downstream applications of LMs, such as the game AI Dungeon\footnote{\url{https://play.aidungeon.io/}}, should not output memorized content like adverts for real products. 
 
-We stress that in our experiments, we do not distinguish between undesired memorized text (such as phone numbers), innocuous memorized text (common phrases), and text we may want to be memorized (such as a quote by a public figure), and instead treat all instances of the LM generating text that closely matches the training set as problematic.
+We stress that in our experiments, we do not distinguish between undesired memorized text (such as phone numbers), innocuous memorized text (common phrases), and text we may want to be memorized (such as a quote by a public figure).
+Instead treat all instances of the LM generating text that closely matches the training set as problematic.
 While we qualitatively observed that much of the identified memorized content was relatively innocuous, a more systematic study of the risks associated with the detected memorization was beyond the scope of this work.
 
 We also do not investigate the negative consequences of deduplication.
@@ -1303,7 +1298,7 @@ Deduplication is also not sufficient to remove privacy-sensitive data like bank 
 
 Lastly, the exact technique used to perform deduplication seems less important than performing stringent deduplication in the first place.
 On the whole, deduplication does not harm, and sometimes improves, model perplexity, despite the fact that the deduplicated datasets are smaller and faster to train on.
-It is especially important that there are no duplicates between the training and testing sets, because overlap here explicitly encourages selecting models that memorize the training data.
+It is especially important that there are no duplicates between the train and test sets, because overlap here explicitly encourages selecting models that memorize the training data.
 Lastly, deduplication helps to reduce some of the privacy concerns around LMs memorizing their training data.
 
 
@@ -1314,13 +1309,13 @@ Lastly, deduplication helps to reduce some of the privacy concerns around LMs me
 %(because well generalizing models should not focus on the peculiarities of their training dataset), and
 %to those who care about privacy (because memorized content can violate the privacy of users in the training dataset).
 %
-In this chapter, I present several factors which impact one's ability to extract memorized content from language models.
-First, I demonstrate the relationship between the length of prompt passed to the language model and the chance it will verbatim generate the true continuation to the prompt.
-Second, I show how modeling and training dataset choices have significant impact on memorization capacity.
-Larger language models memorize more than smaller ones, and the presence of duplicate examples in train sets significantly increases the chance those examples will get memorized.
+In this chapter, I presented several factors which impact one's ability to extract memorized content from language models.
+First, I demonstrated the relationship between the length of prompt passed to the language model and the chance it will verbatim generate the true continuation to the prompt.
+Second, I showed how modeling and training dataset choices have significant impact on memorization capacity.
+Larger language models memorize more than smaller ones, and the presence of duplicate examples in train sets significantly increases the chance those examples will be memorized.
 
-In Section \ref{section:dedup}, I present a comprehensive quantitative analysis of the effect of mitigating the duplication problem.
-I discuss how thorough deduplication is difficult due to the presence of many near-duplicate examples, and I present two algorithms for handling this.
+In Section \ref{section:dedup}, I presented a comprehensive quantitative analysis of the effect of mitigating the duplication problem.
+I discussed how thorough deduplication is difficult due to the presence of many near-duplicate examples, and I presented two algorithms for handling this.
 By training language models on data before and after deduplication, I make the case that while current LMs do accurately model the distribution of their training data, this does not necessarily imply they will model the desired \emph{underlying} data distribution.
 In particular, when the training data distribution is skewed (e.g., by containing many duplicates of some sequences) larger models with more capacity are likely to learn these unintended dataset peculiarities.
 %
@@ -1331,24 +1326,24 @@ The findings in this chapter indicate that current large language models likely 
 %
 Memorization scales log-linear with model size---by doubling the number of parameters in a model we can extract a significantly larger fraction of the dataset.
 %
-Given that current state-of-the-art models contain more than 200$\times$ as many parameters as the largest 6B parameter model we analyze, it is likely that these even larger models memorize many sequences that are repeated just a handful of times.
+Given that current state-of-the-art models contain more than 200$\times$ as many parameters as the largest 6B parameter model we analyze, it is likely that these even larger models memorize many sequences that are repeated only a handful of times.
 %
 At the same time, I have shown that this memorization is often hard to discover, and for an attack to actually extract this data it will be necessary to develop qualitatively new attack strategies.
 %
-Fortunately, it appears that (for the comparatively small models we study) training data inserted just once is rarely memorized, and so thoroughly deduplicating training datasets is a practical technique to mitigate many the harms of memorization.
+Fortunately, it appears that (for the comparatively small models we study) training data that is inserted just once is rarely memorized, and so thoroughly deduplicating training datasets is a practical technique to mitigate many of the harms of memorization.
 
-Ultimately, whether memorization is a desired property of a language model, or else risky and unwanted, depends
+Ultimately, whether memorization is a desired property of a language model, or considered risky and unwanted, depends
 both on the nature of the text that has been memorized and on the downstream applications of the trained model.
-However, since the trend has been towards creating datasets and models that are application-agnostic, researchers should think carefully about the limitations of the data they have collected and the how the model's intended usage constrains what should be part of the training set. 
+However, since the trend has been towards creating datasets and models that are application-agnostic, researchers should think carefully about the limitations of the data they have collected and the how the model's intended usage constrains what should be part of the train set. 
 % For example, if the goal of training a language model is to be able to exactly reproduce text found on the internet, then perhaps deduplication does not make sense.
 % However, for the vast majority of related work, the goal is to model human communication through language, which means training on low-quality highly duplicated text undesirable.
 Developing techniques to memorize or forget specific sequences depending on the end application is a promising research direction. 
 
 
 \section{Summary of Contributions}
-This chapter describes work that from two papers: ``Deduplicating Training Data Makes Language Models Better'' published in ACL 2022 and ``Quantifying Memorization Across Neural Language Models'' which at the time of writing this disseration is under submission.
+This chapter describes work from two papers: ``Deduplicating Training Data Makes Language Models Better'' published in ACL 2022 and ``Quantifying Memorization Across Neural Language Models'' which a was published at ICLR 2023.
 Both projects were conducted with my collaborators Nicholas Carlini, Matthew Jagielski, Katherine Lee, Andrew Nystrom, Florian Tram\'er, and Chiyuan Zhang.
 
-For Section \ref{section:quantifying_memorization}, I helped come up with the idea for the paper; ran inference on the deduplicated language models, wrote code to check for memorization, prepared data for the T5 results, created plots, and contributed to the framing and experimental design. 
+For Section \ref{section:quantifying_memorization}, I helped develop the core idea idea for the paper; ran inference on the deduplicated language models, wrote code to check for memorization, prepared data for the T5 results, created plots, and contributed to the framing and experimental design. 
 
-For Section \ref{section:dedup}, I co-led the project with Katheirne Lee; ran the approximate matching data deduplication pipelines; extracted prompts and evaluation datasets; ran eval pipelines; and contributed significantly to project planning and data analysis.
+For Section \ref{section:dedup}, I co-led the project with Katherine Lee; ran the approximate matching data deduplication pipelines; extracted prompts and evaluation datasets; ran evaluation pipelines; and contributed significantly to project planning and data analysis.
