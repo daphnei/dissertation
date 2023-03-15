@@ -1,63 +1,66 @@
 \chapter{Conclusion}
 
-This thesis focuses on (1) analyzing neural language models to better understand the text they are able to generate, and (2) studying the feasibility of applying large language models to tasks that could benefit from human-AI writing collaboration.
+This thesis focuses on (1) analyzing neural language models to better understand the text that they are able to generate, and (2) studying the feasibility of applying large language models to tasks that could benefit from human-AI writing collaboration.
 
-Over the course of my PhD, the field of language generation with neural language models has progressed from character-level LSTMs with tens of millions of learned weights that are only capable of generating passages such as ``{An ICBM, the [[gurt and land]] has registered \$155 billion in U.S. and August 1688, and makes sure the US-transplantation disbanded backwards in the County by authorizing disputes that tend to carry over this peninsula}'' \citep{graves2013generating} to non-recurrent networks with hundreds of billions of learned weights that are capable of outputting text even skilled humans can have trouble distinguishing as machine-generated.
-Despite these advancements, even state-of-the-art language models tend to generate text that fails in both subtle and unpredictable ways.
+Over the course of my PhD, the field of language generation with neural language models has progressed from character-level LSTMs with tens of millions of learned weights that are only capable of generating passages such as ``{An ICBM, the [[gurt and land]] has registered \$155 billion in U.S. and August 1688, and makes sure the US-transplantation disbanded backwards in the County by authorizing disputes that tend to carry over this peninsula}'' \citep{graves2013generating} to non-recurrent networks with hundreds of billions of learned weights that are capable of outputing text even skilled humans  have trouble distinguishing as machine-generated.
+Despite these advances, even state-of-the-art language models tend to generate text that fails in both subtle and unpredictable ways.
 They also struggle to understand context which should influence their generations, and they fall short on supporting the kinds of fine-grained controllability that are crucial for meaningful human-AI collaboration.
-However, the future of the field is promising; \TODO{say something positive}.
 
-I conclude by summarizing the main takeaways from my research and the future work suggested by them.
+However, the future of the field is promising.
+Challenges in natural language understanding and generation that have tantalized researchers in computational linguists for over half a century are rapidly being solved by language models with only limited requirements for instructions on how to complete the task.
+Significant progress has been made in story generation, document summarization, machine translation, commonsense reasoning, and many more tasks.
+
+I conclude by summarizing the main takeaways from my research and describing some directions in which my work has guided future research in the field.
 
 \subsubsection{Detection of generated text is getting harder but no less important.}
-	Chapter \ref{chap:decoding}, I present the challenge of detecting machine-generated text.
-	As neural language models get better, it is becoming only more challenging for humans to notice they are interacting with a bot.
-	Indeed, in a recent controversy, a YouTuber inundated 4chan with GPT-Neo generated text \footnote{\url{https://youtu.be/efPrtcLdcdM}}.
+	In Chapter \ref{chap:decoding}, I presented the challenge of detecting machine-generated text.
+	As neural language models become better at simulating human text and speech, it becomes only more challenging for humans to notice when they are interacting with a bot.
+	Indeed, in a recent controversy, a YouTuber inundated 4chan with GPT-Neo generated text,\footnote{\url{https://youtu.be/efPrtcLdcdM}}
 	While some users eventually caught on, many continued to be fooled even after the YouTuber revealed the scheme.
-	In computer vision \citep{saharia2022photorealistic,ramesh2022hierarchical}, it is standard to watermark generated images, but thus far, this has not been applied to large language model outputs.
-	The increasing pervasiveness of generated text on the internet is problematic not just because of its potential societal impacts but because it sullies our future training sets.
+	In the field of computer vision \citep{saharia2022photorealistic,ramesh2022hierarchical}, it is standard to watermark generated images, but thus far, this has not been applied to large language model outputs.
+	The increasing pervasiveness of generated text on the internet is problematic not just because of its potential societal impacts, but because it sullies our future training sets.
 	In machine translation, it is a well-known problem that automatically translated text could corrupt training sets, and some watermarking techniques have been proposed \citep{venugopal2011watermarking}.
-	This is a problem that those who build large neural language models (and their training sets) need to start concerning themselves with as as well.
+	Those researchers who build large neural language models (and their training sets) need to start concerning themselves with this problem as well.
 	My research on automatic detection was performed in 2018 on 768M parameter models.
 	It would be very valuable to reconsider the automatic detection problem on state-of-the-art generation systems and in more realistic contexts (such as on documents where only a portion of the text may be generated).
 
 \subsubsection{Text generation involves tradeoffs.}
-	In Chapters \ref{chap:background} and \ref{chap:decoding}, I describe how there exists a tradeoff between generating diverse text that is easier for humans to detect because it contains obvious errors--and generating mundane text that is harder to detect, but lacks the lexical diversity of a real human writer.
-	This tradeoff continues to be important, both for academic research--because we need to ensure that  comparisons between different NLG systems are fair--and for practitioners--because the setting chosen can have a significant impact on user experience.
-	For example, Wordcraft users complained that the text was in too dull a style, a problem that might have been resolved very simply by increasing the sampling temperature.
+	In Chapters \ref{chap:background} and \ref{chap:decoding}, I described how there exists a tradeoff between generating diverse text that is easier for humans to detect because it contains obvious errors--and generating mundane text that is harder to detect, but lacks the lexical diversity of a real human writer.
+	This tradeoff continues to be important, both for academic research--because we need to ensure that  comparisons between different NLG systems are fair--and for practitioners--because the decoding strategy setting chosen can have a significant impact on user experience.
+	For example, Wordcraft users complained that the generated suggested were stylistically dull, a problem that might have been resolved very simply by increasing the sampling temperature.
 	Further research is needed into techniques for sampling from the long tail of low-likelihood words without causing semantic errors.
 
 \subsubsection{Memorization is a serious concern but can be hard to define.}
-	In Chapter \ref{chap:memorization}, I focus on the memorization problem; language models are capable of regurgitating text from their train sets.
+	In Chapter \ref{chap:memorization}, I focused on the memorization problem; language models are capable of regurgitating text from their train sets.
 	Memorization is most often caused by examples being over-represented in the training data, but in recent work \citep{zhang2021counterfactual}, we show that language models also memorize rare sequences.
 	(We show this by measuring counterfactual memorization--how much more likely an example is according to models that saw it during training compared to models that never saw the example.)
-	More detailed studies of what kinds of content are more susceptible to memorization and the training dynamics behind memorization will be important subjects of future work.
+	More detailed studies of the types of content that are more susceptible to memorization and the training dynamics behind memorization will be important subjects of future work.
 
 	In the research discussed in this thesis, I have considered \textit{all} instances of memorization as problematic.
-	While memorization is often a sign of poor generalization, and at its worst, it can divulge private information, memorization can also be a good thing (e.g., we might want our language model to be able to accurately quote famous speeches).
-	It will be important to develop more advanced techniques for controlling memorization, allowing models to quote verbatim when there is a good reason to.
+	While memorization is often a sign of poor generalization, and at its worst, it can divulge private information, memorization can also be a beneficial (e.g., we might want our language model to be able to accurately quote famous speeches).
+	It will be important to develop more advanced techniques for controlling memorization, allowing models to quote verbatim when there it is reasonable and desirable to do so.
 
-\subsubsection{More attention needs to be paid to dataset quality.}
-	Chapter \ref{chap:memorization} shows that duplicate text in language model training data is a crucial source of memorization.
+\subsubsection{More attention should be given to dataset quality.}
+	Chapter \ref{chap:memorization} showed that duplicate text in language model training data is a crucial source of memorization.
 	However, duplication is only one of many traits that can influence how well models pre-trained on a large dataset perform on a variety of tasks of interest.
-	Research answering questions on the effect of pre-training dataset composition--including how stringent toxicity filters should be, what languages to include, and the balancing of different sources (news, Wikipedia, books, etc.)--could have important ramifications for how new datasets are built and how trained models are used.
+	Research that answers questions on the effect of pre-training dataset composition--including how stringent toxicity filters should be, what languages to include, and the balancing of different sources (news, Wikipedia, books, etc.)--could have important ramifications for how new datasets are built and how trained models are used.
 	It will be impossible to recommend a single set of data composition rules that will be optimal for all downstream tasks (for example, filtering out all hate speech will result in a model that is less likely to generate hate speech but is also less useful as part of a hate speech detection system), but at least further research should allow us to answer questions about the tradeoffs involved in different dataset composition decisions. 
 	
 \subsubsection{Supporting many tasks from fewer models is valuable.}
 	As neural language models increase in number of parameters, it is becoming increasingly infeasible to create one custom-tailored model per task that needs to be supported.
-	In Chapter \ref{chap:creativity}, I show how a single pre-trained language model can be made to support a large variety of style transfer tasks that previous work would have typically trained several separate models for.
-	I also argue that we should be pre-training large language models for a fill-in-the-blank-style objective, rather than a continuation one, because filling in the blank is a strictly more versatile task.
+	In Chapter \ref{chap:creativity}, I showed how a single pre-trained language model can be made to support a large variety of style transfer tasks for which previous work would have typically trained several separate models.
+	I also argued that we should be pre-training large language models for a fill-in-the-blank-style objective, rather than a continuation one, because filling in the blank is a strictly more versatile task.
 	There has been a significant focus in recent work on developing training objectives to support a variety of downstream tasks with minimal additional task-specific adaption \citep{wei2021finetuned,sanh2021multitask}.
-	However, these approaches require a substantial amount of annotated training data, and self-supervised pre-training objectives which yield multi-task-capable models is an important subject for future research.
+	However, these approaches require a substantial amount of annotated training data, and self-supervised pre-training objectives which yield multi-task-capable models are an important subject for future research.
 
 \subsubsection{Evaluation of NLG systems should happen in real-world settings.}
-	In Chapter \ref{chap:creativity}, I present Wordcraft, a text editor with NLG-powered writing assistance intended for creative writers.
-	Through user studies with both novice and professional writers, we explore the strengths and weaknesses of state-of-the-art natural language generation.
+	In Chapter \ref{chap:creativity}, I presented Wordcraft, a text editor with NLG-powered writing assistance intended for creative writers.
+	Through user studies with both novice and professional writers, we explored the strengths and weaknesses of state-of-the-art natural language generation.
 	Studies of NLG use by real users can lead to different and more nuanced conclusions than those from more contrived human evaluation schemes.
-	For example, when evaluating the use of augmented zero shot learning for style transfer with Amazon Mechanical Turk-based evaluation, we saw that annotators preferred our approach's generations over other approaches.
-	However, use of this feature within Wordcraft revealed just how much of gap there still is between the types of transfers writers want to do and the capability of our approach.
+	For example, when evaluating the use of augmented zero-shot learning for style transfer with Amazon Mechanical Turk-based evaluation, we saw that annotators preferred our approach's generations over other approaches.
+	However, use of this feature within Wordcraft revealed just how much of gap still exists between the types of transfers writers want to do and the capability of our approach.
 
-	Fiction writing is only one domain where NLG-powered tools could be impactful, and it would be valuable to see the types of studies I ran with Wordcraft be conducted in other domains.
+	Fiction writing is only one domain where NLG-powered tools could be impactful, and it would be valuable to see studies similar to my work with Wordcraft conducted across other domains.
 	In particular, NLG has many possible uses in tools that assist people in learning how to write (both children and new-language learners).
-	It could also have impact in domains that require writers to produce a lot of text quickly, such as script writing for immersive video games.
+	It could also have prove useful in domains that require writers to produce a lot of text quickly, such as scriptwriting for immersive video games.
 
